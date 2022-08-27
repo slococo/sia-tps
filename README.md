@@ -5,4 +5,4 @@
 - Bellver, Ezequiel (61268)
 - Castagnino, Salvador (60590)
 - Lo Coco, Santiago (61301)
-- Negro, Juan (61225)
+- Negro, Juan Manuel (61225)

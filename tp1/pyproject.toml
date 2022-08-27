@@ -3,11 +3,11 @@ name = "tp1"
 version = "0.1.0"
 description = "TP1 - SIA"
 authors = [
-    "Juan Martin Barmasch <slococo@itba.edu.ar>",
-    "Ezequiel Bellver <slococo@itba.edu.ar>",
-    "Salvador Castagnino <slococo@itba.edu.ar>",
+    "Juan Martin Barmasch <jbarmasch@itba.edu.ar>",
+    "Ezequiel Bellver <ebellver@itba.edu.ar>",
+    "Salvador Castagnino <scastagnino@itba.edu.ar>",
     "Santiago Lo Coco <slococo@itba.edu.ar>",
-    "Juan Negro <slococo@itba.edu.ar>"
+    "Juan Manuel Negro <jnegro@itba.edu.ar>"
 ]
 license = "MIT"
 readme = "README.md"
