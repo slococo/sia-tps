@@ -82,12 +82,6 @@ def main():
     game.first_node.absorb(2)
     print_graph(game.first_node, set(), 1)
 
-    """print('----------')
-    for i in range(9):
-        for j in range(9):
-            print(matrix[i][j].node)
-    print('----------')
-    for i in range(9):
-        for j in range(9):
-            print(matrix[i][j].node.frontier)
-    """
+
+if __name__ == '__main__':
+    main()
