@@ -1,8 +1,8 @@
-from structure import Node
+from tp1.ladoA.structure import Node
 from collections import deque
 from heapq import heappop, heappush
 from itertools import count
-from searchTreeNode import SearchTreeNode
+from tp1.ladoA.searchTreeNode import SearchTreeNode
 
 
 # Asumimos que dado un "goal node" n la heuristica cumple que h(n)=0

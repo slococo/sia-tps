@@ -1,5 +1,5 @@
 import numpy as np
-from structure import Node, Matrix, Cell
+from tp1.ladoA.structure import Node, Matrix, Cell
 
 
 # TODO: hacerla iterativa
@@ -71,22 +71,23 @@ def print_graph(node: Node, checked: set, level):
             print_graph(aux, checked, level + 1)
 
 
-game = Game(2134, 35)
-matrix = game.matrix
-print(matrix)
-print('----------')
-print_graph(game.first_node, set(), 1)
-print()
-print('---------------------------------------------')
-game.first_node.absorb(2)
-print_graph(game.first_node, set(), 1)
+def main():
+    game = Game(3, 35)
+    matrix = game.matrix
+    print(matrix)
+    print('----------')
+    print_graph(game.first_node, set(), 1)
+    print()
+    print('---------------------------------------------')
+    game.first_node.absorb(2)
+    print_graph(game.first_node, set(), 1)
 
-"""print('----------')
-for i in range(9):
-    for j in range(9):
-        print(matrix[i][j].node)
-print('----------')
-for i in range(9):
-    for j in range(9):
-        print(matrix[i][j].node.frontier)
-"""
+    """print('----------')
+    for i in range(9):
+        for j in range(9):
+            print(matrix[i][j].node)
+    print('----------')
+    for i in range(9):
+        for j in range(9):
+            print(matrix[i][j].node.frontier)
+    """
