@@ -1,6 +1,3 @@
-# from game import Game
-
-
 class Cell:
     def __init__(self, color: int):
         self.color = color
@@ -25,12 +22,12 @@ class Matrix:
         return self.matrix[tup]
 
     def __str__(self):
-        string = ''
+        string = ""
         for i in range(self.size):
             for j in range(self.size):
                 string += self.matrix[i][j].__str__()
-                string += '\t'
-            string += '\n'
+                string += "\t"
+            string += "\n"
         return string
 
 
@@ -39,33 +36,23 @@ class Node:
         self.color = color
         self.frontier = set()
 
-    # def absorb(self, node: "Node"):
-    #     if self.frontier is not None:
-    #         self.frontier.remove(node)
-    #         self.frontier.add(node.frontier)
-    #     else:
-    #         self.frontier = node.frontier
-
     def absorb(self, color):
         self.color = color
         for node in self.frontier.copy():
             if node.color == color:
                 self.frontier.remove(node)
                 for aux in node.frontier:
-                    self.frontier.add(aux)
                     aux.frontier.discard(node)
+                    self.frontier.add(aux)
 
     def __str__(self):
         return self.color.__str__()
 
-# def parse_game(game: Game) -> Node:
-#     matrix = game.matrix
-#     size = game.size
-#     init_node = Node(matrix[0][0], None)
-#
-#     current_node = init_node
-#     current_x = 0
-#     current_y = 0
+    def frontier_size(self):
+        return self.frontier.__len__()
 
+    def get_frontier(self):
+        return self.frontier
 
-
+    def get_color(self):
+        return self.color

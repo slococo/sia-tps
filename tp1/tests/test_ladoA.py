@@ -1,4 +1,4 @@
-from tp1 import __version__
+from tp1.ladoA import __version__
 
 
 def test_version():

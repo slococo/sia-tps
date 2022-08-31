@@ -1,32 +1,32 @@
-from tp1.ladoA.structure import Node
 from collections import deque
 from heapq import heappop, heappush
 from itertools import count
-from tp1.ladoA.searchTreeNode import SearchTreeNode
+
+from tp1.ladoA.search_tree_node import SearchTreeNode
 
 
-# Asumimos que dado un "goal node" n la heuristica cumple que h(n)=0
-# Asumimos que el grafo tiene nodo inicial
 def a_star(root: SearchTreeNode, h):
     pending_nodes = PriorityQueue()
-    pending_nodes.enqueue_with_priority(root.get_cost() + h(root), root)
+    pending_nodes.enqueue_with_priority(h(root.get_game().first_node, root.get_game().nodes), root)
 
     while pending_nodes.__len__() > 0:
         current_node = pending_nodes.dequeue()
 
-        # TODO mirar si hay una forma mas eficiente de agregar elementos al principio de un arreglo
-        if not current_node.is_goal():
+        if current_node.is_goal():
             solution = []
-            solution = [current_node.get_state.get_color, *solution]
-            while current_node != root:
-                solution = [current_node.get_state.get_color, *solution]
-                current_node = current_node.get_parent
+            solution = [current_node.get_game().first_node.get_color(), *solution]
+            current_node = current_node.get_parent()
+            while current_node != root and current_node is not None:
+                solution = [current_node.get_game().first_node.get_color(), *solution]
+                current_node = current_node.get_parent()
             return solution
 
-        for child_node in current_node.getChildren:
-            pending_nodes.enqueue_with_priority(child_node.get_cost + h(child_node), child_node)
+        for child_node in current_node.get_children():
+            pending_nodes.enqueue_with_priority(
+                child_node.get_cost() + h(child_node.get_game().first_node, root.get_game().nodes), child_node
+            )
 
-    return 0
+    return None
 
 
 def greedy(root: SearchTreeNode, h):
@@ -36,15 +36,15 @@ def greedy(root: SearchTreeNode, h):
     while pending_nodes.__len__() > 0:
         current_node = pending_nodes.dequeue()
 
-        if not current_node.is_goal():
+        if current_node.is_goal():
             solution = []
-            solution = [current_node.get_state.get_color, *solution]
+            solution = [current_node.get_graph.get_color, *solution]
             while current_node != root:
-                solution = [current_node.get_state.get_color, *solution]
+                solution = [current_node.get_graph.get_color, *solution]
                 current_node = current_node.get_parent
             return solution
 
-        for child_node in current_node.getChildren:
+        for child_node in current_node.get_children:
             pending_nodes.enqueue_with_priority(h(child_node), child_node)
 
     return 0
@@ -57,15 +57,15 @@ def dfs(root: SearchTreeNode):
     while pending_nodes.__len__() > 0:
         current_node = pending_nodes.dequeue()
 
-        if not current_node.get_goal():
+        if current_node.get_goal():
             solution = []
-            solution = [current_node.get_state.get_color, *solution]
+            solution = [current_node.get_graph.get_color, *solution]
             while current_node != root:
-                solution = [current_node.get_state.get_color, *solution]
+                solution = [current_node.get_graph.get_color, *solution]
                 current_node = current_node.get_parent
             return solution
 
-        for child_node in current_node.getChildren:
+        for child_node in current_node.get_children:
             pending_nodes.enqueue(child_node)
 
     return 0
@@ -80,13 +80,13 @@ def bfs(root: SearchTreeNode):
 
         if not current_node.get_goal():
             solution = []
-            solution = [current_node.get_state.get_color, *solution]
+            solution = [current_node.get_graph.get_color, *solution]
             while current_node != root:
-                solution = [current_node.get_state.get_color, *solution]
+                solution = [current_node.get_graph.get_color, *solution]
                 current_node = current_node.get_parent
             return solution
 
-        for child_node in current_node.getChildren:
+        for child_node in current_node.get_children:
             pending_nodes.enqueue(child_node)
 
     return 0
