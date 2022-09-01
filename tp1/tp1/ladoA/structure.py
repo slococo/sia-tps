@@ -37,16 +37,23 @@ class Node:
         self.frontier = set()
 
     def absorb(self, color):
+        print("self: " + self.color.__str__() + " -> " + color.__str__())
         self.color = color
+
+        for node_aux in self.frontier:
+            print("node: " + node_aux.color.__str__())
+
         for node in self.frontier.copy():
             if node.color == color:
                 self.frontier.remove(node)
-                for aux in node.frontier:
+                for aux in node.frontier.copy():
                     aux.frontier.discard(node)
-                    self.frontier.add(aux)
+                    # if aux.get_color() != self.get_color():
+                    #     self.frontier.add(aux)
+        print('\n')
 
-    def __str__(self):
-        return self.color.__str__()
+    # def __str__(self):
+    #     return self.color.__str__()
 
     def frontier_size(self):
         return self.frontier.__len__()

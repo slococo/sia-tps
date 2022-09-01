@@ -31,5 +31,5 @@ class SearchTreeNode:
                 child_game = deepcopy(self.game)
                 child_game.first_node.absorb(i)
                 self.children.append(SearchTreeNode(child_game, self))
-        print(len(self.children))
+        # print(len(self.children))
         return self.children

@@ -38,16 +38,17 @@ def greedy(root: SearchTreeNode, h):
 
         if current_node.is_goal():
             solution = []
-            solution = [current_node.get_graph.get_color, *solution]
-            while current_node != root:
-                solution = [current_node.get_graph.get_color, *solution]
-                current_node = current_node.get_parent
+            solution = [current_node.get_game().first_node.get_color(), *solution]
+            current_node = current_node.get_parent()
+            while current_node != root and current_node is not None:
+                solution = [current_node.get_game().first_node.get_color(), *solution]
+                current_node = current_node.get_parent()
             return solution
 
-        for child_node in current_node.get_children:
-            pending_nodes.enqueue_with_priority(h(child_node), child_node)
+        for child_node in current_node.get_children():
+            pending_nodes.enqueue_with_priority(h(child_node.get_game().first_node), child_node)
 
-    return 0
+    return None
 
 
 def dfs(root: SearchTreeNode):
@@ -57,18 +58,19 @@ def dfs(root: SearchTreeNode):
     while pending_nodes.__len__() > 0:
         current_node = pending_nodes.dequeue()
 
-        if current_node.get_goal():
+        if current_node.is_goal():
             solution = []
-            solution = [current_node.get_graph.get_color, *solution]
-            while current_node != root:
-                solution = [current_node.get_graph.get_color, *solution]
-                current_node = current_node.get_parent
+            solution = [current_node.get_game().first_node.get_color(), *solution]
+            current_node = current_node.get_parent()
+            while current_node != root and current_node is not None:
+                solution = [current_node.get_game().first_node.get_color(), *solution]
+                current_node = current_node.get_parent()
             return solution
 
-        for child_node in current_node.get_children:
+        for child_node in current_node.get_children():
             pending_nodes.enqueue(child_node)
 
-    return 0
+    return None
 
 
 def bfs(root: SearchTreeNode):
@@ -78,16 +80,18 @@ def bfs(root: SearchTreeNode):
     while pending_nodes.__len__() > 0:
         current_node = pending_nodes.dequeue()
 
-        if not current_node.get_goal():
+        if current_node.is_goal():
             solution = []
-            solution = [current_node.get_graph.get_color, *solution]
-            while current_node != root:
-                solution = [current_node.get_graph.get_color, *solution]
-                current_node = current_node.get_parent
+            solution = [current_node.get_game().first_node.get_color(), *solution]
+            current_node = current_node.get_parent()
+            while current_node != root and current_node is not None:
+                solution = [current_node.get_game().first_node.get_color(), *solution]
+                current_node = current_node.get_parent()
             return solution
 
-        for child_node in current_node.get_children:
+        for child_node in current_node.get_children():
             pending_nodes.enqueue(child_node)
+
 
     return 0
 

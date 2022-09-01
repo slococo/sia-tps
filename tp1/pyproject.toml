@@ -22,7 +22,7 @@ numpy = "^1.23.2"
 pytest = "^7.1"
 
 [tool.poetry.scripts]
-ladoA = "tp1.ladoA.game:main"
+ladoA = "tp1.ladoA.main:main"
 ladoB = "tp1.ladoB.game:main"
 
 [build-system]

@@ -10,34 +10,41 @@ def create_graph(matrix, i, j, size, nodeset: set, current_node=None):
     if current_node is None:
         current_node = Node(color)
         nodeset.add(current_node)
-
     matrix[i][j].node = current_node
 
     if i > 0:
         if matrix[i - 1][j].color == color:
             create_graph(matrix, i - 1, j, size, nodeset, current_node)
-        else:
-            new_node, nodeset = create_graph(matrix, i - 1, j, size, nodeset)
-            current_node.frontier.add(new_node)
 
     if j > 0:
         if matrix[i][j - 1].color == color:
             create_graph(matrix, i, j - 1, size, nodeset, current_node)
-        else:
-            new_node, nodeset = create_graph(matrix, i, j - 1, size, nodeset)
-            current_node.frontier.add(new_node)
 
     if i < size - 1:
         if matrix[i + 1][j].color == color:
             create_graph(matrix, i + 1, j, size, nodeset, current_node)
-        else:
-            new_node, nodeset = create_graph(matrix, i + 1, j, size, nodeset)
-            current_node.frontier.add(new_node)
 
     if j < size - 1:
         if matrix[i][j + 1].color == color:
             create_graph(matrix, i, j + 1, size, nodeset, current_node)
-        else:
+
+    if i > 0:
+        if matrix[i - 1][j].color != color:
+            new_node, nodeset = create_graph(matrix, i - 1, j, size, nodeset)
+            current_node.frontier.add(new_node)
+
+    if j > 0:
+        if matrix[i][j - 1].color != color:
+            new_node, nodeset = create_graph(matrix, i, j - 1, size, nodeset)
+            current_node.frontier.add(new_node)
+
+    if i < size - 1:
+        if matrix[i + 1][j].color != color:
+            new_node, nodeset = create_graph(matrix, i + 1, j, size, nodeset)
+            current_node.frontier.add(new_node)
+
+    if j < size - 1:
+        if matrix[i][j + 1].color != color:
             new_node, nodeset = create_graph(matrix, i, j + 1, size, nodeset)
             current_node.frontier.add(new_node)
 
@@ -56,6 +63,27 @@ class Game:
                 cell = Cell(np.random.randint(1, self.num_colors + 1))
                 self.matrix[i][j] = cell
         self.first_node, self.nodes = create_graph(self.matrix, 0, 0, size, set())
+        sstr = ""
+        for i in range(size):
+            for j in range(size):
+                sstr += self.matrix[i][j].node.__str__()
+            sstr += '\n'
+        print(sstr + '\n')
+        print("total nodes: " + len(self.nodes).__str__())
+        print()
+        colors = [0] * num_colors
+        for i in range(1, num_colors + 1):
+            for node in self.nodes:
+                if node.color == i:
+                    colors[i-1] += 1
+        for i in range(1, num_colors + 1):
+            print("color" + i.__str__() + ": " + colors[i-1].__str__() + "\n")
+
+        for node in self.nodes:
+            print("node: " + node.color.__str__())
+            for front in node.frontier:
+                print("front: " + front.color.__str__())
+            print('\n')
 
     def shuffle(self):
         for i in range(self.size):
