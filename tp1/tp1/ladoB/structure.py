@@ -10,13 +10,13 @@ class Color:
         self.rgb = rgb
         self.fitness = None
         for i in range(0, 8):
-            self.genes[i] = (rgb[0] >> (7 - i) & 1)
-            self.genes[i + 8] = (rgb[1] >> (7 - i) & 1)
-            self.genes[i + 16] = (rgb[2] >> (7 - i) & 1)
+            self.genes[i] = ((rgb[0] >> (7 - i)) & 1)
+            self.genes[i + 8] = ((rgb[1] >> (7 - i)) & 1)
+            self.genes[i + 16] = ((rgb[2] >> (7 - i)) & 1)
 
     def is_goal(self, target):
         for i in range(0, 3):
-            if self.rgb[i] < target.rgb[i] - 10 or self.rgb[i] > target.rgb[i] + 10:
+            if self.rgb[i] < target.rgb[i] - 5 or self.rgb[i] > target.rgb[i] + 5:
                 return False
         return True
 
@@ -49,8 +49,9 @@ class GeneticExecutor:
         return self.success()
 
     def generate(self):
-        if not self.new_gen:
-            self.new_gen = []
+        self.new_gen = []
+        if len(self.generation) <= 1:
+            return
         for i in range(0, floor(len(self.generation) / 2)):
             child1, child2 = self.cross_method(self.generation[i], self.generation[-(i + 1)])
             self.new_gen.append(child1)
@@ -60,10 +61,12 @@ class GeneticExecutor:
                                                self.generation[floor(np.random.uniform(0, len(self.generation)))])
             self.new_gen.append(child1)
             self.new_gen.append(child2)
-            self.generation = self.new_gen
 
     def select(self):
-        self.generation = self.selection_method(self.generation, len(self.generation), self.target)
+        if self.new_gen:
+            for new in self.new_gen:
+                self.generation.append(new)
+        self.generation = self.selection_method(self.generation, floor(len(self.generation) / 2), self.target)
         self.gen_n += 1
 
     def end(self):
