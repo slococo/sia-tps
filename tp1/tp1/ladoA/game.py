@@ -1,7 +1,7 @@
 import numpy as np
 
-from tp1.utils import Queue
 from tp1.ladoA.structure import Cell, Matrix, Node
+from tp1.utils import Queue
 
 
 def create_graph(matrix, size, nodeset: set):
@@ -33,16 +33,24 @@ def create_graph(matrix, size, nodeset: set):
             current.node = node
 
             if current.i > 0:
-                enqueue_aux(current, current.i - 1, current.j, matrix, group, new_groups)
+                enqueue_aux(
+                    current, current.i - 1, current.j, matrix, group, new_groups
+                )
 
             if current.j > 0:
-                enqueue_aux(current, current.i, current.j - 1, matrix, group, new_groups)
+                enqueue_aux(
+                    current, current.i, current.j - 1, matrix, group, new_groups
+                )
 
             if current.i < size - 1:
-                enqueue_aux(current, current.i + 1, current.j, matrix, group, new_groups)
+                enqueue_aux(
+                    current, current.i + 1, current.j, matrix, group, new_groups
+                )
 
             if current.j < size - 1:
-                enqueue_aux(current, current.i, current.j + 1, matrix, group, new_groups)
+                enqueue_aux(
+                    current, current.i, current.j + 1, matrix, group, new_groups
+                )
 
     return first_node
 

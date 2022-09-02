@@ -7,7 +7,7 @@ def graph_max_distance(starting_node: Node, nodes):
     dijkstra(starting_node, nodes)
     dist = 0
     for node in nodes:
-        if dist != float('inf'):
+        if dist != float("inf"):
             dist = max(dist, node.distance)
 
     return dist
@@ -20,11 +20,11 @@ def dijkstra(initial_node: Node, nodes: Set[Node]):
         if aux is initial_node:
             aux.distance = 0
         else:
-            aux.distance = float('inf')
+            aux.distance = float("inf")
         unvisited.add(aux)
 
     while unvisited:
-        dist = float('inf')
+        dist = float("inf")
         for aux_node in unvisited:
             if aux_node.distance <= dist:
                 node = aux_node

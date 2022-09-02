@@ -1,8 +1,8 @@
 import time
+from queue import PriorityQueue
 
 from tp1.ladoA.search_tree_node import SearchTreeNode
 from tp1.utils import Queue, Stack
-from queue import PriorityQueue
 
 
 def hpa(root: SearchTreeNode, h, w):
@@ -28,8 +28,16 @@ def hpa(root: SearchTreeNode, h, w):
             elif h is None:
                 to_expand.put((child_node.cost, child_node))
             else:
-                to_expand.put((((1 - w) * child_node.cost + w * h(child_node.game.first_node,
-                                                                  child_node.game.nodes)) * 2, child_node))
+                to_expand.put(
+                    (
+                        (
+                            (1 - w) * child_node.cost
+                            + w * h(child_node.game.first_node, child_node.game.nodes)
+                        )
+                        * 2,
+                        child_node,
+                    )
+                )
 
 
 def get_solution(current_node: SearchTreeNode, root: SearchTreeNode):
