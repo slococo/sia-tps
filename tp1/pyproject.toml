@@ -15,11 +15,11 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 black = "^22.6.0"
-pre-commit = "^2.20.0"
 numpy = "^1.23.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
+pre-commit = "^2.20.0"
 
 [tool.poetry.scripts]
 ladoA = "tp1.ladoA.main:main"
