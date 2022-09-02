@@ -1,139 +1,73 @@
-from collections import deque
-from heapq import heappop, heappush
-from itertools import count
+import time
 
 from tp1.ladoA.search_tree_node import SearchTreeNode
+from tp1.utils import Queue, Stack
+from queue import PriorityQueue
+
+
+def hpa(root: SearchTreeNode, h, w):
+    expanded_nodes = 1
+    to_expand = PriorityQueue()
+    if h is None and w != 0:
+        raise Exception
+    elif h is None:
+        to_expand.put((root.cost, root))
+    else:
+        to_expand.put((h(root.game.first_node, root.game.nodes), root))
+    root.cost = 0
+    while to_expand:
+        prio, current = to_expand.get()
+        if current.is_goal():
+            print("Expanded nodes: " + expanded_nodes.__str__())
+            return get_solution(current, root)
+
+        for child_node in current.get_children():
+            expanded_nodes += 1
+            if h is None and w != 0:
+                raise Exception
+            elif h is None:
+                to_expand.put((child_node.cost, child_node))
+            else:
+                to_expand.put((((1 - w) * child_node.cost + w * h(child_node.game.first_node,
+                                                                  child_node.game.nodes)) * 2, child_node))
+
+
+def get_solution(current_node: SearchTreeNode, root: SearchTreeNode):
+    solution = []
+    solution = [current_node.game.first_node.color, *solution]
+    current_node = current_node.parent
+    while current_node != root and current_node is not None:
+        solution = [current_node.game.first_node.color, *solution]
+        current_node = current_node.parent
+    return solution
 
 
 def a_star(root: SearchTreeNode, h):
-    pending_nodes = PriorityQueue()
-    pending_nodes.enqueue_with_priority(h(root.get_game().first_node, root.get_game().nodes), root)
-
-    while pending_nodes.__len__() > 0:
-        current_node = pending_nodes.dequeue()
-
-        if current_node.is_goal():
-            solution = []
-            solution = [current_node.get_game().first_node.get_color(), *solution]
-            current_node = current_node.get_parent()
-            while current_node != root and current_node is not None:
-                solution = [current_node.get_game().first_node.get_color(), *solution]
-                current_node = current_node.get_parent()
-            return solution
-
-        for child_node in current_node.get_children():
-            pending_nodes.enqueue_with_priority(
-                child_node.get_cost() + h(child_node.get_game().first_node, root.get_game().nodes), child_node
-            )
-
-    return None
+    return hpa(root, h, 0.5)
 
 
 def greedy(root: SearchTreeNode, h):
-    pending_nodes = PriorityQueue()
-    pending_nodes.enqueue_with_priority(h(root), root)
+    return hpa(root, h, 1)
+
+
+def generic_search(root: SearchTreeNode, pending_nodes):
+    pending_nodes.enqueue(root)
 
     while pending_nodes.__len__() > 0:
         current_node = pending_nodes.dequeue()
 
         if current_node.is_goal():
-            solution = []
-            solution = [current_node.get_game().first_node.get_color(), *solution]
-            current_node = current_node.get_parent()
-            while current_node != root and current_node is not None:
-                solution = [current_node.get_game().first_node.get_color(), *solution]
-                current_node = current_node.get_parent()
-            return solution
+            return get_solution(current_node, root)
 
         for child_node in current_node.get_children():
-            pending_nodes.enqueue_with_priority(h(child_node.get_game().first_node), child_node)
+            pending_nodes.enqueue(child_node)
 
     return None
 
 
 def dfs(root: SearchTreeNode):
-    pending_nodes = Queue()
-    pending_nodes.enqueue(root)
-
-    while pending_nodes.__len__() > 0:
-        current_node = pending_nodes.dequeue()
-
-        if current_node.is_goal():
-            solution = []
-            solution = [current_node.get_game().first_node.get_color(), *solution]
-            current_node = current_node.get_parent()
-            while current_node != root and current_node is not None:
-                solution = [current_node.get_game().first_node.get_color(), *solution]
-                current_node = current_node.get_parent()
-            return solution
-
-        for child_node in current_node.get_children():
-            pending_nodes.enqueue(child_node)
-
-    return None
+    return generic_search(root, Stack())
 
 
 def bfs(root: SearchTreeNode):
-    pending_nodes = Stack()
-    pending_nodes.enqueue(root)
-
-    while pending_nodes.__len__() > 0:
-        current_node = pending_nodes.dequeue()
-
-        if current_node.is_goal():
-            solution = []
-            solution = [current_node.get_game().first_node.get_color(), *solution]
-            current_node = current_node.get_parent()
-            while current_node != root and current_node is not None:
-                solution = [current_node.get_game().first_node.get_color(), *solution]
-                current_node = current_node.get_parent()
-            return solution
-
-        for child_node in current_node.get_children():
-            pending_nodes.enqueue(child_node)
-
-
-    return 0
-
-
-class Queue:
-    def __init__(self, *elements):
-        self._elements = deque(elements)
-
-    def __len__(self):
-        return len(self._elements)
-
-    def __iter__(self):
-        while len(self) > 0:
-            yield self.dequeue()
-
-    def enqueue(self, element):
-        self._elements.append(element)
-
-    def dequeue(self):
-        return self._elements.popleft()
-
-
-class Stack(Queue):
-    def dequeue(self):
-        return self._elements.pop()
-
-
-class PriorityQueue:
-    def __init__(self):
-        self._elements = []
-        self._counter = count()
-
-    def enqueue_with_priority(self, priority, value):
-        element = (-priority, next(self._counter), value)
-        heappush(self._elements, element)
-
-    def dequeue(self):
-        return heappop(self._elements)[-1]
-
-    def __len__(self):
-        return len(self._elements)
-
-    def __iter__(self):
-        while len(self) > 0:
-            yield self.dequeue()
+    return generic_search(root, Queue())

@@ -1,10 +1,11 @@
 from tp1.ladoA.algorithms import dfs, bfs, greedy, a_star
 from tp1.ladoA.game import Game
-from tp1.ladoA.heuristics import graph_max_distance, frontier_color_count
+from tp1.ladoA.heuristics import graph_max_distance, frontier_color_count, amount_of_nodes
 from tp1.ladoA.search_tree_node import SearchTreeNode
 
 import argparse
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -13,13 +14,13 @@ logger.setLevel(logging.INFO)
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--size", help="Size of the game matrix",
-                        type=int, required=False, default=3)  # TODO: Change to 14
+                        type=int, required=False, default=14)  # TODO: Change to 14
     parser.add_argument("-c", "--colors", help="Number of different colors in game",
-                        type=int, required=False, default=3)  # TODO: Change to 6
+                        type=int, required=False, default=4)  # TODO: Change to 6
     parser.add_argument("-a", "--algorithm", help="Preferred algorithm",
                         choices={"bfs", "dfs", "greedy", "astar"}, required=False, default="astar")
     parser.add_argument("-k", "--heuristic", help="Preferred heuristic to use",
-                        choices={"frontier", "max_count"}, required=False, default="frontier")
+                        choices={"frontier", "max_count"}, required=False, default="max_count")
     args = parser.parse_args()
     size = args.size
     colors = args.colors
@@ -36,8 +37,7 @@ def main():
             f"Number of colors must be positive. Number provided was {colors}")
 
     game = Game(size, colors)
-    matrix = game.matrix
-    print(matrix)
+    game.key = 0
 
     tree_node_root = SearchTreeNode(game, None)
 
@@ -54,7 +54,19 @@ def main():
         if heuristic == "frontier":
             print(a_star(tree_node_root, frontier_color_count))
         else:
-            print(a_star(tree_node_root, graph_max_distance))
+            start_time = time.time()
+            print(a_star(tree_node_root, frontier_color_count))
+            print("{:.2f}".format((time.time() - start_time) * 1000) + "ms")
+
+    # start_time = time.time()
+    # print(a_star(tree_node_root, graph_max_distance))
+    # print("{:.2f}".format((time.time() - start_time) * 1000) + "ms")
+    #
+    # start_time = time.time()
+    # print(a_star(tree_node_root, amount_of_nodes))
+    # print("{:.2f}".format((time.time() - start_time) * 1000) + "ms")
+    #
+    # print(bfs(tree_node_root))
 
 
 if __name__ == "__main__":

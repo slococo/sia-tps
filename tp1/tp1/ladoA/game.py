@@ -1,54 +1,61 @@
 import numpy as np
 
+from tp1.utils import Queue
 from tp1.ladoA.structure import Cell, Matrix, Node
 
 
-def create_graph(matrix, i, j, size, nodeset: set, current_node=None):
-    color = matrix[i][j].color
-    if matrix[i][j].node is not None:
-        return matrix[i][j].node, nodeset
-    if current_node is None:
-        current_node = Node(color)
-        nodeset.add(current_node)
-    matrix[i][j].node = current_node
+def create_graph(matrix, size, nodeset: set):
+    if size <= 0:
+        return
+    count = 0
 
-    if i > 0:
-        if matrix[i - 1][j].color == color:
-            create_graph(matrix, i - 1, j, size, nodeset, current_node)
+    new_groups = Queue()
+    group = Queue()
+    first_node = Node(matrix[0][0].color, count)
+    count += 1
+    is_first = True
+    new_groups.enqueue(matrix[0][0])
 
-    if j > 0:
-        if matrix[i][j - 1].color == color:
-            create_graph(matrix, i, j - 1, size, nodeset, current_node)
+    while new_groups:
+        new = new_groups.dequeue()
+        if new.node is not None:
+            continue
+        if not is_first:
+            node = Node(new.color, count)
+            count += 1
+        else:
+            is_first = False
+            node = first_node
+        nodeset.add(node)
+        group.enqueue(new)
+        while group:
+            current = group.dequeue()
+            current.node = node
 
-    if i < size - 1:
-        if matrix[i + 1][j].color == color:
-            create_graph(matrix, i + 1, j, size, nodeset, current_node)
+            if current.i > 0:
+                enqueue_aux(current, current.i - 1, current.j, matrix, group, new_groups)
 
-    if j < size - 1:
-        if matrix[i][j + 1].color == color:
-            create_graph(matrix, i, j + 1, size, nodeset, current_node)
+            if current.j > 0:
+                enqueue_aux(current, current.i, current.j - 1, matrix, group, new_groups)
 
-    if i > 0:
-        if matrix[i - 1][j].color != color:
-            new_node, nodeset = create_graph(matrix, i - 1, j, size, nodeset)
-            current_node.frontier.add(new_node)
+            if current.i < size - 1:
+                enqueue_aux(current, current.i + 1, current.j, matrix, group, new_groups)
 
-    if j > 0:
-        if matrix[i][j - 1].color != color:
-            new_node, nodeset = create_graph(matrix, i, j - 1, size, nodeset)
-            current_node.frontier.add(new_node)
+            if current.j < size - 1:
+                enqueue_aux(current, current.i, current.j + 1, matrix, group, new_groups)
 
-    if i < size - 1:
-        if matrix[i + 1][j].color != color:
-            new_node, nodeset = create_graph(matrix, i + 1, j, size, nodeset)
-            current_node.frontier.add(new_node)
+    return first_node
 
-    if j < size - 1:
-        if matrix[i][j + 1].color != color:
-            new_node, nodeset = create_graph(matrix, i, j + 1, size, nodeset)
-            current_node.frontier.add(new_node)
 
-    return [matrix[i][j].node, nodeset]
+def enqueue_aux(current, i, j, matrix, groups_queue, new_groups_queue):
+    if current.color == matrix[i][j].color:
+        if matrix[i][j].node is None:
+            groups_queue.enqueue(matrix[i][j])
+    elif matrix[i][j].node is not None:
+        matrix[i][j].node.frontier.add(current.node)
+        current.node.frontier.add(matrix[i][j].node)
+    else:
+        new_groups_queue.enqueue(matrix[i][j])
 
 
 class Game:
@@ -60,35 +67,23 @@ class Game:
         self.matrix = Matrix(size)
         for i in range(size):
             for j in range(size):
-                cell = Cell(np.random.randint(1, self.num_colors + 1))
+                cell = Cell(np.random.randint(1, self.num_colors + 1), i, j)
                 self.matrix[i][j] = cell
-        self.first_node, self.nodes = create_graph(self.matrix, 0, 0, size, set())
-        sstr = ""
-        for i in range(size):
-            for j in range(size):
-                sstr += self.matrix[i][j].node.__str__()
-            sstr += '\n'
-        print(sstr + '\n')
-        print("total nodes: " + len(self.nodes).__str__())
-        print()
+        self.nodes = set()
+        print(self.matrix)
+        self.first_node = create_graph(self.matrix, size, self.nodes)
         colors = [0] * num_colors
         for i in range(1, num_colors + 1):
             for node in self.nodes:
                 if node.color == i:
-                    colors[i-1] += 1
-        for i in range(1, num_colors + 1):
-            print("color" + i.__str__() + ": " + colors[i-1].__str__() + "\n")
+                    colors[i - 1] += 1
 
-        for node in self.nodes:
-            print("node: " + node.color.__str__())
-            for front in node.frontier:
-                print("front: " + front.color.__str__())
-            print('\n')
+        self.matrix = None
 
     def shuffle(self):
         for i in range(self.size):
             for j in range(self.size):
-                cell = Cell(np.random.randint(1, self.num_colors + 1))
+                cell = Cell(np.random.randint(1, self.num_colors + 1), i, j)
                 self.matrix[i][j] = cell
 
     def is_goal(self):
@@ -96,9 +91,36 @@ class Game:
 
     def get_frontier_colors(self):
         frontier_color = set()
-        for node in self.first_node.get_frontier():
+        for node in self.first_node.frontier:
             frontier_color.add(node.color)
         return frontier_color
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        new_nodes = {}
+
+        for node in self.nodes:
+            new_nodes[node.key] = Node(node.color, node.key)
+
+        for node in self.nodes:
+            new_node = new_nodes.get(node.key)
+            new_node.frontier = set()
+
+            for front in node.frontier:
+                aux = new_nodes.get(front.key)
+                new_node.frontier.add(aux)
+
+        result.nodes = set()
+        for k, v in new_nodes.items():
+            result.nodes.add(v)
+
+        result.first_node = new_nodes.get(self.first_node.key)
+        result.size = self.size
+        result.key = self.key + 1
+
+        return result
 
 
 def print_graph(node: Node, checked: set, level):
