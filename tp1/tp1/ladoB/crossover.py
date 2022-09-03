@@ -1,7 +1,8 @@
-import random
 import copy
-from tp1.ladoB.structure import Color
+import random
+
 from tp1.ladoB.mutation import uniform_mutate
+from tp1.ladoB.structure import Color
 
 
 def uniform_cross(par1: Color, par2: Color):

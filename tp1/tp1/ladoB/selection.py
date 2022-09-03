@@ -1,8 +1,9 @@
 import math
 import random
 from typing import List
-from structure import Color
+
 import numpy as np
+from structure import Color
 
 
 def elite_selection(pop: List[Color], num_to_select, target):
