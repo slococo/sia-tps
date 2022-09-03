@@ -5,7 +5,8 @@ import fitness
 
 
 class Color:
-    def __init__(self, rgb):
+    def __init__(self, rgb, gen_n=0):
+        self.gen_n = gen_n
         self.genes = np.zeros(24)
         self.rgb = rgb
         self.fitness = None
@@ -24,6 +25,16 @@ class Color:
         if self.fitness is None:
             self.fitness = fitness.euclidean_distance_fitness(target.rgb, self.rgb)
         return self.fitness
+
+    def calc_rgb(self):
+        self.rgb = np.zeros(3)
+        for i in range(0, 8):
+            self.rgb[0] = np.left_shift(np.uint8(self.rgb[0]), 1)
+            self.rgb[0] += self.genes[i]
+            self.rgb[1] = np.left_shift(np.uint8(self.rgb[1]), 1)
+            self.rgb[1] += self.genes[i + 8]
+            self.rgb[2] = np.left_shift(np.uint8(self.rgb[2]), 1)
+            self.rgb[2] += self.genes[i + 16]
 
     def __str__(self):
         return self.rgb.__str__()
@@ -46,7 +57,9 @@ class GeneticExecutor:
         while not self.end():
             self.select()
             self.generate()
-        return self.success()
+        # print(self.gen_n)
+        return self.gen_n
+        # return self.success()
 
     def generate(self):
         self.new_gen = []
@@ -54,6 +67,7 @@ class GeneticExecutor:
             return
         for i in range(0, floor(len(self.generation) / 2)):
             child1, child2 = self.cross_method(self.generation[i], self.generation[-(i + 1)])
+
             self.new_gen.append(child1)
             self.new_gen.append(child2)
         if len(self.generation) % 2 == 1:
@@ -66,6 +80,7 @@ class GeneticExecutor:
         if self.new_gen:
             for new in self.new_gen:
                 self.generation.append(new)
+
         self.generation = self.selection_method(self.generation, floor(len(self.generation) / 2), self.target)
         self.gen_n += 1
 

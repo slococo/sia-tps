@@ -1,10 +1,14 @@
 import json
 import random
+from concurrent.futures import ThreadPoolExecutor
+import matplotlib.pyplot as plt
 
+from threading import Thread
 import numpy as np
 
 from tp1.ladoB.crossover import uniform_cross, avg_cross, two_point_cross
-from tp1.ladoB.selection import elite_selection, boltzmann_selection, roulette_selection
+from tp1.ladoB.selection import elite_selection, boltzmann_selection, roulette_selection, tournament_selection_det, \
+    tournament_selection_prob
 from tp1.ladoB.structure import Color, GeneticExecutor
 
 
@@ -36,7 +40,22 @@ def main():
          Color(np.array([240, 255, 9])), Color(np.array([12, 32, 1])),
          Color(np.array([232, 255, 1])), Color(np.array([0, 23, 42]))]
     y = Color(np.array([127, 255, 127]))
-    GeneticExecutor(x, y, uniform_cross, boltzmann_selection, cut).start()
+    acc = 0
+
+    with ThreadPoolExecutor() as executor:
+        futures = [executor.submit(GeneticExecutor(x, y, uniform_cross, roulette_selection, cut).start)
+                   for _ in range(0, 10)]
+
+    for fut in futures:
+        acc += fut.result()
+        print(fut.result())
+
+    print("avg: " + (acc / 10).__str__())
+
+    # x = np.linspace(-10, 10)
+    # plt.plot(x, -25 * np.arctan(x / 300 - 2) + 35)
+    # plt.axis('tight')
+    # plt.show()
 
 
 if __name__ == '__main__':

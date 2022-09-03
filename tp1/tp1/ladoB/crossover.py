@@ -1,17 +1,7 @@
 import random
-
-import numpy as np
-
-from tp1.ladoB.structure import Color
-
 import copy
-
-
-def uniform_mutate(color: Color):
-    for i in range(0, 24):
-        mut = random.uniform(0, 1)
-        if mut < 0.1:
-            color.genes[i] = 1 - color.genes[i]
+from tp1.ladoB.structure import Color
+from tp1.ladoB.mutation import uniform_mutate
 
 
 def uniform_cross(par1: Color, par2: Color):
@@ -27,22 +17,7 @@ def uniform_cross(par1: Color, par2: Color):
     uniform_mutate(child1)
     uniform_mutate(child2)
 
-    child1.rgb = np.zeros(3)
-    child2.rgb = np.zeros(3)
-    calc_rgb(child1)
-    calc_rgb(child2)
-
     return child1, child2
-
-
-def calc_rgb(color: Color):
-    for i in range(0, 8):
-        color.rgb[0] = np.left_shift(np.uint8(color.rgb[0]), 1)
-        color.rgb[0] += color.genes[i]
-        color.rgb[1] = np.left_shift(np.uint8(color.rgb[1]), 1)
-        color.rgb[1] += color.genes[i + 8]
-        color.rgb[2] = np.left_shift(np.uint8(color.rgb[2]), 1)
-        color.rgb[2] += color.genes[i + 16]
 
 
 def two_point_cross(par1: Color, par2: Color):
@@ -61,11 +36,6 @@ def two_point_cross(par1: Color, par2: Color):
         child1.genes[i] = child2.genes[i]
         child2.genes[i] = aux
         i += 1
-
-    child1.rgb = np.zeros(3)
-    child2.rgb = np.zeros(3)
-    calc_rgb(child1)
-    calc_rgb(child2)
 
     return child1, child2
 

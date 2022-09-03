@@ -8,7 +8,7 @@ import numpy as np
 def elite_selection(pop: List[Color], num_to_select, target):
     for i in pop:
         i.calculate_fitness(target)
-    sorted_pop = np.sort(pop)
+    sorted_pop = np.sort(pop)[::-1]
     pop_len = len(sorted_pop)
     solution = []
     for i in range(0, pop_len):
@@ -45,9 +45,13 @@ def roulette_aux(pop: List[Color], k, accum_fit, target):
     return res
 
 
+it = 0
+
+
 def boltzmann_selection(pop: List[Color], num_to_select, target):
-    # t = 20
-    t = 2 + (20 - 4) * math.exp(-1)
+    global it
+    it += 1
+    t = 20 + (20 - 4) * math.exp(-it)
 
     avg = 0
     for i in pop:
@@ -60,3 +64,43 @@ def boltzmann_selection(pop: List[Color], num_to_select, target):
         tot += i.fitness
 
     return roulette_aux(pop, num_to_select, tot, target)
+
+
+def tournament_selection_det(pop: List[Color], num_to_select, target):
+    pool = pop.copy()
+    sol = []
+
+    for col in pop:
+        col.calculate_fitness(target)
+
+    for i in range(0, num_to_select):
+        random.shuffle(pool)
+        group = pool[0:round(len(pool) / 3)]
+        group.sort(reverse=True)
+        aux = group.pop()
+        sol.append(aux)
+        pool.remove(aux)
+
+    return sol
+
+
+def tournament_selection_prob(pop: List[Color], num_to_select, target):
+    threshold = 0.8
+    pool = pop.copy()
+    sol = []
+
+    for col in pop:
+        col.calculate_fitness(target)
+
+    for i in range(0, num_to_select):
+        random.shuffle(pool)
+        group = pool[0:2]
+        group.sort(reverse=True)
+        if random.uniform(0, 1) < threshold:
+            aux = group.pop()
+        else:
+            aux = group[-1]
+        sol.append(aux)
+        pool.remove(aux)
+
+    return sol
