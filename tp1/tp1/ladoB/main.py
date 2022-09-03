@@ -1,8 +1,8 @@
 import json
 import random
+import time
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
-import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,6 +36,7 @@ def cut(generation: [Color], gen_n, target):
 #         ret = GeneticExecutor(x, y, cross, selection, cut).start()
 #         return ret, (time.time() - start_time) * 1000
 #     return start
+
 
 def main():
     with open("config.json") as f:

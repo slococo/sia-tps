@@ -1,7 +1,8 @@
+import math
 from random import randint, uniform
 
 from tp1.ladoB.structure import Color
-import math
+
 MUTATION_PROB = 0.05
 
 

@@ -16,13 +16,7 @@ class Color:
         #     self.genes[i + 16] = (rgb[2] >> (7 - i)) & 1
         self.genes = np.array(
             np.concatenate(
-                [
-                    [
-                        np.uint8(i)
-                        for i in '{0:08b}'.format(num)
-                    ]
-                    for num in self.rgb
-                ]
+                [[np.uint8(i) for i in "{0:08b}".format(num)] for num in self.rgb]
             )
         )
 
