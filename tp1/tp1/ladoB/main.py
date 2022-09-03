@@ -23,6 +23,9 @@ def cut(generation: [Color], gen_n, target):
         return True
     for color in generation:
         if color.is_goal(target):
+            print("Goal reached")
+            print("Generation: " + gen_n.__str__())
+            print("Color: " + color.__str__())
             return True
     return False
 
@@ -65,37 +68,37 @@ def main():
         Color(np.array([232, 255, 1])),
         Color(np.array([0, 23, 42])),
     ]
-    y = Color(np.array([127, 255, 127]))
+    y = Color(np.array([82, 15, 207]))
     acc = 0
+    num_tries = 10
 
     with ThreadPoolExecutor() as executor:
         uniform_futures = [
             executor.submit(
-                GeneticExecutor(x, y, uniform_cross, roulette_selection, cut).start
+                GeneticExecutor(x, y, two_point_cross, elite_selection, cut).start
             )
-            for _ in range(0, 10)
+            for _ in range(0, num_tries)
         ]
-        two_point_futures = [
-            executor.submit(
-                GeneticExecutor(x, y, two_point_cross, roulette_selection, cut).start
-            )
-            for _ in range(0, 10)
-        ]
+        # print("Start Two Point Futures")
+        # two_point_futures = [
+        #     executor.submit(
+        #         GeneticExecutor(x, y, two_point_cross, roulette_selection, cut).start
+        #     )
+        #     for _ in range(0, num_tries)
+        # ]
 
-    print("uniform cross: ")
-    for fut in uniform_futures:
-        acc += fut.result()
-        print(fut.result())
+        for fut in uniform_futures:
+            acc += fut.result()
 
-    print("avg: " + (acc / 10).__str__())
+        print("avg: " + (acc / num_tries).__str__())
 
-    print("two_point cross: ")
-    acc = 0
-    for fut in two_point_futures:
-        acc += fut.result()
-        print(fut.result())
-
-    print("avg: " + (acc / 10).__str__())
+        # print("two_point cross: ")
+        # acc = 0
+        # for fut in two_point_futures:
+        #     acc += fut.result()
+        #
+        # print("avg: " + (acc / num_tries).__str__())
+    exit(0)
 
     # x = np.linspace(-10, 10)
     # plt.plot(x, -25 * np.arctan(x / 300 - 2) + 35)

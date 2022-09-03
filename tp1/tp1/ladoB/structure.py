@@ -104,9 +104,7 @@ class GeneticExecutor:
         self.gen_n += 1
 
     def end(self):
-        if self.end_method(self.generation, self.gen_n, self.target):
-            return True
-        return False
+        return self.end_method(self.generation, self.gen_n, self.target)
 
     def success(self):
         print(self.gen_n)

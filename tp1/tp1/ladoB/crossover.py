@@ -9,8 +9,7 @@ def uniform_cross(par1: Color, par2: Color):
     child1 = copy.deepcopy(par1)
     child2 = copy.deepcopy(par2)
     for i in range(0, 24):
-        prob = round(random.uniform(0, 1))
-        if prob == 1:
+        if round(random.uniform(0, 1)) == 1:
             aux = child1.genes[i]
             child1.genes[i] = child2.genes[i]
             child2.genes[i] = aux
@@ -22,21 +21,22 @@ def uniform_cross(par1: Color, par2: Color):
 
 
 def two_point_cross(par1: Color, par2: Color):
-    p1 = random.uniform(0, 24)
-    p2 = random.uniform(0, 24)
-    aux = max(p2, p1)
-    p1 = min(p1, p2)
-    p2 = round(aux)
-    i = round(p1)
+    size = len(par1.genes)
+    p1 = p2 = 0
+    while p1 == p2:
+        p1 = random.randint(0, size)
+        p2 = random.randint(0, size)
+    idx = max(p1, p2)
+    end = min(p1, p2)
 
     child1 = copy.deepcopy(par1)
     child2 = copy.deepcopy(par2)
 
-    while i < p2:
-        aux = child1.genes[i]
-        child1.genes[i] = child2.genes[i]
-        child2.genes[i] = aux
-        i += 1
+    while idx < end:
+        aux = child1.genes[idx]
+        child1.genes[idx] = child2.genes[idx]
+        child2.genes[idx] = aux
+        idx += 1
 
     return child1, child2
 
