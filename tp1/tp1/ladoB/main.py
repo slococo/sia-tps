@@ -2,6 +2,7 @@ import json
 import random
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,6 +26,13 @@ def cut(generation: [Color], gen_n, target):
             return True
     return False
 
+
+# def wrapper(x, y, cross, selection):
+#     def start():
+#         start_time = time.time()
+#         ret = GeneticExecutor(x, y, cross, selection, cut).start()
+#         return ret, (time.time() - start_time) * 1000
+#     return start
 
 def main():
     with open("config.json") as f:
@@ -61,14 +69,29 @@ def main():
     acc = 0
 
     with ThreadPoolExecutor() as executor:
-        futures = [
+        uniform_futures = [
             executor.submit(
                 GeneticExecutor(x, y, uniform_cross, roulette_selection, cut).start
             )
             for _ in range(0, 10)
         ]
+        two_point_futures = [
+            executor.submit(
+                GeneticExecutor(x, y, two_point_cross, roulette_selection, cut).start
+            )
+            for _ in range(0, 10)
+        ]
 
-    for fut in futures:
+    print("uniform cross: ")
+    for fut in uniform_futures:
+        acc += fut.result()
+        print(fut.result())
+
+    print("avg: " + (acc / 10).__str__())
+
+    print("two_point cross: ")
+    acc = 0
+    for fut in two_point_futures:
         acc += fut.result()
         print(fut.result())
 

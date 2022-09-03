@@ -1,3 +1,4 @@
+import time
 from math import ceil, floor
 
 import fitness
@@ -5,15 +6,25 @@ import numpy as np
 
 
 class Color:
-    def __init__(self, rgb, gen_n=0):
-        self.gen_n = gen_n
+    def __init__(self, rgb):
         self.genes = np.zeros(24)
-        self.rgb = rgb
+        self.rgb = np.array(rgb)
         self.fitness = None
-        for i in range(0, 8):
-            self.genes[i] = (rgb[0] >> (7 - i)) & 1
-            self.genes[i + 8] = (rgb[1] >> (7 - i)) & 1
-            self.genes[i + 16] = (rgb[2] >> (7 - i)) & 1
+        # for i in range(0, 8):
+        #     self.genes[i] = (rgb[0] >> (7 - i)) & 1
+        #     self.genes[i + 8] = (rgb[1] >> (7 - i)) & 1
+        #     self.genes[i + 16] = (rgb[2] >> (7 - i)) & 1
+        self.genes = np.array(
+            np.concatenate(
+                [
+                    [
+                        np.uint8(i)
+                        for i in '{0:08b}'.format(num)
+                    ]
+                    for num in self.rgb
+                ]
+            )
+        )
 
     def is_goal(self, target):
         for i in range(0, 3):
@@ -54,10 +65,12 @@ class GeneticExecutor:
         self.new_gen = None
 
     def start(self):
+        start_time = time.time()
         while not self.end():
             self.select()
             self.generate()
         # print(self.gen_n)
+        print("{:.2f}".format((time.time() - start_time) * 1000) + "ms")
         return self.gen_n
         # return self.success()
 
