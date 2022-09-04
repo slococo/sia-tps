@@ -1,8 +1,9 @@
 import time
 from math import ceil, floor
 
-import fitness
 import numpy as np
+
+from tp1.ladoB.fitness import euclidean_distance_fitness
 
 
 class Color:
@@ -28,7 +29,7 @@ class Color:
 
     def calculate_fitness(self, target):
         if self.fitness is None:
-            self.fitness = fitness.euclidean_distance_fitness(target.rgb, self.rgb)
+            self.fitness = euclidean_distance_fitness(target.rgb, self.rgb)
         return self.fitness
 
     def calc_rgb(self):
@@ -49,7 +50,15 @@ class Color:
 
 
 class GeneticExecutor:
-    def __init__(self, colors, target, cross_method, selection_method, end_method):
+    def __init__(
+        self,
+        colors,
+        target,
+        cross_method,
+        selection_method,
+        end_method=None,
+        max_gen=1000,
+    ):
         self.target = target
         self.gen_n = 0
         self.generation = colors
@@ -57,6 +66,7 @@ class GeneticExecutor:
         self.selection_method = selection_method
         self.end_method = end_method
         self.new_gen = None
+        self.max_gen = max_gen
 
     def start(self):
         start_time = time.time()
@@ -98,10 +108,23 @@ class GeneticExecutor:
         self.gen_n += 1
 
     def end(self):
-        return self.end_method(self.generation, self.gen_n, self.target)
+        if self.end_method:
+            return self.end_method(self.generation, self.gen_n, self.target)
+        return self.default_stop()
 
     def success(self):
         print(self.gen_n)
         for color in self.generation:
             print(color)
         return True
+
+    def default_stop(self):
+        if self.gen_n > self.max_gen:
+            return True
+        for color in self.generation:
+            if color.is_goal(self.target):
+                print("Goal reached")
+                print("Generation: " + self.gen_n.__str__())
+                print("Color: " + color.__str__())
+                return True
+        return False

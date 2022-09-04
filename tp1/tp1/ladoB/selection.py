@@ -3,7 +3,8 @@ import random
 from typing import List
 
 import numpy as np
-from structure import Color
+
+from tp1.ladoB.structure import Color
 
 
 def elite_selection(pop: List[Color], num_to_select, target):
@@ -76,7 +77,7 @@ def tournament_selection_det(pop: List[Color], num_to_select, target):
 
     for i in range(0, num_to_select):
         random.shuffle(pool)
-        group = pool[0:round(len(pool) / 3)]
+        group = pool[0 : round(len(pool) / 3)]
         group.sort(reverse=True)
         aux = group.pop()
         sol.append(aux)
