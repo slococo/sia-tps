@@ -88,6 +88,23 @@ class Game:
 
         self.matrix = None
 
+    def __init__(self, size: int, num_colors: int, matrix):
+        if size < 0 or num_colors < 0:
+            raise ValueError("Game must have positive size and amount of colors")
+        self.size = size
+        self.num_colors = num_colors
+        self.nodes = set()
+        self.matrix = matrix
+        print(self.matrix)
+        self.first_node = create_graph(self.matrix, size, self.nodes)
+        colors = [0] * num_colors
+        for i in range(1, num_colors + 1):
+            for node in self.nodes:
+                if node.color == i:
+                    colors[i - 1] += 1
+
+        self.matrix = None
+
     def shuffle(self):
         for i in range(self.size):
             for j in range(self.size):
