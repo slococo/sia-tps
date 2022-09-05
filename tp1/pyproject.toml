@@ -3,20 +3,29 @@ name = "tp1"
 version = "0.1.0"
 description = "TP1 - SIA"
 authors = [
-    "Juan Martin Barmasch <slococo@itba.edu.ar>",
-    "Ezequiel Bellver <slococo@itba.edu.ar>",
-    "Salvador Castagnino <slococo@itba.edu.ar>",
+    "Juan Martin Barmasch <jbarmasch@itba.edu.ar>",
+    "Ezequiel Bellver <ebellver@itba.edu.ar>",
+    "Salvador Castagnino <scastagnino@itba.edu.ar>",
     "Santiago Lo Coco <slococo@itba.edu.ar>",
-    "Juan Negro <slococo@itba.edu.ar>"
+    "Juan Manuel Negro <jnegro@itba.edu.ar>"
 ]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+black = "^22.6.0"
+pre-commit = "^2.20.0"
+numpy = "^1.23.2"
+matplotlib = "^3.5.2"
 
 [tool.poetry.dev-dependencies]
+matplotlib = "^3.5.2"
 pytest = "^7.1"
+
+[tool.poetry.scripts]
+ladoA = "tp1.ladoA.main:main"
+ladoB = "tp1.ladoB.game:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
