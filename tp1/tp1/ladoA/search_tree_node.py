@@ -1,4 +1,5 @@
-from copy import deepcopy
+import copy
+
 
 from tp1.ladoA.game import Game
 
@@ -11,25 +12,18 @@ class SearchTreeNode:
         if parent is None:
             self.cost = 0
         else:
-            self.cost = parent.get_cost() + 1
+            self.cost = parent.cost + 1
 
     def is_goal(self):
         return self.game.is_goal()
 
-    def get_cost(self):
-        return self.cost
-
-    def get_game(self):
-        return self.game
-
-    def get_parent(self):
-        return self.parent
-
     def get_children(self):
         if self.children.__len__() == 0:
             for i in self.game.get_frontier_colors():
-                child_game = deepcopy(self.game)
-                child_game.first_node.absorb(i)
+                child_game = copy.deepcopy(self.game)
+                child_game.first_node.absorb(i, child_game.nodes)
                 self.children.append(SearchTreeNode(child_game, self))
-        # print(len(self.children))
         return self.children
+
+    def __lt__(self, other):
+        return 1
