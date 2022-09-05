@@ -7,7 +7,7 @@ repos:
       - id: check-toml
       - id: debug-statements
   - repo: https://github.com/psf/black.git
-    rev: 22.6.0
+    rev: 22.8.0
     hooks:
       - id: black
         name: black
