@@ -56,6 +56,7 @@ class GeneticExecutor:
         target,
         cross_method,
         selection_method,
+        mutation_method,
         end_method=None,
         max_gen=1000,
     ):
@@ -67,16 +68,16 @@ class GeneticExecutor:
         self.end_method = end_method
         self.new_gen = None
         self.max_gen = max_gen
+        self.found_sol = False
+        self.mutation_method = mutation_method
 
     def start(self):
         start_time = time.time()
         while not self.end():
             self.select()
             self.generate()
-        # print(self.gen_n)
         print("{:.2f}".format((time.time() - start_time) * 1000) + "ms")
         return self.gen_n
-        # return self.success()
 
     def generate(self):
         self.new_gen = []
@@ -84,7 +85,7 @@ class GeneticExecutor:
             return
         for i in range(0, floor(len(self.generation) / 2)):
             child1, child2 = self.cross_method(
-                self.generation[i], self.generation[-(i + 1)]
+                self.generation[i], self.generation[-(i + 1)], self.mutation_method
             )
 
             self.new_gen.append(child1)
@@ -93,6 +94,7 @@ class GeneticExecutor:
             child1, child2 = self.cross_method(
                 self.generation[ceil(len(self.generation) / 2)],
                 self.generation[floor(np.random.uniform(0, len(self.generation)))],
+                self.mutation_method,
             )
             self.new_gen.append(child1)
             self.new_gen.append(child2)
@@ -119,12 +121,13 @@ class GeneticExecutor:
         return True
 
     def default_stop(self):
-        if self.gen_n > self.max_gen:
-            return True
         for color in self.generation:
             if color.is_goal(self.target):
-                print("Goal reached")
-                print("Generation: " + self.gen_n.__str__())
-                print("Color: " + color.__str__())
+                # print("Goal reached")
+                # print("Generation: " + self.gen_n.__str__())
+                # print("Color: " + color.__str__())
+                self.found_sol = True
                 return True
+        if self.gen_n >= self.max_gen:
+            return True
         return False

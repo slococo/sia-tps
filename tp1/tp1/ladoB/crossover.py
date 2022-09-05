@@ -5,7 +5,7 @@ from tp1.ladoB.mutation import uniform_mutate
 from tp1.ladoB.structure import Color
 
 
-def uniform_cross(par1: Color, par2: Color):
+def uniform_cross(par1: Color, par2: Color, mutate_method):
     child1 = copy.deepcopy(par1)
     child2 = copy.deepcopy(par2)
     for i in range(0, 24):
@@ -13,14 +13,14 @@ def uniform_cross(par1: Color, par2: Color):
             aux = child1.genes[i]
             child1.genes[i] = child2.genes[i]
             child2.genes[i] = aux
-
-    uniform_mutate(child1)
-    uniform_mutate(child2)
+    if mutate_method:
+        mutate_method(child1)
+        mutate_method(child2)
 
     return child1, child2
 
 
-def two_point_cross(par1: Color, par2: Color):
+def two_point_cross(par1: Color, par2: Color, mutate_method):
     size = len(par1.genes)
     p1 = p2 = 0
     while p1 == p2:
@@ -37,6 +37,10 @@ def two_point_cross(par1: Color, par2: Color):
         child1.genes[idx] = child2.genes[idx]
         child2.genes[idx] = aux
         idx += 1
+
+    if mutate_method:
+        mutate_method(child1)
+        mutate_method(child2)
 
     return child1, child2
 

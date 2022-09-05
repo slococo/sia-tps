@@ -6,7 +6,7 @@ from tp1.ladoB.structure import Color
 MUTATION_PROB = 0.05
 
 
-def uniform_mutate(color: Color):
+def uniform_mutate(color: Color) -> None:
     for i in range(0, len(color.genes)):
         mut = uniform(0, 1)
         if mut < MUTATION_PROB or math.isclose(mut, MUTATION_PROB):
@@ -14,7 +14,7 @@ def uniform_mutate(color: Color):
     color.calc_rgb()
 
 
-def one_gen_mutate(color: Color):
+def one_gen_mutate(color: Color) -> None:
     prob = uniform(0, 1)
     if prob < MUTATION_PROB or math.isclose(prob, MUTATION_PROB):
         gen_idx = randint(0, len(color.genes) - 1)
@@ -22,7 +22,7 @@ def one_gen_mutate(color: Color):
     color.calc_rgb()
 
 
-def limited_multigen_mutate(color: Color):
+def limited_multigen_mutate(color: Color) -> None:
     gen_len = len(color.genes)
     mutated = []
     gen_idx = randint(0, gen_len - 1)
@@ -36,7 +36,7 @@ def limited_multigen_mutate(color: Color):
     color.calc_rgb()
 
 
-def complete_mutate(color: Color):
+def complete_mutate(color: Color) -> None:
     mut = uniform(0, 1)
     if mut < MUTATION_PROB or math.isclose(mut, MUTATION_PROB):
         for gen in color.genes:
