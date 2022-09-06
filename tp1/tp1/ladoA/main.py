@@ -34,7 +34,7 @@ def main():
         "-a",
         "--algorithm",
         help="Preferred algorithm",
-        choices={"bfs", "dfs", "greedy", "astar"},
+        choices={"bfs", "dfs", "greedy", "astar", "iddfs"},
         required=False,
         default="astar",
     )
@@ -42,9 +42,9 @@ def main():
         "-k",
         "--heuristic",
         help="Preferred heuristic to use",
-        choices={"frontier", "max_count"},
+        choices={"frontier", "max_distance", "amount_nodes"},
         required=False,
-        default="max_count",
+        default="amount_nodes",
     )
     args = parser.parse_args()
     size = args.size
@@ -67,7 +67,8 @@ def main():
     game.key = 0
 
     tree_node_root = SearchTreeNode(game, None)
-
+    
+    start_time = time.time()
     if algorithm == "dfs":
         print(dfs(tree_node_root, None))
     if algorithm == "bfs":
@@ -75,16 +76,25 @@ def main():
     if algorithm == "greedy":
         if heuristic == "frontier":
             print(greedy(tree_node_root, frontier_color_count))
-        else:
+        elif heuristic == "max_distance":
             print(greedy(tree_node_root, graph_max_distance))
+        else:
+            print(greedy(tree_node_root, amount_of_nodes))
     if algorithm == "astar":
         if heuristic == "frontier":
             print(a_star(tree_node_root, frontier_color_count))
-        else:
-            start_time = time.time()
+        elif heuristic == "max_distance":
             print(a_star(tree_node_root, graph_max_distance))
-            print("{:.2f}".format((time.time() - start_time) * 1000) + "ms")
-
+        else:
+            print(a_star(tree_node_root, amount_of_nodes))
+    if algorithm == "iddfs":
+        if heuristic == "frontier":
+            print(iddfs(tree_node_root, frontier_color_count))
+        elif heuristic == "max_distance":
+            print(iddfs(tree_node_root, graph_max_distance))
+        else:
+            print(iddfs(tree_node_root, amount_of_nodes))
+    print("{:.2f}".format((time.time() - start_time) * 1000) + "ms")
 
 if __name__ == "__main__":
     main()
