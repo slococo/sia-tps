@@ -21,7 +21,6 @@ def hpa(root: SearchTreeNode, h, w):
         prio, current = to_expand.get()
         expanded_nodes += 1
         if current.is_goal():
-            print("Expanded nodes: " + expanded_nodes.__str__())
             return get_solution(current, root), expanded_nodes
 
         for child_node in current.get_children():
@@ -31,10 +30,7 @@ def hpa(root: SearchTreeNode, h, w):
                 res = h(current, child_node.game.first_node, child_node.game.nodes)
                 to_expand.put(
                     (
-                        (
-                            (1 - w) * child_node.cost + w * res[0]
-                        )
-                        * 2,
+                        ((1 - w) * child_node.cost + w * res[0]) * 2,
                         child_node,
                     )
                 )
@@ -54,8 +50,6 @@ def hpa_thread(root: SearchTreeNode, h, w):
         prio, current = to_expand.get()
         expanded_nodes += 1
         if current.is_goal():
-            print(expanded_nodes)
-            # print("Expanded nodes: " + expanded_nodes.__str__())
             return get_solution(current, root), expanded_nodes
 
         if h is None:
@@ -111,14 +105,12 @@ def generic_search(root: SearchTreeNode, pending_nodes):
         expanded_nodes += 1
 
         if current_node.is_goal():
-            # print("Expanded nodes: " + expanded_nodes.__str__())
             return get_solution(current_node, root), expanded_nodes
 
         for child_node in current_node.get_children():
             pending_nodes.enqueue(child_node)
 
     return None, None
-
 
 
 def dls(root: SearchTreeNode, max_dist):
@@ -131,7 +123,6 @@ def dls(root: SearchTreeNode, max_dist):
         expanded_nodes += 1
 
         if current_node.is_goal():
-            # print("Expanded nodes: " + expanded_nodes.__str__())
             return get_solution(current_node, root), expanded_nodes
 
         if current_node.cost >= max_dist:
@@ -150,7 +141,7 @@ def iddfs(root: SearchTreeNode, h):
     a = 0
     while dls(root, b) is None:
         b *= 2
-        a = b/2
+        a = b / 2
     t = round((a + b) / 2)
     while (a != b and b != t) or res is None:
         res, exp = dls(root, t)

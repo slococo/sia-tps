@@ -1,6 +1,5 @@
 import copy
 
-
 from tp1.ladoA.game import Game
 
 

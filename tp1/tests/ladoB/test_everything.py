@@ -1,16 +1,11 @@
 import time
 
-from tests.ladoB import (
-    all_crossovers,
-    all_mutations,
-    all_selections,
-    params,
-    tries_per_run,
-)
-from tp1.ladoB.structure import GeneticExecutor
-
 import matplotlib.pyplot as plt
 import numpy as np
+from tests.ladoB import (all_crossovers, all_mutations, all_selections, params,
+                         tries_per_run)
+
+from tp1.ladoB.structure import GeneticExecutor
 
 """Test each combination of crossover, selection and mutation methods,
  each 10 times, for each input-output pair in config.json"""
@@ -41,7 +36,7 @@ def test_everything():
                             selection,
                             mut,
                             max_gen=2000,
-                            gen_size=50
+                            gen_size=50,
                         )
                         aux = gen_exec.start()
                         acc += aux
@@ -59,9 +54,18 @@ def test_everything():
                     y.append(gen_aux)
                     time_aux = []
                     gen_aux = []
-                    name.append(cross.__name__[:2] + selection.__name__[:2] + mut.__name__[:2])
-                print_bar_graph(x, 'Tiempo', name, 'selection' + time.time().__str__() + '.png')
-                print_bar_graph(y, 'Generaciones', name, 'generation' + time.time().__str__() + '.png')
+                    name.append(
+                        cross.__name__[:2] + selection.__name__[:2] + mut.__name__[:2]
+                    )
+                print_bar_graph(
+                    x, "Tiempo", name, "selection" + time.time().__str__() + ".png"
+                )
+                print_bar_graph(
+                    y,
+                    "Generaciones",
+                    name,
+                    "generation" + time.time().__str__() + ".png",
+                )
                 x = []
                 y = []
 
@@ -78,8 +82,8 @@ def print_bar_graph(val, title, x_names, fig_name):
     print(mean)
     print(std)
     plt.title(title)
-    plt.bar(x_names, mean, yerr=std, ecolor='black', capsize=10)
-    plt.grid(axis='y', c='lightgray', linewidth=0.5, linestyle='-')
+    plt.bar(x_names, mean, yerr=std, ecolor="black", capsize=10)
+    plt.grid(axis="y", c="lightgray", linewidth=0.5, linestyle="-")
     plt.axis(ymin=0)
     plt.savefig(fig_name, dpi=300)
     plt.show()

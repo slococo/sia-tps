@@ -55,7 +55,7 @@ class GeneticExecutor:
         mutation_method,
         end_method=None,
         max_gen=1000,
-        gen_size=50
+        gen_size=50,
     ):
         self.target = target
         self.gen_n = 0
@@ -103,8 +103,9 @@ class GeneticExecutor:
                 self.generation.append(new)
 
         self.generation = self.selection_method(
-            # self.generation, floor(len(self.generation) / 2), self.target
-            self.generation, self.gen_size, self.target
+            self.generation,
+            self.gen_size,
+            self.target,
         )
         self.gen_n += 1
 
@@ -122,9 +123,6 @@ class GeneticExecutor:
     def default_stop(self):
         for color in self.generation:
             if color.is_goal(self.target):
-                # print("Goal reached")
-                # print("Generation: " + self.gen_n.__str__())
-                # print("Color: " + color.__str__())
                 self.found_sol = True
                 return True
         if self.gen_n >= self.max_gen:
