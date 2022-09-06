@@ -3,8 +3,12 @@
     [10,123,3],
     [224,4,150],
     [53,255,201],
-    [255,255,255],
-    [24,40,70]
+    [255,255,255]
   ],
-  "target": [30,230,180]
+  "target": [30,230,180],
+  "crossover": "uniform_cross",
+  "selection": "tournament_selection_prob",
+  "mutation": "uniform_mutate",
+  "max_gen": 100,
+  "gen_size": 10
 }

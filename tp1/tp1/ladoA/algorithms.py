@@ -7,37 +7,37 @@ from tp1.ladoA.search_tree_node import SearchTreeNode
 from tp1.utils import Queue, Stack
 
 
-# def hpa(root: SearchTreeNode, h, w):
-#     expanded_nodes = 1
-#     to_expand = PriorityQueue()
-#     if h is None and w != 0:
-#         raise Exception
-#     elif h is None:
-#         to_expand.put((root.cost, root))
-#     else:
-#         to_expand.put((h(root, root.game.first_node, root.game.nodes), root))
-#     root.cost = 0
-#     while to_expand:
-#         prio, current = to_expand.get()
-#         expanded_nodes += 1
-#         if current.is_goal():
-#             print("Expanded nodes: " + expanded_nodes.__str__())
-#             return get_solution(current, root)
-#
-#         for child_node in current.get_children():
-#             if h is None:
-#                 to_expand.put((child_node.cost, child_node))
-#             else:
-#                 res = h(current, child_node.game.first_node, child_node.game.nodes)
-#                 to_expand.put(
-#                     (
-#                         (
-#                             (1 - w) * child_node.cost + w * res[0]
-#                         )
-#                         * 2,
-#                         child_node,
-#                     )
-#                 )
+def hpa(root: SearchTreeNode, h, w):
+    expanded_nodes = 1
+    to_expand = PriorityQueue()
+    if h is None and w != 0:
+        raise Exception
+    elif h is None:
+        to_expand.put((root.cost, root))
+    else:
+        to_expand.put((h(root, root.game.first_node, root.game.nodes), root))
+    root.cost = 0
+    while to_expand:
+        prio, current = to_expand.get()
+        expanded_nodes += 1
+        if current.is_goal():
+            print("Expanded nodes: " + expanded_nodes.__str__())
+            return get_solution(current, root), expanded_nodes
+
+        for child_node in current.get_children():
+            if h is None:
+                to_expand.put((child_node.cost, child_node))
+            else:
+                res = h(current, child_node.game.first_node, child_node.game.nodes)
+                to_expand.put(
+                    (
+                        (
+                            (1 - w) * child_node.cost + w * res[0]
+                        )
+                        * 2,
+                        child_node,
+                    )
+                )
 
 
 def hpa_thread(root: SearchTreeNode, h, w):
@@ -54,6 +54,7 @@ def hpa_thread(root: SearchTreeNode, h, w):
         prio, current = to_expand.get()
         expanded_nodes += 1
         if current.is_goal():
+            print(expanded_nodes)
             # print("Expanded nodes: " + expanded_nodes.__str__())
             return get_solution(current, root), expanded_nodes
 
@@ -86,10 +87,18 @@ def get_solution(current_node: SearchTreeNode, root: SearchTreeNode):
 
 
 def a_star(root: SearchTreeNode, h):
+    return hpa(root, h, 0.5)
+
+
+def a_star_t(root: SearchTreeNode, h):
     return hpa_thread(root, h, 0.5)
 
 
 def greedy(root: SearchTreeNode, h):
+    return hpa(root, h, 1)
+
+
+def greedy_t(root: SearchTreeNode, h):
     return hpa_thread(root, h, 1)
 
 

@@ -11,10 +11,6 @@ class Color:
         self.genes = np.zeros(24)
         self.rgb = np.array(rgb)
         self.fitness = None
-        # for i in range(0, 8):
-        #     self.genes[i] = (rgb[0] >> (7 - i)) & 1
-        #     self.genes[i + 8] = (rgb[1] >> (7 - i)) & 1
-        #     self.genes[i + 16] = (rgb[2] >> (7 - i)) & 1
         self.genes = np.array(
             np.concatenate(
                 [[np.uint8(i) for i in "{0:08b}".format(num)] for num in self.rgb]
@@ -59,6 +55,7 @@ class GeneticExecutor:
         mutation_method,
         end_method=None,
         max_gen=1000,
+        gen_size=50
     ):
         self.target = target
         self.gen_n = 0
@@ -70,6 +67,7 @@ class GeneticExecutor:
         self.max_gen = max_gen
         self.found_sol = False
         self.mutation_method = mutation_method
+        self.gen_size = gen_size
 
     def start(self):
         start_time = time.time()
@@ -105,7 +103,8 @@ class GeneticExecutor:
                 self.generation.append(new)
 
         self.generation = self.selection_method(
-            self.generation, floor(len(self.generation) / 2), self.target
+            # self.generation, floor(len(self.generation) / 2), self.target
+            self.generation, self.gen_size, self.target
         )
         self.gen_n += 1
 

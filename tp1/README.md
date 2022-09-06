@@ -15,16 +15,38 @@ poetry install
 
 ## Ejecución <a name="ejecución"></a>
 
+Puede ejecutar el ladoA usando poetry mediante:
+
 ```bash
-poetry run ...
+poetry run ladoA
 ```
+
+Aquí, si desea, puede pasarle ciertos parámetros. Para imprimir la ayuda puede correr:
+
+```bash
+poetry run ladoA -h
+```
+
+Por otro lado, para el ladoB:
+
+```bash
+poetry run ladoB
+```
+
+Note que para el ladoB se puede modificar el `config.json` de la carpeta ladoB para cambiar los parametros.
 
 ## Testeos <a name="tests"></a>
 
-Puede correrlos con:
+Debe entrar a la carpeta `tests/ladoA` y correr:
 
 ```bash
-poetry run pytest
+poetry run pytest test_ladoA.py
+```
+
+Por otro lado, para correr los testeos del ladoB debe entrar a `tests/ladoB` y correr
+
+```bash
+poetry run pytest test_everything.py
 ```
 
 ## Autores

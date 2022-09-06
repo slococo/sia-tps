@@ -78,6 +78,8 @@ def tournament_selection_det(pop: List[Color], num_to_select, target):
     for i in range(0, num_to_select):
         random.shuffle(pool)
         group = pool[0 : round(len(pool) / 3)]
+        if not group:
+            break
         group.sort(reverse=True)
         aux = group.pop()
         sol.append(aux)
@@ -97,6 +99,8 @@ def tournament_selection_prob(pop: List[Color], num_to_select, target):
     for i in range(0, num_to_select):
         random.shuffle(pool)
         group = pool[0:2]
+        if not group:
+            break
         group.sort(reverse=True)
         if random.uniform(0, 1) < threshold:
             aux = group.pop()

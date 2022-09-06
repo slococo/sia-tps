@@ -67,17 +67,20 @@ def enqueue_aux(current, i, j, matrix, groups_queue, new_groups_queue):
 
 
 class Game:
-    def __init__(self, size: int, num_colors: int):
+    def __init__(self, size: int, num_colors: int, matrix=None):
         if size < 0 or num_colors < 0:
             raise ValueError("Game must have positive size and amount of colors")
         self.size = size
         self.num_colors = num_colors
-        self.matrix = Matrix(size)
-        for i in range(size):
-            for j in range(size):
-                cell = Cell(np.random.randint(1, self.num_colors + 1), i, j)
-                self.matrix[i][j] = cell
         self.nodes = set()
+        if matrix is None:
+            self.matrix = Matrix(size)
+            for i in range(size):
+                for j in range(size):
+                    cell = Cell(np.random.randint(1, self.num_colors + 1), i, j)
+                    self.matrix[i][j] = cell
+        else:
+            self.matrix = matrix
         print(self.matrix)
         self.first_node = create_graph(self.matrix, size, self.nodes)
         colors = [0] * num_colors
@@ -85,24 +88,7 @@ class Game:
             for node in self.nodes:
                 if node.color == i:
                     colors[i - 1] += 1
-
-        self.matrix = None
-
-    def __init__(self, size: int, num_colors: int, matrix):
-        if size < 0 or num_colors < 0:
-            raise ValueError("Game must have positive size and amount of colors")
-        self.size = size
-        self.num_colors = num_colors
-        self.nodes = set()
-        self.matrix = matrix
-        print(self.matrix)
-        self.first_node = create_graph(self.matrix, size, self.nodes)
-        colors = [0] * num_colors
-        for i in range(1, num_colors + 1):
-            for node in self.nodes:
-                if node.color == i:
-                    colors[i - 1] += 1
-
+        print(self.nodes)
         self.matrix = None
 
     def shuffle(self):
