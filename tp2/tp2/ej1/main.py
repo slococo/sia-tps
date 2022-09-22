@@ -8,6 +8,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
+import seaborn as sb
 
 from tp2.perceptron import Perceptron
 
@@ -41,6 +42,8 @@ def main(config_path=None, data_path=None):
         print(perceptron.predict([1, -1, 1]))
         print("x: 1 ~ y: -1")
         print(perceptron.predict([1, 1, -1]))
+
+        sb.set_style("darkgrid")
 
         x = np.outer(np.linspace(-3, 3, 32), np.ones(32))
         y = x.copy().T

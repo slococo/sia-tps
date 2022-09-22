@@ -40,7 +40,6 @@ class Perceptron:
         aux = np.array(data)
         out = 0
         for layer in self.matrix_arr:
-            # print(layer)
             h = np.array([layer @ aux.T])
             out = self.g(h)
         return out
@@ -48,8 +47,10 @@ class Perceptron:
     def batch(self, data, error_max, max_iter):
         min_error = math.inf
         d = np.zeros((len(self.matrix_arr), len(self.matrix_arr[0])))
+        dw = np.zeros((len(self.matrix_arr), len(self.matrix_arr[0])))
         n = 0
         while min_error > error_max and n < max_iter:
+            error = 0
             n += 1
             for u in data:
                 h, v = [], []
@@ -58,36 +59,29 @@ class Perceptron:
                     h.append(np.array([layer @ v[-1].T]))
                     v.append(self.g(h[-1:]))
 
-                d[0] += np.subtract(u[-1:], v[-1]) * self.g_diff(h[-1])
+                d[0] = np.subtract(u[-1:], v[-1]) * self.g_diff(h[-1])
+                dw[0] += self.eta * v[-2] * d[0]
                 j = 0
                 matr_aux = self.matrix_arr[::-1]
                 for layer in matr_aux:
                     if j != 0:
-                        d[j] += self.g_diff(h[-(j + 1)]) * aux * d[j - 1]
+                        d[j] = self.g_diff(h[-(j + 1)]) * aux * d[j - 1]
+                        dw[j] += self.eta * v[-(j + 2)] * d[j]
                     aux = layer
                     j += 1
 
+                error += (1 / 2) * (np.subtract(u[-1:], v[-1])) ** 2
+
             j = 0
             for layer in self.matrix_arr[::-1]:
-                layer += self.eta * v[-(j + 2)] * (d[j] / len(data))
+                layer += dw[j] / len(data)
                 j += 1
-
-            error = 0
-            for a in data:
-                he, ve = [], []
-                ve.append(np.array(a[:-1]))
-                for layer in self.matrix_arr:
-                    he.append(np.array([layer @ ve[-1].T]))
-                    ve.append(self.g(he[-1:]))
-                error += (1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2
 
             if error < min_error:
                 min_error = error
 
-            if min_error <= error_max or n >= max_iter:
-                print(n)
-                print(min_error)
-                break
+        print(n)
+        print(min_error)
 
     def online(self, data, error_max, max_iter):
         min_error = math.inf
