@@ -1,6 +1,9 @@
 import json
 
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import numpy as np
 import math
 
@@ -25,19 +28,34 @@ def main(config_path=None, data_path=None):
         data = json.load(f)[dataset]
         # matrix = np.random.rand(1, 3)
         matrix = np.zeros((1, 3))
-        perceptron = Perceptron(matrix, None, identity, ident_diff, len(matrix) + 1, eta)
-        # perceptron.train(data, 0, 10000, "batch")
+        perceptron = Perceptron(matrix, None, tanh_arr, tanh_diff, len(matrix) + 1, eta)
         perceptron.train(data, error, max_iter, learning)
         print(perceptron.matrix_arr)
+        print("x: 1 ~ y: 1")
         print(perceptron.predict([1, 1, 1]))
+        print("x: -1 ~ y: -1")
         print(perceptron.predict([1, -1, -1]))
+        print("x: -1 ~ y: 1")
         print(perceptron.predict([1, -1, 1]))
+        print("x: 1 ~ y: -1")
         print(perceptron.predict([1, 1, -1]))
 
-        perceptron.save()
-        del perceptron
-        perceptron = Perceptron.load()
-        print(perceptron.matrix_arr)
+        x = np.outer(np.linspace(-3, 3, 32), np.ones(32))
+        y = x.copy().T
+        coefs = perceptron.matrix_arr[0]
+        z = np.tanh(coefs[0] + x * coefs[1] + y * coefs[2])
+        fig = plt.figure(figsize=(14, 9))
+        ax = plt.axes(projection='3d')
+        ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+        X = np.array([1, 1, -1, -1])
+        Y = np.array([1, -1, -1, 1])
+        ax.scatter(X, Y, color="black")
+        plt.show()
+
+        # perceptron.save()
+        # del perceptron
+        # perceptron = Perceptron.load()
+        # print(perceptron.matrix_arr)
 
 
 def identity(x):

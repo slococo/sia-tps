@@ -1,0 +1,7 @@
+{
+  "dataset": "and",
+  "learning": "online",
+  "max_iter": 10000,
+  "error": 1,
+  "eta": 1
+}

@@ -17,6 +17,7 @@ python = "^3.10"
 black = "^22.6.0"
 numpy = "^1.23.2"
 matplotlib = "^3.5.2"
+pandas = "^1.5.0"
 
 [tool.poetry.dev-dependencies]
 matplotlib = "^3.5.2"
