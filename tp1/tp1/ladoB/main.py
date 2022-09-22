@@ -2,13 +2,20 @@ import json
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from tp1.ladoB.crossover import avg_cross, two_point_cross, uniform_cross
-from tp1.ladoB.mutation import (complete_mutate, limited_multigen_mutate,
-                                one_gen_mutate, uniform_mutate)
-from tp1.ladoB.selection import (boltzmann_selection, elite_selection,
-                                 roulette_selection, tournament_selection_det,
-                                 tournament_selection_prob)
+from tp1.ladoB.mutation import (
+    complete_mutate,
+    limited_multigen_mutate,
+    one_gen_mutate,
+    uniform_mutate,
+)
+from tp1.ladoB.selection import (
+    boltzmann_selection,
+    elite_selection,
+    roulette_selection,
+    tournament_selection_det,
+    tournament_selection_prob,
+)
 from tp1.ladoB.structure import Color, GeneticExecutor
 
 

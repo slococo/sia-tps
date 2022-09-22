@@ -1,7 +1,7 @@
 import copy
 import math
-import random
 import pickle
+import random
 
 import numpy as np
 
@@ -17,14 +17,14 @@ class Perceptron:
     def save(self, file_name=None):
         if file_name is None:
             file_name = "perceptron.obj"
-        with open(file_name, 'wb') as f:
+        with open(file_name, "wb") as f:
             pickle.dump(self, f)
 
     @classmethod
     def load(cls, file_name=None):
         if file_name is None:
             file_name = "perceptron.obj"
-        with open(file_name, 'rb') as f:
+        with open(file_name, "rb") as f:
             return pickle.load(f)
 
     def train(self, data, error_max, max_iter, method):
@@ -79,7 +79,7 @@ class Perceptron:
                 for layer in self.matrix_arr:
                     he.append(np.array([layer @ ve[-1].T]))
                     ve.append(self.g(he[-1:]))
-                error += ((1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2)
+                error += (1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2
 
             if error < min_error:
                 min_error = error
@@ -122,7 +122,7 @@ class Perceptron:
                         he.append(np.array([layer @ ve[-1].T]))
                         ve.append(self.g(he[-1:]))
 
-                    error += ((1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2)
+                    error += (1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2
 
                 if error < min_error:
                     min_error = error

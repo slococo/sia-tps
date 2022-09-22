@@ -1,5 +1,4 @@
 import numpy as np
-
 from tp1.ladoA.structure import Cell, Matrix, Node
 from tp1.utils import Queue
 

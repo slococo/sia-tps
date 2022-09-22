@@ -1,12 +1,14 @@
 import json
 
 import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-from matplotlib import cm
-import numpy as np
+
+matplotlib.use("TkAgg")
 import math
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from matplotlib import cm
 
 from tp2.perceptron import Perceptron
 
@@ -33,7 +35,7 @@ def main(config_path=None):
     # matrix = np.random.rand(1, 4)
     matrix = np.zeros((1, 4))
     perceptron = Perceptron(matrix, None, tanh_arr, tanh_diff, len(matrix) + 1, eta)
-    training_data = data_matrix[:round(len(data_matrix) / 3)]
+    training_data = data_matrix[: round(len(data_matrix) / 3)]
     print(data_matrix)
 
     perceptron.train(training_data / 89, error, max_iter, learning)
@@ -83,7 +85,9 @@ def logistic_arr(x):
 def logistic_diff(x):
     res = []
     for i in x:
-        res.append(2 * b / (1 + math.exp(-2 * b * i)) * (1 - 1 / (1 + math.exp(-2 * b * i))))
+        res.append(
+            2 * b / (1 + math.exp(-2 * b * i)) * (1 - 1 / (1 + math.exp(-2 * b * i)))
+        )
     return res
 
 

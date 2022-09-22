@@ -4,12 +4,13 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-
-from tp1.ladoA.algorithms import (a_star, a_star_t, bfs, dfs, greedy, greedy_t,
-                                  iddfs)
+from tp1.ladoA.algorithms import a_star, a_star_t, bfs, dfs, greedy, greedy_t, iddfs
 from tp1.ladoA.game import Game
-from tp1.ladoA.heuristics import (amount_of_nodes, frontier_color_count,
-                                  graph_max_distance)
+from tp1.ladoA.heuristics import (
+    amount_of_nodes,
+    frontier_color_count,
+    graph_max_distance,
+)
 from tp1.ladoA.search_tree_node import SearchTreeNode
 from tp1.ladoA.structure import Cell, Matrix
 

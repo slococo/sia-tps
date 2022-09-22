@@ -1,11 +1,13 @@
 import json
 
 import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-from matplotlib import cm
-import numpy as np
+
+matplotlib.use("TkAgg")
 import math
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import cm
 
 from tp2.perceptron import Perceptron
 
@@ -45,7 +47,7 @@ def main(config_path=None, data_path=None):
         coefs = perceptron.matrix_arr[0]
         z = np.tanh(coefs[0] + x * coefs[1] + y * coefs[2])
         fig = plt.figure(figsize=(14, 9))
-        ax = plt.axes(projection='3d')
+        ax = plt.axes(projection="3d")
         ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
         X = np.array([1, 1, -1, -1])
         Y = np.array([1, -1, -1, 1])
@@ -99,7 +101,9 @@ def logistic_arr(x):
 def logistic_diff(x):
     res = []
     for i in x:
-        res.append(2 * b / (1 + math.exp(-2 * b * i)) * (1 - 1 / (1 + math.exp(-2 * b * i))))
+        res.append(
+            2 * b / (1 + math.exp(-2 * b * i)) * (1 - 1 / (1 + math.exp(-2 * b * i)))
+        )
     return res
 
 
