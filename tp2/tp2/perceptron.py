@@ -10,7 +10,6 @@ class Perceptron:
         self.optimizer = optimizer
         self.g = g
         self.g_diff = g_diff
-        self.weights = np.zeros(p + 1)
         self.eta = eta
 
     def train(self, data, error_max, max_iter, method):
@@ -34,7 +33,7 @@ class Perceptron:
     def batch(self, data, error_max, max_iter):
         min_error = math.inf
         n = 0
-        dw = np.zeros((len(self.matrix_arr), 3))
+        d = np.zeros((len(self.matrix_arr), 3))
 
         while min_error > error_max and n < max_iter:
             error = 0
@@ -46,14 +45,14 @@ class Perceptron:
                     v.append(self.g(h[-1:]))
 
                 # print(self.eta * (np.subtract(u[-1:], v[-1])) * self.g_diff(h[-1]) * h[-2])
-                dw[0] = np.add(dw[0], self.eta * (np.subtract(u[-1:], v[-1])) * self.g_diff(h[-1]) * h[-2])
+                d[0] = np.add(d[0], self.eta * (np.subtract(u[-1:], v[-1])) * self.g_diff(h[-1]) * h[-2])
 
                 error += ((1 / 2) * (np.subtract(u[-1:], v[-1])) ** 2)[0]
 
                 j = 1
                 matr_aux = self.matrix_arr[::-1]
                 for _ in matr_aux[:-1]:
-                    dw[j] = np.add(dw[j], self.eta * (np.subtract(u[-1:] - v[-1])) * self.g_diff(h[-j]) * matr_aux[-j] * self.g_diff(h[-(j + 1)]) * u[-1:])
+                    d[j] = np.add(d[j], self.eta * (np.subtract(u[-1:] - v[-1])) * self.g_diff(h[-j]) * matr_aux[-j] * self.g_diff(h[-(j + 1)]) * u[-1:])
                     j += 1
 
             if error < min_error:
@@ -63,8 +62,8 @@ class Perceptron:
 
             i = 0
             for layer in self.matrix_arr:
-                # print(dw[-(i + 1)])
-                layer += (dw[-(i + 1)] / len(data))
+                # print(d[-(i + 1)])
+                layer += (d[-(i + 1)] / len(data))
 
             n += 1
 
@@ -73,19 +72,36 @@ class Perceptron:
 
     def online(self, data, error_max, max_iter):
         min_error = math.inf
-        dw = 0
+        d = np.zeros((len(self.matrix_arr), len(self.matrix_arr[0])))
         n = 0
-        random.shuffle(data)
-        while min_error > error_max or n < max_iter:
-            # for u in data:
-            #     aux, out = np.array(u[:-1])
-            #     for layer in self.matrix_arr:
-            #         aux = layer @ out.T
-            #         out = self.g(aux)
-            #
-            #     dw += self.eta * (u[-1:] - out) * self.g_diff(aux) * u[-1:]
-            #     error = 1 / 2 * (u[-1:] - out) ** 2
-            #     if error < min_error:
-            #         min_error = error
-            #     w += dw
-            n += 1
+        while min_error > error_max and n < max_iter:
+            random.shuffle(data)
+            for u in data:
+                # print("data: ", u[:-1])
+                n += 1
+                h, v = [], []
+                v.append(np.array(u[:-1]))
+                for layer in self.matrix_arr:
+                    h.append(np.array([layer @ v[-1].T]))
+                    v.append(self.g(h[-1:]))
+
+                d[0] = np.subtract(u[-1:], v[-1]) * self.g_diff(h[-1])
+                j = 0
+                matr_aux = self.matrix_arr[::-1]
+                for layer in matr_aux:
+                    if j != 0:
+                        d[j] = self.g_diff(h[-(j + 1)]) * aux * d[j - 1]
+                    aux = layer
+                    # print("? ", v)
+                    layer += self.eta * v[-(j + 2)] * d[j]
+                    j += 1
+
+                error = ((1 / 2) * (np.subtract(u[-1:], v[-1])) ** 2)[0][0]
+
+                if error < min_error:
+                    min_error = error
+
+                if min_error <= error_max or n >= max_iter:
+                    print(n)
+                    print(min_error)
+                    break

@@ -10,25 +10,19 @@ def main(config_path=None):
     if config_path is None:
         config_path = "ej1/config.json"
     with open(config_path) as f:
-        data = json.load(f)["xor"]
+        data = json.load(f)["and"]
         print(data)
 
         # matrix = np.random.rand(1, 3)
         matrix = np.zeros((1, 3))
-        perceptron = Perceptron(matrix, None, tanh_arr, tanh_diff, len(matrix) + 1, 1)
-        perceptron.train(data, 0, 10000, "batch")
+        perceptron = Perceptron(matrix, None, identity, ident_diff, len(matrix) + 1, 0.7)
+        # perceptron.train(data, 0, 10000, "batch")
+        perceptron.train(data, 0, 10000, "online")
         print(perceptron.matrix_arr)
         print(perceptron.predict([1, 1, 1]))
         print(perceptron.predict([1, -1, -1]))
         print(perceptron.predict([1, -1, 1]))
         print(perceptron.predict([1, 1, -1]))
-
-
-def zeroes(x):
-    res = []
-    for i in x:
-        res.append(0)
-    return res
 
 
 def identity(x):
@@ -45,17 +39,34 @@ def ident_diff(x):
     return res
 
 
+b = 1
+
+
 def tanh_diff(x):
     res = []
     for i in x:
-        res.append(1 - math.tanh(i))
+        res.append(b * (1 - math.tanh(b * i)))
     return res
 
 
 def tanh_arr(x):
     res = []
     for i in x:
-        res.append(math.tanh(i))
+        res.append(math.tanh(b * i))
+    return res
+
+
+def logistic_arr(x):
+    res = []
+    for i in x:
+        res.append(1 / (1 + math.exp(-2 * b * i)))
+    return res
+
+
+def logistic_diff(x):
+    res = []
+    for i in x:
+        res.append(2 * b / (1 + math.exp(-2 * b * i)) * (1 - 1 / (1 + math.exp(-2 * b * i))))
     return res
 
 
