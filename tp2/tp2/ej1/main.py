@@ -3,26 +3,41 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+
 from tp2.perceptron import Perceptron
 
 
-def main(config_path=None):
+def main(config_path=None, data_path=None):
     if config_path is None:
-        config_path = "ej1/config.json"
-    with open(config_path) as f:
-        data = json.load(f)["and"]
-        print(data)
+        config_path = "tp2/ej1/config.json"
+    if data_path is None:
+        data_path = "tp2/ej1/data.json"
 
+    with open(config_path) as f:
+        data = json.load(f)
+        dataset = data["dataset"]
+        learning = data["learning"]
+        max_iter = data["max_iter"]
+        error = data["error"]
+        eta = data["eta"]
+
+    with open(data_path) as f:
+        data = json.load(f)[dataset]
         # matrix = np.random.rand(1, 3)
         matrix = np.zeros((1, 3))
-        perceptron = Perceptron(matrix, None, identity, ident_diff, len(matrix) + 1, 0.7)
+        perceptron = Perceptron(matrix, None, identity, ident_diff, len(matrix) + 1, eta)
         # perceptron.train(data, 0, 10000, "batch")
-        perceptron.train(data, 0, 10000, "online")
+        perceptron.train(data, error, max_iter, learning)
         print(perceptron.matrix_arr)
         print(perceptron.predict([1, 1, 1]))
         print(perceptron.predict([1, -1, -1]))
         print(perceptron.predict([1, -1, 1]))
         print(perceptron.predict([1, 1, -1]))
+
+        perceptron.save()
+        del perceptron
+        perceptron = Perceptron.load()
+        print(perceptron.matrix_arr)
 
 
 def identity(x):
@@ -71,4 +86,4 @@ def logistic_diff(x):
 
 
 if __name__ == "__main__":
-    main("config.json")
+    main("config.json", "data.json")

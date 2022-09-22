@@ -1,5 +1,6 @@
 import math
 import random
+import pickle
 
 import numpy as np
 
@@ -11,6 +12,19 @@ class Perceptron:
         self.g = g
         self.g_diff = g_diff
         self.eta = eta
+
+    def save(self, file_name=None):
+        if file_name is None:
+            file_name = "perceptron.obj"
+        with open(file_name, 'wb') as f:
+            pickle.dump(self, f)
+
+    @classmethod
+    def load(cls, file_name=None):
+        if file_name is None:
+            file_name = "perceptron.obj"
+        with open(file_name, 'rb') as f:
+            return pickle.load(f)
 
     def train(self, data, error_max, max_iter, method):
         match method:
