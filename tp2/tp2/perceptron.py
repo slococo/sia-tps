@@ -82,6 +82,7 @@ class Perceptron:
 
         print(n)
         print(min_error)
+        print(self.matrix_arr)
 
     def online(self, data, error_max, max_iter):
         min_error = math.inf
@@ -124,4 +125,5 @@ class Perceptron:
                 if min_error <= error_max or n >= max_iter:
                     print(n)
                     print(min_error)
+                    print(self.matrix_arr)
                     break

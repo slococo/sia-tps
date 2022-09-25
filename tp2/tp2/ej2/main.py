@@ -2,15 +2,16 @@ import json
 
 import matplotlib
 
+from tp2.ej2 import graph
+
 matplotlib.use("TkAgg")
-import math
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib import cm
 
 from tp2.perceptron import Perceptron
+from tp2 import utils
 
 
 def main(config_path=None):
@@ -34,70 +35,26 @@ def main(config_path=None):
         error = data["error"]
         eta = data["eta"]
 
-    # matrix = np.random.rand(1, 4)
     matrix = np.zeros((1, 4))
-    perceptron = Perceptron(matrix, None, tanh_arr, tanh_diff, len(matrix) + 1, eta)
-    # print(data_matrix)
+    perceptron = Perceptron(matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta)
 
-    res_normalised = res_matrix / 89
-    data_normalised = data_matrix / 8
+    res_min = np.min(res_matrix)
+    res_normalised = np.subtract(2 * (np.subtract(res_matrix, res_min) / (np.max(res_matrix) - res_min)), 1)
+    data_min = np.min(data_matrix)
+    data_normalised = np.subtract(2 * (np.subtract(data_matrix, data_min) / (np.max(data_matrix) - data_min)), 1)
 
     data_normalised = np.concatenate((data_normalised, res_normalised), axis=1)
-    # print(data_normalised)
 
-    training_data = data_normalised[: round(len(data_normalised) / 3)]
+    training_data = data_normalised[: round(len(data_normalised) / 2)]
 
     perceptron.train(training_data, error, max_iter, learning)
 
+    a, b = np.min(res_matrix), np.max(res_matrix)
     for data in data_normalised:
-        print("expected: ", data[-1] * 8, "\tout: ", perceptron.predict(data[:-1])[0] * 8)
+        print("expected: ", utils.denormalise(data[-1], -1, 1, a, b), "\tout: ",
+              utils.denormalise(perceptron.predict(data[:-1])[0], -1, 1, a, b))
 
-
-def identity(x):
-    res = []
-    for i in x:
-        res.append(i)
-    return res
-
-
-def ident_diff(x):
-    res = []
-    for _ in x:
-        res.append(1)
-    return res
-
-
-b = 1
-
-
-def tanh_diff(x):
-    res = []
-    for i in x:
-        res.append(b * (1 - math.tanh(b * i)))
-    return res
-
-
-def tanh_arr(x):
-    res = []
-    for i in x:
-        res.append(math.tanh(b * i))
-    return res
-
-
-def logistic_arr(x):
-    res = []
-    for i in x:
-        res.append(1 / (1 + math.exp(-2 * b * i)))
-    return res
-
-
-def logistic_diff(x):
-    res = []
-    for i in x:
-        res.append(
-            2 * b / (1 + math.exp(-2 * b * i)) * (1 - 1 / (1 + math.exp(-2 * b * i)))
-        )
-    return res
+    graph.plot(df)
 
 
 if __name__ == "__main__":
