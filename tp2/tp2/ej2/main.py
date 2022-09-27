@@ -1,17 +1,11 @@
 import json
 
-import matplotlib
-
-from tp2.ej2 import graph
-
-matplotlib.use("TkAgg")
-
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from tp2.perceptron import Perceptron
 from tp2 import utils
+from tp2.ej2 import graph
+from tp2.perceptron import Perceptron
 
 
 def main(config_path=None):
@@ -36,12 +30,18 @@ def main(config_path=None):
         eta = data["eta"]
 
     matrix = np.zeros((1, 4))
-    perceptron = Perceptron(matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta)
+    perceptron = Perceptron(
+        matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
+    )
 
     res_min = np.min(res_matrix)
-    res_normalised = np.subtract(2 * (np.subtract(res_matrix, res_min) / (np.max(res_matrix) - res_min)), 1)
+    res_normalised = np.subtract(
+        2 * (np.subtract(res_matrix, res_min) / (np.max(res_matrix) - res_min)), 1
+    )
     data_min = np.min(data_matrix)
-    data_normalised = np.subtract(2 * (np.subtract(data_matrix, data_min) / (np.max(data_matrix) - data_min)), 1)
+    data_normalised = np.subtract(
+        2 * (np.subtract(data_matrix, data_min) / (np.max(data_matrix) - data_min)), 1
+    )
 
     data_normalised = np.concatenate((data_normalised, res_normalised), axis=1)
 
@@ -51,8 +51,12 @@ def main(config_path=None):
 
     a, b = np.min(res_matrix), np.max(res_matrix)
     for data in data_normalised:
-        print("expected: ", utils.denormalise(data[-1], -1, 1, a, b), "\tout: ",
-              utils.denormalise(perceptron.predict(data[:-1])[0], -1, 1, a, b))
+        print(
+            "expected: ",
+            utils.denormalise(data[-1], -1, 1, a, b),
+            "\tout: ",
+            utils.denormalise(perceptron.predict(data[:-1])[0], -1, 1, a, b),
+        )
 
     graph.plot(df)
 

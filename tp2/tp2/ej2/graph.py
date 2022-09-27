@@ -23,7 +23,7 @@ def plot(df=None):
     res = utils.normalise(df["y"], -1, 1)
     for i in range(0, len(X)):
         color = 0xFFFFFF * ((res[i] + 1) / 2)
-        ax.scatter(X[i], Y[i], Z[i], color='#{:06x}'.format(round(color)))
+        ax.scatter(X[i], Y[i], Z[i], color="#{:06x}".format(round(color)))
 
     plt.show()
 

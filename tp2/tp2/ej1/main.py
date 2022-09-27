@@ -1,16 +1,11 @@
 import json
-import matplotlib
-from tp2 import utils
 
-matplotlib.use("TkAgg")
-
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import cm
-import seaborn as sb
 
-from tp2.perceptron import Perceptron
+from tp2 import utils
 from tp2.ej1 import graph
+from tp2.perceptron import Perceptron
+
 
 def main(config_path=None, data_path=None):
     if config_path is None:
@@ -29,7 +24,9 @@ def main(config_path=None, data_path=None):
     with open(data_path) as f:
         data = json.load(f)[dataset]
         matrix = np.zeros((1, 3))
-        perceptron = Perceptron(matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta)
+        perceptron = Perceptron(
+            matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
+        )
         perceptron.train(data, error, max_iter, learning)
         print(perceptron.matrix_arr)
         print("x: 1 ~ y: 1")
