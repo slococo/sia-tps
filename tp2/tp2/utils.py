@@ -35,6 +35,7 @@ b = 1
 
 def tanh_diff(x):
     res = []
+    x = np.atleast_1d(x)
     for i in x:
         res.append(b * (1 - math.tanh(b * i)))
     return res
@@ -42,6 +43,7 @@ def tanh_diff(x):
 
 def tanh_arr(x):
     res = []
+    x = np.atleast_1d(x)
     for i in x:
         res.append(math.tanh(b * i))
     return res

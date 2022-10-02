@@ -8,12 +8,21 @@ from tp2.ej2 import graph
 from tp2.perceptron import Perceptron
 
 
+def res_index(x):
+    res = np.zeros_like(x)
+    res[np.argmax(x)] = 1
+    return res
+
+
 def main(config_path=None):
     if config_path is None:
-        config_path = "tp2/ej2/config.json"
+        config_path = "tp2/ej3/config.json"
 
-    path = "dataset.csv"
-    data_column_names = ["x1", "x2", "x3"]
+    path = "digitsformat.csv"
+
+    df = pd.read_csv(path, sep=' ', header=None)
+
+    data_column_names = ["x" + str(i) for i in range(1, 36)]
     expected_column_names = ["y"]
 
     df = pd.read_csv(path)
@@ -33,37 +42,39 @@ def main(config_path=None):
         print("Couldn't find config path")
         exit(1)
 
-    matrix = np.zeros((1, 4))
+    #matrix = np.zeros((36, 21))
+    matrix = np.zeros((21, 36))
+    #matrix2 = np.zeros((21, 14))
+    matrix2 = np.zeros((14, 21))
+    #matrix3 = np.zeros((14, 10))
+    matrix3 = np.zeros((10, 14))
+    matr = [matrix, matrix2, matrix3]
     perceptron = Perceptron(
-        matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
+        matr, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
     )
 
-    res_min = np.min(res_matrix)
-    res_normalised = np.subtract(
-        2 * (np.subtract(res_matrix, res_min) / (np.max(res_matrix) - res_min)), 1
-    )
     data_min = np.min(data_matrix)
     data_normalised = np.subtract(
         2 * (np.subtract(data_matrix, data_min) / (np.max(data_matrix) - data_min)), 1
     )
 
-    data_normalised = np.concatenate((data_normalised, res_normalised), axis=1)
+    data_normalised = np.concatenate((data_normalised, res_matrix), axis=1)
 
     training_data = data_normalised[: round(len(data_normalised) / 2)]
 
-    perceptron.train(training_data, error, max_iter, learning)
+    perceptron.train(training_data, error, max_iter, learning, res_index)
 
-    a, b = np.min(res_matrix), np.max(res_matrix)
-    for data in data_normalised:
-        print(
-            "expected: ",
-            utils.denormalise(data[-1], -1, 1, a, b),
-            "\tout: ",
-            utils.denormalise(perceptron.predict(data[:-1])[0], -1, 1, a, b),
-        )
+    # for data in data_normalised:
+        # print(
+        #     "expected: ",
+        #     utils.denormalise(data[-1], -1, 1, a, b),
+        #     "\tout: ",
+        #     utils.denormalise(perceptron.predict(data[:-1])[0], -1, 1, a, b),
+        # )
 
-    graph.plot(df)
+    # graph.plot(df)
 
 
 if __name__ == "__main__":
     main("config.json")
+

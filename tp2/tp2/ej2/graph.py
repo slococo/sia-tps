@@ -1,11 +1,12 @@
 import matplotlib
 
-matplotlib.use("TkAgg")
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
 from tp2 import utils
+
+matplotlib.use("TkAgg")
 
 
 def plot(df=None):

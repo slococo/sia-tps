@@ -27,50 +27,64 @@ class Perceptron:
         with open(file_name, "rb") as f:
             return pickle.load(f)
 
-    def train(self, data, error_max, max_iter, method):
+    def train(self, data, error_max, max_iter, method, exp=None):
         match method:
             case "online":
-                self.online(data, error_max, max_iter)
+                self.online(data, error_max, max_iter, exp)
             case "batch":
-                self.batch(data, error_max, max_iter)
+                self.batch(data, error_max, max_iter, exp)
             case _:
                 raise RuntimeError("Unknown method " + method)
 
     def predict(self, data):
-        aux = np.array(data)
-        out = 0
+        out = np.array(data)
         for layer in self.matrix_arr:
-            h = np.array([layer @ aux.T])
-            out = self.g(h)
+            aux = np.array([layer @ out.T])
+            out = self.g(aux)
         return out
 
-    def batch(self, data, error_max, max_iter):
+    def batch(self, data, error_max, max_iter, exp=None):
         min_error = math.inf
-        d = np.zeros((len(self.matrix_arr), len(self.matrix_arr[0])))
-        dw = np.zeros((len(self.matrix_arr), len(self.matrix_arr[0])))
         n = 0
         while min_error > error_max and n < max_iter:
             error = 0
+
+            dw = []
+            for i in self.matrix_arr[::-1]:
+                dw.append(np.zeros_like(i))
+
             n += 1
             for u in data:
                 h, v = [], []
                 v.append(np.array(u[:-1]))
                 for layer in self.matrix_arr:
-                    h.append(np.array([layer @ v[-1].T]))
-                    v.append(self.g(h[-1:]))
+                    h.append(layer @ v[-1].T)
+                    v.append(np.array(self.g(h[-1])))
 
-                d[0] = np.subtract(u[-1:], v[-1]) * self.g_diff(h[-1])
-                dw[0] += self.eta * v[-2] * d[0]
+                res = v[-1]
+                if exp:
+                    res = exp(v[-1])
+
+                expected = np.zeros_like(res)
+                expected[round(u[-1:][0])] = 1
+                d = np.subtract(expected, res) * self.g_diff(h[-1])
+                print(self.matrix_arr[-1].shape)
+                print((dw[0]).shape)
+                print((self.eta * v[-2][:, None].dot(d[:, None].T)).shape)
+                print(v[-2][:, None].shape)
+                print(d[:, None].shape)
+                dw[0] += self.eta * v[-2][:, None].dot(d[:, None].T)
                 j = 0
                 matr_aux = self.matrix_arr[::-1]
                 for layer in matr_aux:
                     if j != 0:
-                        d[j] = self.g_diff(h[-(j + 1)]) * aux * d[j - 1]
-                        dw[j] += self.eta * v[-(j + 2)] * d[j]
+                        d = np.dot(d, aux * self.g_diff(h[-(j + 1)]))
+                        dw[j] += self.eta * d[:, None].dot(v[-(j + 2)][:, None].T)
                     aux = layer
                     j += 1
 
-                error += (1 / 2) * (np.subtract(u[-1:], v[-1])) ** 2
+                error += np.average((1 / 2) * (np.subtract(expected, res)) ** 2)
+                # print(error)
 
             j = 0
             for layer in self.matrix_arr[::-1]:
@@ -84,7 +98,7 @@ class Perceptron:
         print(min_error)
         print(self.matrix_arr)
 
-    def online(self, data, error_max, max_iter):
+    def online(self, data, error_max, max_iter, exp=None):
         min_error = math.inf
         d = np.zeros((len(self.matrix_arr), len(self.matrix_arr[0])))
         n = 0
