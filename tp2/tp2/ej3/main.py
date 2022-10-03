@@ -9,7 +9,8 @@ from tp2.perceptron import Perceptron
 
 
 def res_index(x):
-    res = np.zeros_like(x)
+    res = np.full_like(x, fill_value=-1)
+    # res = np.zeros_like(x)
     res[np.argmax(x)] = 1
     return res
 
@@ -20,7 +21,7 @@ def main(config_path=None):
 
     path = "digitsformat.csv"
 
-    df = pd.read_csv(path, sep=' ', header=None)
+    df = pd.read_csv(path, sep=' ')
 
     data_column_names = ["x" + str(i) for i in range(1, 36)]
     expected_column_names = ["y"]
@@ -42,10 +43,17 @@ def main(config_path=None):
         print("Couldn't find config path")
         exit(1)
 
-    matrix = np.zeros((21, 36))
-    matrix2 = np.zeros((14, 21))
-    matrix3 = np.zeros((10, 14))
-    matr = [matrix, matrix2, matrix3]
+    # matrix = np.zeros((21, 36))
+    matrix = np.random.rand(28, 36)
+    matrix1 = np.random.rand(24, 28)
+    # matrix2 = np.zeros((14, 21))
+    matrix2 = np.random.rand(18, 24)
+    matrix3 = np.random.rand(14, 18)
+    matrix4 = np.random.rand(12, 14)
+    # matrix3 = np.zeros((10, 14))
+    matrix5 = np.random.rand(10, 12)
+
+    matr = [matrix, matrix1, matrix2, matrix3, matrix4, matrix5]
     perceptron = Perceptron(
         matr, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
     )
@@ -57,14 +65,14 @@ def main(config_path=None):
 
     data_normalised = np.concatenate((data_normalised, res_matrix), axis=1)
 
-    training_data = data_normalised[: round(len(data_normalised) / 2)]
+    training_data = data_normalised
 
     perceptron.train(training_data, error, max_iter, learning, res_index)
 
     for data in data_normalised:
         print(
             "expected: ",
-            data,
+            data[-1],
             "\tout: ",
             np.argmax(perceptron.predict(data[:-1]))
         )

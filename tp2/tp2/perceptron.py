@@ -39,8 +39,7 @@ class Perceptron:
     def predict(self, data):
         out = np.array(data)
         for layer in self.matrix_arr:
-            aux = np.atleast_1d([layer @ out.T])
-            print(aux)
+            aux = np.atleast_1d(layer @ np.atleast_2d(out).T)
             out = self.g(aux)
         return out
 
@@ -66,8 +65,7 @@ class Perceptron:
                 expected = u[-1]
                 if exp:
                     res = exp(v[-1])
-
-                    expected = np.zeros_like(res)
+                    expected = np.full_like(res, fill_value=-1)
                     expected[round(u[-1:][0])] = 1
 
                 d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
@@ -76,8 +74,8 @@ class Perceptron:
                 j = 0
                 for layer in self.matrix_arr[::-1]:
                     if j != 0:
-                        d = np.atleast_2d(aux.T.dot(d.T) * (np.atleast_2d(self.g_diff(h[-(j + 1)])).T)).T
-                        dw[j] += self.eta * d.dot((np.atleast_2d(v[-(j + 1)])).T)
+                        d = np.atleast_2d(aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T).T
+                        dw[j] += self.eta * d.T.dot((np.atleast_2d(v[-(j + 2)])))
                     aux = layer
                     j += 1
 
@@ -97,27 +95,39 @@ class Perceptron:
 
     def online(self, data, error_max, max_iter, exp=None):
         min_error = math.inf
-        d = np.zeros((len(self.matrix_arr), len(self.matrix_arr[0])))
         n = 0
         data_copy = copy.copy(data)
         while min_error > error_max and n < max_iter:
             random.shuffle(data_copy)
+            dw = []
+            for i in self.matrix_arr[::-1]:
+                dw.append(np.atleast_2d(np.zeros_like(i)))
+
             n += 1
-            for u in data:
+            for u in data_copy:
                 h, v = [], []
                 v.append(np.array(u[:-1]))
                 for layer in self.matrix_arr:
-                    h.append(np.array([layer @ v[-1].T]))
-                    v.append(self.g(h[-1:]))
+                    h.append(np.atleast_1d(layer @ v[-1]))
+                    v.append(np.atleast_1d(np.array(self.g(h[-1]))))
 
-                d[0] = np.subtract(u[-1:], v[-1]) * self.g_diff(h[-1])
+                res = v[-1]
+                expected = u[-1]
+                if exp:
+                    res = exp(v[-1])
+                    expected = np.full_like(res, fill_value=-1)
+                    expected[round(u[-1:][0])] = 1
+
+                d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
+                dw[0] = self.eta * (d.T.dot(np.atleast_2d(v[-2])))
+
                 j = 0
-                matr_aux = self.matrix_arr[::-1]
-                for layer in matr_aux:
+                for layer in self.matrix_arr[::-1]:
                     if j != 0:
-                        d[j] = self.g_diff(h[-(j + 1)]) * aux * d[j - 1]
+                        d = np.atleast_2d(aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T).T
+                        dw[j] = self.eta * d.T.dot((np.atleast_2d(v[-(j + 2)])))
                     aux = layer
-                    layer += self.eta * v[-(j + 2)] * d[j]
+                    layer += dw[j]
                     j += 1
 
                 error = 0
@@ -125,10 +135,10 @@ class Perceptron:
                     he, ve = [], []
                     ve.append(np.array(a[:-1]))
                     for layer in self.matrix_arr:
-                        he.append(np.array([layer @ ve[-1].T]))
-                        ve.append(self.g(he[-1:]))
+                        he.append(np.atleast_1d(layer @ ve[-1]))
+                        ve.append(np.atleast_1d(np.array(self.g(he[-1]))))
 
-                    error += (1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2
+                    error += np.average((1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2)
 
                 if error < min_error:
                     min_error = error

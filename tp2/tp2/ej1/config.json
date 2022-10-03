@@ -1,5 +1,5 @@
 {
-  "dataset": "and",
+  "dataset": "xor",
   "learning": "online",
   "max_iter": 10000,
   "error": 1e-6,

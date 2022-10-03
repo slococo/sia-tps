@@ -1,5 +1,5 @@
 {
-  "learning": "batch",
+  "learning": "online",
   "max_iter": 100000,
   "error": 1e-6,
   "eta": 2
