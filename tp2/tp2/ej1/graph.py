@@ -17,7 +17,8 @@ def plot(perceptron=None):
     # sb.set_style("darkgrid")
     x = np.outer(np.linspace(-3, 3, 32), np.ones(32))
     y = x.copy().T
-    coefs = perceptron.matrix_arr[0]
+    print(perceptron.matrix_arr)
+    coefs = perceptron.matrix_arr[0][0]
     z = np.tanh(coefs[0] + x * coefs[1] + y * coefs[2])
     fig = plt.figure(figsize=(14, 9))
     ax = plt.axes(projection="3d")

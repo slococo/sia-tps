@@ -42,11 +42,8 @@ def main(config_path=None):
         print("Couldn't find config path")
         exit(1)
 
-    #matrix = np.zeros((36, 21))
     matrix = np.zeros((21, 36))
-    #matrix2 = np.zeros((21, 14))
     matrix2 = np.zeros((14, 21))
-    #matrix3 = np.zeros((14, 10))
     matrix3 = np.zeros((10, 14))
     matr = [matrix, matrix2, matrix3]
     perceptron = Perceptron(
@@ -64,16 +61,15 @@ def main(config_path=None):
 
     perceptron.train(training_data, error, max_iter, learning, res_index)
 
-    # for data in data_normalised:
-        # print(
-        #     "expected: ",
-        #     utils.denormalise(data[-1], -1, 1, a, b),
-        #     "\tout: ",
-        #     utils.denormalise(perceptron.predict(data[:-1])[0], -1, 1, a, b),
-        # )
+    for data in data_normalised:
+        print(
+            "expected: ",
+            data,
+            "\tout: ",
+            np.argmax(perceptron.predict(data[:-1]))
+        )
 
     # graph.plot(df)
-
 
 if __name__ == "__main__":
     main("config.json")

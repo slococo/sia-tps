@@ -33,7 +33,7 @@ def main(config_path=None):
         print("Couldn't find config path")
         exit(1)
 
-    matrix = np.zeros((1, 4))
+    matrix = [np.atleast_2d(np.zeros((1, 4)))]
     perceptron = Perceptron(
         matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
     )
@@ -62,7 +62,7 @@ def main(config_path=None):
             utils.denormalise(perceptron.predict(data[:-1])[0], -1, 1, a, b),
         )
 
-    graph.plot(df)
+    # graph.plot(df)
 
 
 if __name__ == "__main__":
