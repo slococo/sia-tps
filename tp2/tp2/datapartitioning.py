@@ -20,7 +20,7 @@ def holdout(dataset, training_probability, activation_function, eta, neurone_mat
 
     perceptron.train(dataset[:int(len(dataset)*training_probability)+1], error, max_iter, learning)
 
-    results = perceptron.predict(dataset[len(dataset)*training_probability+1:, :-1])
+    results = perceptron.predict(dataset[int(len(dataset)*training_probability)+1:, :-1])
 
     expected = np.squeeze(dataset[int(len(dataset)*training_probability)+1:, -1:])
 
@@ -33,7 +33,12 @@ def k_fold(dataset, k, activation_function, eta, neurone_matrix, error, max_iter
     dataset = np.array(dataset)
     partition_size = int(len(dataset)/k)
 
-    partitioned_dataset = dataset[:partition_size*k-len(dataset)].reshape(k, partition_size, 4)
+    if partition_size*k == len(dataset):
+        partitioned_dataset = dataset.reshape(k, partition_size, 4)
+    else:
+        partitioned_dataset = dataset[:partition_size*k-len(dataset)].reshape(k, partition_size, 4)
+
+    testing_result = TestingResult()
 
     for i in range(k):
         perceptron = Perceptron(
@@ -44,8 +49,7 @@ def k_fold(dataset, k, activation_function, eta, neurone_matrix, error, max_iter
 
         results = perceptron.predict(partitioned_dataset[i])
 
-        expected = np.squeeze(partitioned_dataset[i, -1:])
+        expected = np.squeeze(partitioned_dataset[i, :, -1:])
 
-        testing_result = TestingResult(expected, results)
 
     return testing_result
