@@ -5,6 +5,7 @@ import pandas as pd
 
 from tp2 import utils
 from tp2.ej2 import graph
+from tp2.ej2 import animation
 from tp2.perceptron import Perceptron
 
 
@@ -35,7 +36,7 @@ def main(config_path=None):
 
     matrix = [np.atleast_2d(np.zeros((1, 4)))]
     perceptron = Perceptron(
-        matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
+        matrix, None, utils.tanh_arr, utils.tanh_diff, eta
     )
 
     res_min = np.min(res_matrix)
@@ -49,9 +50,10 @@ def main(config_path=None):
 
     data_normalised = np.concatenate((data_normalised, res_normalised), axis=1)
 
-    training_data = data_normalised[: round(len(data_normalised) / 2)]
+    # training_data = data_normalised[: round(len(data_normalised) / 2)]
+    training_data = data_normalised[: round(len(data_normalised))]
 
-    perceptron.train(training_data, error, max_iter, learning)
+    historic = perceptron.train(training_data, error, max_iter, learning)
 
     a, b = np.min(res_matrix), np.max(res_matrix)
     for data in data_normalised:
@@ -62,7 +64,10 @@ def main(config_path=None):
             utils.denormalise(perceptron.predict(data[:-1])[0], -1, 1, a, b),
         )
 
+    perceptron.data = data_matrix
+    perceptron.save()
     # graph.plot(df)
+    animation.create_animation(data_matrix, historic)
 
 
 if __name__ == "__main__":

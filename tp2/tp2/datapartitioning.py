@@ -13,7 +13,7 @@ def holdout(dataset, training_probability, activation_function, eta, neurone_mat
     np.random.shuffle(dataset)
 
     perceptron = Perceptron(
-        neurone_matrix, None, activation_function, activation_function, len(neurone_matrix) + 1, eta
+        neurone_matrix, None, activation_function, activation_function, eta
     )
 
     perceptron.train(dataset[:int(len(dataset)*training_probability)+1], error, max_iter, learning)
@@ -39,7 +39,7 @@ def k_fold(dataset, k, activation_function, eta, neurone_matrix, error, max_iter
 
     for i in range(k):
         perceptron = Perceptron(
-            neurone_matrix, None, activation_function, activation_function, len(neurone_matrix) + 1, eta
+            neurone_matrix, None, activation_function, activation_function, eta
         )
 
         perceptron.train(

@@ -8,12 +8,14 @@ from matplotlib import pyplot as plt, cm
 
 
 class Perceptron:
-    def __init__(self, matrix_arr, optimizer, g, g_diff, p, eta):
+    def __init__(self, matrix_arr, optimizer, g, g_diff, eta):
         self.matrix_arr = matrix_arr
         self.optimizer = optimizer
         self.g = g
         self.g_diff = g_diff
         self.eta = eta
+        self.data = None
+        self.historic = None
 
     def save(self, file_name=None):
         if file_name is None:
@@ -31,9 +33,9 @@ class Perceptron:
     def train(self, data, error_max, max_iter, method, exp=None):
         match method:
             case "online":
-                self.online(data, error_max, max_iter, exp)
+                return self.online(data, error_max, max_iter, exp)
             case "batch":
-                self.batch(data, error_max, max_iter, exp)
+                return self.batch(data, error_max, max_iter, exp)
             case _:
                 raise RuntimeError("Unknown method " + method)
 
@@ -45,7 +47,7 @@ class Perceptron:
         return out
 
     def batch(self, data, error_max, max_iter, exp=None):
-        errors = []
+        errors, self.historic = [], []
         min_error = math.inf
         n = 0
         while min_error > error_max and n < max_iter:
@@ -62,6 +64,10 @@ class Perceptron:
                 for layer in self.matrix_arr:
                     h.append(np.atleast_1d(layer @ v[-1]))
                     v.append(np.atleast_1d(np.array(self.g(h[-1]))))
+
+                if len(self.historic) <= n - 1:
+                    self.historic.append([])
+                self.historic[n - 1].append(v[-1])
 
                 res = v[-1]
                 expected = u[-1]
@@ -81,7 +87,7 @@ class Perceptron:
                     aux = layer
                     j += 1
 
-                error += np.average((np.subtract(expected, res) / 2) ** 2)
+                error += np.max((np.subtract(expected, res) / 2) ** 2)
 
             j = 0
             for layer in self.matrix_arr[::-1]:
@@ -100,6 +106,7 @@ class Perceptron:
         print(n)
         print(min_error)
         print(self.matrix_arr)
+        return self.historic
 
     def online(self, data, error_max, max_iter, exp=None):
         min_error = math.inf

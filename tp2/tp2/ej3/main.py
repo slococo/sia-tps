@@ -10,7 +10,6 @@ from tp2.perceptron import Perceptron
 
 def res_index(x):
     res = np.full_like(x, fill_value=-1)
-    # res = np.zeros_like(x)
     res[np.argmax(x)] = 1
     return res
 
@@ -44,18 +43,16 @@ def main(config_path=None):
         exit(1)
 
     # matrix = np.zeros((21, 36))
-    matrix = np.random.rand(28, 36)
-    matrix1 = np.random.rand(24, 28)
+    matrix0 = np.random.rand(27, 36)
+    matrix1 = np.random.rand(21, 27)
+    matrix2 = np.random.rand(16, 21)
     # matrix2 = np.zeros((14, 21))
-    matrix2 = np.random.rand(18, 24)
-    matrix3 = np.random.rand(14, 18)
-    matrix4 = np.random.rand(12, 14)
+    matrix3 = np.random.rand(10, 16)
     # matrix3 = np.zeros((10, 14))
-    matrix5 = np.random.rand(10, 12)
 
-    matr = [matrix, matrix1, matrix2, matrix3, matrix4, matrix5]
+    matr = [matrix0, matrix1, matrix2, matrix3]
     perceptron = Perceptron(
-        matr, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
+        matr, None, utils.tanh_arr, utils.tanh_diff, eta
     )
 
     data_min = np.min(data_matrix)
@@ -98,7 +95,7 @@ def main_xor(config_path=None, data_path=None):
         matrix3 = np.random.rand(3, 6)
         matrix2 = np.atleast_2d(np.random.rand(1, 3))
         perceptron = Perceptron(
-            [matrix1, matrix3, matrix2], None, utils.tanh_arr, utils.tanh_diff, -1, eta
+            [matrix1, matrix3, matrix2], None, utils.tanh_arr, utils.tanh_diff, eta
         )
 
         perceptron.train(data, error, max_iter, learning)
@@ -111,5 +108,6 @@ def main_xor(config_path=None, data_path=None):
 
 
 if __name__ == "__main__":
-    main_xor("config.json", "data.json")
+    main("config.json")
+    # main_xor("config.json", "data.json")
 
