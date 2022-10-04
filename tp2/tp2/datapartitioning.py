@@ -18,14 +18,15 @@ def holdout(dataset, training_probability, activation_function, eta, neurone_mat
         neurone_matrix, None, activation_function, activation_function, len(neurone_matrix) + 1, eta
     )
 
-    perceptron.train(dataset[:int(len(dataset)*training_probability)], error, max_iter, learning)
+    perceptron.train(dataset[:int(len(dataset)*training_probability)+1], error, max_iter, learning)
 
-    results = perceptron.predict(dataset[- int(len(dataset)*(1-training_probability)):, :-1])
+    results = perceptron.predict(dataset[len(dataset)*training_probability+1:, :-1])
 
-    #TODO: mirar que la dimension este bien
-    expected = np.squeeze(dataset[int(len(dataset)*(1-training_probability)):, -1:])
+    expected = np.squeeze(dataset[int(len(dataset)*training_probability)+1:, -1:])
 
-    return 0
+    testing_result = TestingResult(expected, results)
+
+    return testing_result
 
 
 def k_fold(dataset, k, activation_function, eta, neurone_matrix, error, max_iter, learning):
@@ -39,11 +40,12 @@ def k_fold(dataset, k, activation_function, eta, neurone_matrix, error, max_iter
             neurone_matrix, None, activation_function, activation_function, len(neurone_matrix) + 1, eta
         )
 
-        perceptron.train(np.delete(dataset, i, 0).reshape((k-1)*partition_size, 4), error, max_iter, learning)
+        perceptron.train(np.delete(partitioned_dataset, i, 0).reshape((k-1)*partition_size, 4), error, max_iter, learning)
 
         results = perceptron.predict(partitioned_dataset[i])
 
-        # TODO: mirar que la dimension este bien
         expected = np.squeeze(partitioned_dataset[i, -1:])
 
-    return 0
+        testing_result = TestingResult(expected, results)
+
+    return testing_result
