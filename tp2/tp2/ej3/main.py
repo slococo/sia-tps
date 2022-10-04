@@ -98,7 +98,7 @@ def main_xor(config_path=None, data_path=None):
         matrix3 = np.random.rand(3, 6)
         matrix2 = np.atleast_2d(np.random.rand(1, 3))
         perceptron = Perceptron(
-            [matrix1, matrix3, matrix2], None, utils.tanh_arr, utils.tanh_diff, -1, eta
+            [matrix1, matrix3, matrix2], None, utils.tanh_arr, utils.tanh_diff, -1, eta, input_keep_prob=0.8, hidden_keep_prob=0.5
         )
 
         perceptron.train(data, error, max_iter, learning)

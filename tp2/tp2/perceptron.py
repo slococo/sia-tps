@@ -8,12 +8,14 @@ from matplotlib import pyplot as plt, cm
 
 
 class Perceptron:
-    def __init__(self, matrix_arr, optimizer, g, g_diff, p, eta):
+    def __init__(self, matrix_arr, optimizer, g, g_diff, p, eta, input_keep_prob=1, hidden_keep_prob=1):
         self.matrix_arr = matrix_arr
         self.optimizer = optimizer
         self.g = g
         self.g_diff = g_diff
         self.eta = eta
+        self.input_keep_prob = input_keep_prob
+        self.hidden_keep_prob = hidden_keep_prob
 
     def save(self, file_name=None):
         if file_name is None:
@@ -60,7 +62,17 @@ class Perceptron:
                 h, v = [], []
                 v.append(np.array(u[:-1]))
                 for layer in self.matrix_arr:
-                    h.append(np.atleast_1d(layer @ v[-1]))
+                    # Temporarily dropout nodes with probs self.input_keep_prob or self.hidden_keep_prob
+                    if layer is self.matrix_arr[0]:
+                        prob = self.input_keep_prob
+                    else:
+                        prob = self.hidden_keep_prob
+                    layer_cpy = layer.copy()
+                    for i in range(len(layer)):
+                        if random.uniform(0, 1) > prob:
+                            print("Node dropped")
+                            layer_cpy[i] = np.zeros(len(layer[i]))
+                    h.append(np.atleast_1d(layer_cpy @ v[-1]))
                     v.append(np.atleast_1d(np.array(self.g(h[-1]))))
 
                 res = v[-1]
@@ -93,6 +105,14 @@ class Perceptron:
 
             if error < min_error:
                 min_error = error
+
+        # Scale weights down to account for dropout in training
+        for layer_idx in range(len(self.matrix_arr)):
+            if layer_idx == 0:
+                prob = self.input_keep_prob
+            else:
+                prob = self.hidden_keep_prob
+            self.matrix_arr[layer_idx] = np.array([prob * i for i in self.matrix_arr[layer_idx]])
 
         fig = plt.figure(figsize=(14, 9))
         plt.plot(range(1, n + 1), errors)

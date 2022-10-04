@@ -25,7 +25,8 @@ def main(config_path=None, data_path=None):
         data = json.load(f)[dataset]
         matrix = [np.atleast_2d(np.zeros((1, 3)))]
         perceptron = Perceptron(
-            matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
+            matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta,
+            input_keep_prob=0.8, hidden_keep_prob=0.5
         )
         perceptron.train(data, error, max_iter, learning)
         # print(perceptron.matrix_arr)
