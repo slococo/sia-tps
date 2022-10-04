@@ -39,7 +39,7 @@ def k_fold(dataset, k, activation_function, eta, neurone_matrix, error, max_iter
             neurone_matrix, None, activation_function, activation_function, len(neurone_matrix) + 1, eta
         )
 
-        perceptron.train(dataset[Elimirar la row que no quiero].reshape(k*partition_size, 4), error, max_iter, learning)
+        perceptron.train(np.delete(dataset, i, 0).reshape((k-1)*partition_size, 4), error, max_iter, learning)
 
         results = perceptron.predict(partitioned_dataset[i])
 
