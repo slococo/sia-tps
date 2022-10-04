@@ -1,7 +1,7 @@
 {
-  "dataset": "xor",
-  "learning": "online",
+  "dataset": "and",
+  "learning": "batch",
   "max_iter": 10000,
-  "error": 1e-6,
-  "eta": 1
+  "error": 1e-4,
+  "eta": 0.01
 }

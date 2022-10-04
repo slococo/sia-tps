@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from tp2 import utils
-from tp2.ej2 import graph
+from tp2.ej3 import graph
 from tp2.perceptron import Perceptron
 
 
@@ -79,6 +79,37 @@ def main(config_path=None):
 
     # graph.plot(df)
 
+def main_xor(config_path=None, data_path=None):
+    if config_path is None:
+        config_path = "tp2/ej3/config.json"
+    if data_path is None:
+        data_path = "tp2/ej3/data.json"
+
+    with open(config_path) as f:
+        data = json.load(f)
+        learning = data["learning"]
+        max_iter = data["max_iter"]
+        error = data["error"]
+        eta = data["eta"]
+
+    with open(data_path) as f:
+        data = json.load(f)["xor"]
+        matrix1 = np.random.rand(6, 3)
+        matrix3 = np.random.rand(3, 6)
+        matrix2 = np.atleast_2d(np.random.rand(1, 3))
+        perceptron = Perceptron(
+            [matrix1, matrix3, matrix2], None, utils.tanh_arr, utils.tanh_diff, -1, eta
+        )
+
+        perceptron.train(data, error, max_iter, learning)
+        # print(perceptron.matrix_arr)
+
+        print("x1: 1 ~ x2: 1 ~ exp = -1 ~ res = ", perceptron.predict([1, 1, 1]))
+        print("x1: -1 ~ x2: -1 ~ exp = -1 ~ res = ", perceptron.predict([1, -1, -1]))
+        print("x1: -1 ~ x2: 1 ~ exp = 1 ~ res = ", perceptron.predict([1, -1, 1]))
+        print("x1: 1 ~ x2: -1 ~ exp = 1 ~ res = ", perceptron.predict([1, 1, -1]))
+
+
 if __name__ == "__main__":
-    main("config.json")
+    main_xor("config.json", "data.json")
 

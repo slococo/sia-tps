@@ -4,6 +4,7 @@ import pickle
 import random
 
 import numpy as np
+from matplotlib import pyplot as plt, cm
 
 
 class Perceptron:
@@ -44,6 +45,7 @@ class Perceptron:
         return out
 
     def batch(self, data, error_max, max_iter, exp=None):
+        errors = []
         min_error = math.inf
         n = 0
         while min_error > error_max and n < max_iter:
@@ -79,16 +81,22 @@ class Perceptron:
                     aux = layer
                     j += 1
 
-                error += np.average((1 / 2) * (np.subtract(expected, res)) ** 2)
+                error += np.average((np.subtract(expected, res) / 2) ** 2)
 
             j = 0
             for layer in self.matrix_arr[::-1]:
-                layer += dw[j] / len(data)
+                layer += dw[j]
                 j += 1
+
+            error = error / len(data)
+            errors.append(error)
 
             if error < min_error:
                 min_error = error
 
+        fig = plt.figure(figsize=(14, 9))
+        plt.plot(range(1, n + 1), errors)
+        plt.show()
         print(n)
         print(min_error)
         print(self.matrix_arr)

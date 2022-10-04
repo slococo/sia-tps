@@ -28,7 +28,7 @@ def main(config_path=None, data_path=None):
             matrix, None, utils.tanh_arr, utils.tanh_diff, len(matrix) + 1, eta
         )
         perceptron.train(data, error, max_iter, learning)
-        print(perceptron.matrix_arr)
+        # print(perceptron.matrix_arr)
         print("x: 1 ~ y: 1")
         print(perceptron.predict([1, 1, 1]))
         print("x: -1 ~ y: -1")

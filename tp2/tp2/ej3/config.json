@@ -1,6 +1,6 @@
 {
   "learning": "batch",
-  "max_iter": 10000,
-  "error": 1e-6,
-  "eta": 2
+  "max_iter": 50000,
+  "error": 1e-5,
+  "eta": 0.01
 }
