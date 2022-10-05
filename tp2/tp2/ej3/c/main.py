@@ -13,9 +13,9 @@ from tp2.ej3.c.wrapper import Wrapper
 from tp2.perceptron import Perceptron
 
 
-def res_index(x):
+def res_index(x, n):
     res = np.full_like(x, fill_value=-1)
-    res[np.argmax(x)] = 1
+    res[round(n)] = 1
     return res
 
 
@@ -54,20 +54,24 @@ def main(config_path=None):
     # data_normalised = np.subtract(
     #     2 * (np.subtract(data_matrix, data_min) / (np.max(data_matrix) - data_min)), 1
     # )
+
+    # data_min = np.min(data_matrix)
+    # data_normalised = np.subtract(
+    #     2 * (np.subtract(data_matrix, data_min) / (np.max(data_matrix) - data_min)), 1
+    # )
     data_normalised = data_matrix
     data_normalised = np.concatenate((data_normalised, res_matrix), axis=1)
 
     training_data = data_normalised
 
     # perceptron.train(training_data, error, max_iter, learning, res_index)
-    historic, errors = perceptron.train(training_data, error, max_iter, learning, res_index)
+    historic, errors = perceptron.train(
+        training_data, error, max_iter, learning, res_index
+    )
 
     for data in data_normalised:
         print(
-            "expected: ",
-            data[-1],
-            "\tout: ",
-            np.argmax(perceptron.predict(data[:-1]))
+            "expected: ", data[-1], "\tout: ", np.argmax(perceptron.predict(data[:-1]))
         )
 
     wrapper = Wrapper(perceptron, data, historic, errors)
@@ -82,5 +86,7 @@ def main(config_path=None):
 if __name__ == "__main__":
     main("config.json")
     # wrapper = Wrapper.load()
-    # print(wrapper.perceptron.matrix_arr)
-
+    # if wrapper.historic:
+    #     fig = plt.figure(figsize=(14, 9))
+    #     plt.plot(range(1, len(wrapper.errors) + 1), wrapper.errors)
+    #     plt.show()

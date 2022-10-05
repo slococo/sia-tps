@@ -1,13 +1,11 @@
 import matplotlib
-
 import matplotlib.pyplot as plt
 
 from tp2.ej2.wrapper import Wrapper
 
 matplotlib.use("TkAgg")
 
-from matplotlib.animation import FuncAnimation
-from matplotlib.animation import PillowWriter
+from matplotlib.animation import FuncAnimation, PillowWriter
 
 
 def create_animation(data, historic):
@@ -25,11 +23,16 @@ def create_animation(data, historic):
         for j in range(0, len(data)):
             print(len(data))
             val = 0xCC * ((res[j][0] + 1) / 2)
-            ax.scatter(data[j][0], data[j][1], data[j][2], color="#{:02x}{:02x}{:02x}".format(round(val), 0x00, round(val / 3)))
+            ax.scatter(
+                data[j][0],
+                data[j][1],
+                data[j][2],
+                color="#{:02x}{:02x}{:02x}".format(round(val), 0x00, round(val / 3)),
+            )
 
     ani = FuncAnimation(fig, animate, frames=len(historic), interval=86, repeat=False)
     plt.close()
-    ani.save("anim.gif", writer='PillowWriter', fps=12)
+    ani.save("anim.gif", writer="PillowWriter", fps=12)
 
 
 if __name__ == "__main__":

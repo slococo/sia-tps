@@ -1,6 +1,7 @@
 import json
 
 import matplotlib
+
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 

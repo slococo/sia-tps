@@ -4,7 +4,8 @@ import pickle
 import random
 
 import numpy as np
-from matplotlib import pyplot as plt, cm
+from matplotlib import cm
+from matplotlib import pyplot as plt
 
 
 class Perceptron:
@@ -69,8 +70,6 @@ class Perceptron:
                     h.append(np.atleast_1d(layer @ v[-1]))
                     v.append(np.atleast_1d(np.array(self.g(h[-1]))))
 
-                # print(v[-1])
-
                 if len(historic) <= n - 1:
                     historic.append([])
                 historic[n - 1].append(v[-1])
@@ -78,9 +77,8 @@ class Perceptron:
                 res = v[-1]
                 expected = u[-1]
                 if exp:
-                    res = exp(v[-1])
-                    expected = np.full_like(res, fill_value=-1)
-                    expected[round(u[-1:][0])] = 1
+                    # res = exp(v[-1])
+                    expected = exp(v[-1], expected)
 
                 d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
                 dw[0] += self.eta * (d.T.dot(np.atleast_2d(v[-2])))
@@ -88,7 +86,9 @@ class Perceptron:
                 j = 0
                 for layer in self.matrix_arr[::-1]:
                     if j != 0:
-                        d = np.atleast_2d(aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T).T
+                        d = np.atleast_2d(
+                            aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
+                        ).T
                         dw[j] += self.eta * d.T.dot((np.atleast_2d(v[-(j + 2)])))
                     # print(d)
                     aux = layer
@@ -146,7 +146,9 @@ class Perceptron:
                 j = 0
                 for layer in self.matrix_arr[::-1]:
                     if j != 0:
-                        d = np.atleast_2d(aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T).T
+                        d = np.atleast_2d(
+                            aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
+                        ).T
                         dw[j] = self.eta * d.T.dot((np.atleast_2d(v[-(j + 2)])))
                     aux = layer
                     layer += dw[j]
