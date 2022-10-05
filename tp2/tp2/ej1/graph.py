@@ -4,7 +4,6 @@ matplotlib.use("TkAgg")
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb
 from matplotlib import cm
 
 from tp2.perceptron import Perceptron
@@ -14,10 +13,8 @@ def plot(perceptron=None):
     if perceptron is None:
         perceptron = Perceptron.load()
 
-    # sb.set_style("darkgrid")
     x = np.outer(np.linspace(-3, 3, 32), np.ones(32))
     y = x.copy().T
-    print(perceptron.matrix_arr)
     coefs = perceptron.matrix_arr[0][0]
     z = np.tanh(coefs[0] + x * coefs[1] + y * coefs[2])
     fig = plt.figure(figsize=(14, 9))

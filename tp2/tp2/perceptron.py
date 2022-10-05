@@ -8,14 +8,18 @@ from matplotlib import pyplot as plt, cm
 
 
 class Perceptron:
-    def __init__(self, matrix_arr, optimizer, g, g_diff, eta):
-        self.matrix_arr = matrix_arr
+    def __init__(self, data_dim, dims, optimizer, g, g_diff, eta):
+        self.matrix_arr = []
+        aux = data_dim
+        for dim in dims:
+            self.matrix_arr.append(np.random.rand(dim, aux))
+            aux = dim
+
+        # self.matrix_arr = matrix_arr
         self.optimizer = optimizer
         self.g = g
         self.g_diff = g_diff
         self.eta = eta
-        self.data = None
-        self.historic = None
 
     def save(self, file_name=None):
         if file_name is None:
@@ -47,7 +51,7 @@ class Perceptron:
         return out
 
     def batch(self, data, error_max, max_iter, exp=None):
-        errors, self.historic = [], []
+        errors, historic = [], []
         min_error = math.inf
         n = 0
         while min_error > error_max and n < max_iter:
@@ -65,9 +69,11 @@ class Perceptron:
                     h.append(np.atleast_1d(layer @ v[-1]))
                     v.append(np.atleast_1d(np.array(self.g(h[-1]))))
 
-                if len(self.historic) <= n - 1:
-                    self.historic.append([])
-                self.historic[n - 1].append(v[-1])
+                # print(v[-1])
+
+                if len(historic) <= n - 1:
+                    historic.append([])
+                historic[n - 1].append(v[-1])
 
                 res = v[-1]
                 expected = u[-1]
@@ -84,13 +90,17 @@ class Perceptron:
                     if j != 0:
                         d = np.atleast_2d(aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T).T
                         dw[j] += self.eta * d.T.dot((np.atleast_2d(v[-(j + 2)])))
+                    # print(d)
                     aux = layer
                     j += 1
 
+                # print(np.max((np.subtract(expected, res) / 2) ** 2))
+                # print()
                 error += np.max((np.subtract(expected, res) / 2) ** 2)
 
             j = 0
             for layer in self.matrix_arr[::-1]:
+                aux = layer.copy()
                 layer += dw[j]
                 j += 1
 
@@ -100,13 +110,10 @@ class Perceptron:
             if error < min_error:
                 min_error = error
 
-        fig = plt.figure(figsize=(14, 9))
-        plt.plot(range(1, n + 1), errors)
-        plt.show()
         print(n)
         print(min_error)
         print(self.matrix_arr)
-        return self.historic
+        return historic, errors
 
     def online(self, data, error_max, max_iter, exp=None):
         min_error = math.inf
@@ -163,3 +170,5 @@ class Perceptron:
                     print(min_error)
                     print(self.matrix_arr)
                     break
+
+        return None, None
