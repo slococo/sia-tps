@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 
-from tp2 import utils
+from tp2 import utils, optimizer
 from tp2.ej3.c.wrapper import Wrapper
 from tp2.perceptron import Perceptron
 
@@ -27,7 +27,8 @@ def main(config_path=None, data_path=None):
         data = json.load(f)["xor"]
         matr_dims = [6, 3, 1]
         perceptron = Perceptron(
-            len(data[0]) - 1, matr_dims, None, utils.tanh_arr, utils.tanh_diff, eta
+            len(data[0]) - 1, matr_dims, optimizer.momentum, utils.tanh_arr,
+            utils.tanh_diff, eta, optimizer.adaptative_eta
         )
 
         historic, errors = perceptron.train(data, error, max_iter, learning)

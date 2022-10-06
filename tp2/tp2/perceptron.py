@@ -4,23 +4,22 @@ import pickle
 import random
 
 import numpy as np
-from matplotlib import cm
-from matplotlib import pyplot as plt
-
+from tp2.optimizer import gradient
 
 class Perceptron:
-    def __init__(self, data_dim, dims, optimizer, g, g_diff, eta):
+    def __init__(self, data_dim, dims, optimizer, g, g_diff, eta, eta_adapt):
         self.matrix_arr = []
         aux = data_dim
         for dim in dims:
             self.matrix_arr.append(np.random.rand(dim, aux))
             aux = dim
-
-        # self.matrix_arr = matrix_arr
-        self.optimizer = optimizer
+        self.optimizer = gradient
+        if optimizer:
+            self.optimizer = optimizer
         self.g = g
         self.g_diff = g_diff
         self.eta = eta
+        self.eta_adapt = eta_adapt
 
     def save(self, file_name=None):
         if file_name is None:
@@ -77,11 +76,12 @@ class Perceptron:
                 res = v[-1]
                 expected = u[-1]
                 if exp:
-                    # res = exp(v[-1])
                     expected = exp(v[-1], expected)
 
+                if self.eta_adapt:
+                    self.eta = self.eta_adapt(np.average(np.subtract(expected, res)), self.eta)
                 d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
-                dw[0] += self.eta * (d.T.dot(np.atleast_2d(v[-2])))
+                dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
 
                 j = 0
                 for layer in self.matrix_arr[::-1]:
@@ -89,26 +89,23 @@ class Perceptron:
                         d = np.atleast_2d(
                             aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
                         ).T
-                        dw[j] += self.eta * d.T.dot((np.atleast_2d(v[-(j + 2)])))
-                    # print(d)
+                        dw[j] += self.optimizer(d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j)
                     aux = layer
                     j += 1
 
-                # print(np.max((np.subtract(expected, res) / 2) ** 2))
-                # print()
-                error += np.max((np.subtract(expected, res) / 2) ** 2)
-
-            j = 0
-            for layer in self.matrix_arr[::-1]:
-                aux = layer.copy()
-                layer += dw[j]
-                j += 1
+                error += np.average((np.subtract(expected, res) / 2) ** 2)
 
             error = error / len(data)
             errors.append(error)
 
             if error < min_error:
                 min_error = error
+
+            j = 0
+            for layer in self.matrix_arr[::-1]:
+                aux = layer.copy()
+                layer += dw[j]
+                j += 1
 
         print(n)
         print(min_error)
@@ -137,7 +134,7 @@ class Perceptron:
                 expected = u[-1]
                 if exp:
                     res = exp(v[-1])
-                    expected = np.full_like(res, fill_value=-1)
+                    expected = np.full_like(res, fill_value=0)
                     expected[round(u[-1:][0])] = 1
 
                 d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
@@ -162,7 +159,7 @@ class Perceptron:
                         he.append(np.atleast_1d(layer @ ve[-1]))
                         ve.append(np.atleast_1d(np.array(self.g(he[-1]))))
 
-                    error += np.average((1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2)
+                    error += np.average((np.subtract(a[-1:], ve[-1]) / 2) ** 2)
 
                 if error < min_error:
                     min_error = error

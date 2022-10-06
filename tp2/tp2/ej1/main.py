@@ -1,6 +1,6 @@
 import json
 
-from tp2 import utils
+from tp2 import utils, optimizer
 from tp2.ej1 import graph
 from tp2.perceptron import Perceptron
 
@@ -32,7 +32,7 @@ def main(config_path=None, data_path=None):
 
     matr_dims = [1]
     perceptron = Perceptron(
-        len(data[0]) - 1, matr_dims, None, utils.tanh_arr, utils.tanh_diff, eta
+        len(data[0]) - 1, matr_dims, None, utils.tanh_arr, utils.tanh_diff, eta, optimizer.adaptative_eta
     )
 
     perceptron.train(data, error, max_iter, learning)

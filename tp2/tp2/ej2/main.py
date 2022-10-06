@@ -1,12 +1,14 @@
 import json
 
+import matplotlib
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
 
 matplotlib.use("TkAgg")
 
-from tp2 import utils
+from matplotlib import pyplot as plt
+
+from tp2 import utils, optimizer
 from tp2.ej2 import animation, graph
 from tp2.ej2.wrapper import Wrapper
 from tp2.perceptron import Perceptron
@@ -39,7 +41,8 @@ def main(config_path=None):
 
     matr_dims = [1]
     perceptron = Perceptron(
-        len(data_matrix[0]), matr_dims, None, utils.tanh_arr, utils.tanh_diff, eta
+        len(data_matrix[0]), matr_dims, optimizer.momentum, utils.tanh_arr,
+        utils.tanh_diff, eta, optimizer.adaptative_eta
     )
 
     res_min = np.min(res_matrix)
