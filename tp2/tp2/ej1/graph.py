@@ -1,17 +1,17 @@
 import matplotlib
 
+from tp2.ej1.wrapper import Wrapper
+
 matplotlib.use("TkAgg")
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from tp2.perceptron import Perceptron
-
 
 def plot(perceptron=None):
     if perceptron is None:
-        perceptron = Perceptron.load()
+        perceptron = Wrapper.load().perceptron
 
     x = np.outer(np.linspace(-3, 3, 32), np.ones(32))
     y = x.copy().T
@@ -25,6 +25,7 @@ def plot(perceptron=None):
     x = np.array([1, 1, -1, -1])
     y = np.array([1, -1, -1, 1])
     ax.scatter(x, y, color="black", depthshade=False, alpha=1)
+    # fig.savefig('temp.png', dpi=fig.dpi)
     plt.show()
 
 

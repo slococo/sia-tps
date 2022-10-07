@@ -68,4 +68,3 @@ cython_debug/
 .python-version
 .vscode/*
 *.obj
-*.gif

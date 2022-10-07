@@ -1,6 +1,10 @@
 {
   "learning": "batch",
-  "max_iter": 300000,
+  "optimizer": "momentum",
+  "g_function": "tanh",
+  "beta": 1,
+  "eta_adapt": "adaptative_eta",
+  "max_iter": 200000,
   "error": 1e-5,
   "eta": 0.1
 }

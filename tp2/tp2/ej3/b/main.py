@@ -9,19 +9,28 @@ matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
 
-from tp2 import utils, optimizer
-from tp2.ej2 import animation, graph
-from tp2.ej2.wrapper import Wrapper
+from tp2 import utils
+from tp2.ej3.c.wrapper import Wrapper
 from tp2.perceptron import Perceptron
 from tp2.optimizer import momentum, adaptative_eta
 
 
-def main(config_path=None):
-    if config_path is None:
-        config_path = "tp2/ej2/config.json"
+def res_index(x, n):
+    res = np.full_like(x, fill_value=-1)
+    res[round(n)] = 1
+    return res
 
-    path = "dataset.csv"
-    data_column_names = ["x1", "x2", "x3"]
+
+def main(config_path=None, data_path=None):
+    if config_path is None:
+        config_path = "tp2/ej3/b/config.json"
+
+    if data_path is None:
+        path = "tp2/ej3/b/digitsformat.csv"
+    else:
+        path = data_path
+
+    data_column_names = ["x" + str(i) for i in range(1, 36)]
     expected_column_names = ["y"]
 
     df = pd.read_csv(path)
@@ -62,52 +71,45 @@ def main(config_path=None):
             g_diff = utils.ident_diff
     utils.set_b(beta)
 
-    matr_dims = [1]
+    matr_dims = [21, 2]
     perceptron = Perceptron(
         len(data_matrix[0]), matr_dims, optimizer, g_function, g_diff, eta, eta_adapt
     )
 
-    res_min = np.min(res_matrix)
-    res_normalised = np.subtract(
-        2 * (np.subtract(res_matrix, res_min) / (np.max(res_matrix) - res_min)), 1
-    )
     data_min = np.min(data_matrix)
     data_normalised = np.subtract(
         2 * (np.subtract(data_matrix, data_min) / (np.max(data_matrix) - data_min)), 1
     )
 
-    data_normalised = np.concatenate((data_normalised, res_normalised), axis=1)
+    data_normalised = np.concatenate((data_normalised, res_matrix), axis=1)
 
-    training_data = data_normalised[: round(len(data_normalised) / 2)]
-    # training_data = data_normalised[: round(len(data_normalised))]
+    training_data = data_normalised
 
+    exp = res_index
     start_time = time.time()
-    historic, errors, _ = perceptron.train(training_data, error, max_iter, learning)
+    historic, errors, _ = perceptron.train(training_data, error, max_iter, learning, exp)
     print("Zeit: {:.2f}s".format((time.time() - start_time)))
 
-    a, b = np.min(res_matrix), np.max(res_matrix)
     predict_error = 0
     for data in data_normalised:
         pred = perceptron.predict(data[:-1])
-        predict_error += np.average((np.subtract(data[-1], pred) / 2) ** 2)
+        predict_error += np.average((np.subtract(exp(pred, data[-1]), pred) / 2) ** 2)
         print(
-            "expected: ",
-            utils.denormalise(data[-1:], -1, 1, a, b),
-            "\tout: ",
-            utils.denormalise(pred, -1, 1, a, b),
+            "expected: ", round(data[-1]), "\t\tout: ", np.argmax(pred)
         )
 
     predict_error /= len(data_normalised)
     print("Error with full data: ", predict_error)
 
-    wrapper = Wrapper(perceptron, data, historic, learning)
+    wrapper = Wrapper(perceptron, data, historic, errors)
     wrapper.save()
 
-    if historic:
+    if wrapper.historic:
         fig = plt.figure(figsize=(14, 9))
-        plt.plot(range(1, len(errors) + 1), errors)
+        plt.plot(range(1, len(wrapper.errors) + 1), wrapper.errors)
+        plt.ylim(0, 1)
         plt.show()
 
 
 if __name__ == "__main__":
-    main("config.json")
+    main("config.json", "digitsformat.csv")

@@ -21,7 +21,6 @@ def create_animation(data, historic):
 
         res = historic[i]
         for j in range(0, len(data)):
-            print(len(data))
             val = 0xCC * ((res[j][0] + 1) / 2)
             ax.scatter(
                 data[j][0],

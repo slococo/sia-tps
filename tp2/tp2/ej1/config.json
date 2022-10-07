@@ -1,7 +1,11 @@
 {
   "dataset": "and",
   "learning": "online",
-  "max_iter": 10000,
+  "optimizer": "gradient",
+  "g_function": "step",
+  "beta": 1,
+  "eta_adapt": null,
+  "max_iter": 100,
   "error": 1e-4,
   "eta": 0.01
 }

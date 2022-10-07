@@ -30,7 +30,12 @@ def ident_diff(x):
     return res
 
 
-b = 1
+b = 0.05
+
+
+def set_b(b_val):
+    global b
+    b = b_val
 
 
 def tanh_diff(x):
