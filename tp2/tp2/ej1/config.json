@@ -1,7 +1,7 @@
 {
   "dataset": "and",
-  "learning": "online",
-  "optimizer": "gradient",
+  "learning": "batch",
+  "optimizer": "momentum",
   "g_function": "step",
   "beta": 1,
   "eta_adapt": null,

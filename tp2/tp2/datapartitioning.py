@@ -13,7 +13,7 @@ def holdout(
     training_probability,
     activation_function,
     eta,
-    neurone_matrix,
+    neuron_matrix,
     error,
     max_iter,
     learning,
@@ -22,7 +22,7 @@ def holdout(
     np.random.shuffle(dataset)
 
     perceptron = Perceptron(
-        neurone_matrix, None, activation_function, activation_function, eta
+        neuron_matrix, None, activation_function, activation_function, eta
     )
 
     perceptron.train(
@@ -36,7 +36,7 @@ def holdout(
         dataset[int(len(dataset) * training_probability) + 1 :, :-1]
     )
 
-    expected = np.squeeze(dataset[int(len(dataset) * training_probability) + 1 :, -1:])
+    expected = np.squeeze(dataset[int(len(dataset) * training_probability) + 1:, -1:])
 
     return TestingResult(expected, results)
 

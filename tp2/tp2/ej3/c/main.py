@@ -70,6 +70,10 @@ def main(config_path=None, data_path=None):
             g_diff = utils.ident_diff
     utils.set_b(beta)
 
+    # matr_dims = [30, 22, 16, 10]
+    # perceptron = Perceptron(
+    #     len(data_matrix[0]), matr_dims, optimizer, g_function, g_diff, eta, eta_adapt, 0.8, 0.5
+    # )
     matr_dims = [21, 10]
     perceptron = Perceptron(
         len(data_matrix[0]), matr_dims, optimizer, g_function, g_diff, eta, eta_adapt

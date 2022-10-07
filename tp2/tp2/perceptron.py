@@ -4,7 +4,6 @@ import pickle
 import random
 
 import numpy as np
-from tp2.optimizer import gradient
 
 
 class Perceptron:
@@ -21,6 +20,9 @@ class Perceptron:
         self.eta_adapt = eta_adapt
         self.input_keep_prob = input_keep_prob
         self.hidden_keep_prob = hidden_keep_prob
+        self.dropout = False
+        if self.input_keep_prob != 1 or self.hidden_keep_prob != 1:
+            self.dropout = True
 
     def save(self, file_name=None):
         if file_name is None:
@@ -73,16 +75,18 @@ class Perceptron:
                 h, v = [], []
                 v.append(np.array(u[:-1]))
                 for layer in self.matrix_arr:
-                    if layer is self.matrix_arr[0]:
-                        prob = self.input_keep_prob
+                    if self.dropout:
+                        if layer is self.matrix_arr[0]:
+                            prob = self.input_keep_prob
+                        else:
+                            prob = self.hidden_keep_prob
+                        layer_cpy = layer.copy()
+                        for i in range(len(layer)):
+                            if random.uniform(0, 1) > prob:
+                                layer_cpy[i] = np.zeros(len(layer[i]))
+                        h.append(np.atleast_1d(layer_cpy @ v[-1]))
                     else:
-                        prob = self.hidden_keep_prob
-                    layer_cpy = layer.copy()
-                    for i in range(len(layer)):
-                        if random.uniform(0, 1) > prob:
-                            print("Node dropped")
-                            layer_cpy[i] = np.zeros(len(layer[i]))
-                    h.append(np.atleast_1d(layer_cpy @ v[-1]))
+                        h.append(np.atleast_1d(layer @ v[-1]))
                     v.append(np.atleast_1d(np.array(self.g(h[-1]))))
 
                 if len(historic) <= n - 1:
@@ -127,12 +131,13 @@ class Perceptron:
                 layer += dw[j]
                 j += 1
 
-        for layer_idx in range(len(self.matrix_arr)):
-            if layer_idx == 0:
-                prob = self.input_keep_prob
-            else:
-                prob = self.hidden_keep_prob
-            self.matrix_arr[layer_idx] = np.array([prob * i for i in self.matrix_arr[layer_idx]])
+        if self.dropout:
+            for layer_idx in range(len(self.matrix_arr)):
+                if layer_idx == 0:
+                    prob = self.input_keep_prob
+                else:
+                    prob = self.hidden_keep_prob
+                self.matrix_arr[layer_idx] = np.array([prob * i for i in self.matrix_arr[layer_idx]])
 
         print("Times: ", n)
         print("Error: ", error)

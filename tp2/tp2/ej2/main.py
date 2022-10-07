@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 from tp2 import utils
 from tp2.ej2 import animation, graph
 from tp2.ej2.wrapper import Wrapper
-from tp2.optimizer import adaptative_eta, momentum
+from tp2.optimizer import adaptative_eta, momentum, rms_prop, adam, adamax
 from tp2.perceptron import Perceptron
 
 
@@ -98,9 +98,6 @@ def main(config_path=None):
 
     predict_error /= len(data_normalised)
     print("Error with full data: ", predict_error)
-
-    wrapper = Wrapper(perceptron, data, historic, learning)
-    wrapper.save()
 
     if historic:
         fig = plt.figure(figsize=(14, 9))
