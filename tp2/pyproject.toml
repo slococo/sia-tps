@@ -37,7 +37,9 @@ profile = "black"
 [tool.poetry.scripts]
 ej1 = "tp2.ej1.main:main"
 ej2 = "tp2.ej2.main:main"
-ej3 = "tp2.ej3.main:main"
+ej3a = "tp2.ej3.a.main:main"
+ej3b = "tp2.ej3.b.main:main"
+ej3c = "tp2.ej3.c.main:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

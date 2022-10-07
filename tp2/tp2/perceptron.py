@@ -4,16 +4,21 @@ import pickle
 import random
 
 import numpy as np
-from matplotlib import pyplot as plt, cm
+from tp2.optimizer import gradient
 
 
 class Perceptron:
-    def __init__(self, matrix_arr, optimizer, g, g_diff, p, eta, input_keep_prob=1, hidden_keep_prob=1):
-        self.matrix_arr = matrix_arr
+    def __init__(self, data_dim, dims, optimizer, g, g_diff, eta, eta_adapt, input_keep_prob=1, hidden_keep_prob=1):
+        self.matrix_arr = []
+        aux = data_dim
+        for dim in dims:
+            self.matrix_arr.append(np.random.rand(dim, aux))
+            aux = dim
         self.optimizer = optimizer
         self.g = g
         self.g_diff = g_diff
         self.eta = eta
+        self.eta_adapt = eta_adapt
         self.input_keep_prob = input_keep_prob
         self.hidden_keep_prob = hidden_keep_prob
 
@@ -33,9 +38,9 @@ class Perceptron:
     def train(self, data, error_max, max_iter, method, exp=None):
         match method:
             case "online":
-                self.online(data, error_max, max_iter, exp)
+                return self.online(data, error_max, max_iter, exp)
             case "batch":
-                self.batch(data, error_max, max_iter, exp)
+                return self.batch(data, error_max, max_iter, exp)
             case _:
                 raise RuntimeError("Unknown method " + method)
 
@@ -47,10 +52,10 @@ class Perceptron:
         return out
 
     def batch(self, data, error_max, max_iter, exp=None):
-        errors = []
-        min_error = math.inf
+        errors, historic, layer_historic = [], [], []
+        error = math.inf
         n = 0
-        while min_error > error_max and n < max_iter:
+        while error > error_max and n < max_iter:
             error = 0
 
             dw = []
@@ -58,11 +63,16 @@ class Perceptron:
                 dw.append(np.atleast_2d(np.zeros_like(i)))
 
             n += 1
+            if len(layer_historic) <= n - 1:
+                layer_historic.append([])
+
+            for layer in self.matrix_arr:
+                layer_historic[n - 1].append(layer.copy())
+
             for u in data:
                 h, v = [], []
                 v.append(np.array(u[:-1]))
                 for layer in self.matrix_arr:
-                    # Temporarily dropout nodes with probs self.input_keep_prob or self.hidden_keep_prob
                     if layer is self.matrix_arr[0]:
                         prob = self.input_keep_prob
                     else:
@@ -75,38 +85,48 @@ class Perceptron:
                     h.append(np.atleast_1d(layer_cpy @ v[-1]))
                     v.append(np.atleast_1d(np.array(self.g(h[-1]))))
 
+                if len(historic) <= n - 1:
+                    historic.append([])
+                historic[n - 1].append(v[-1])
+
                 res = v[-1]
                 expected = u[-1]
                 if exp:
-                    res = exp(v[-1])
-                    expected = np.full_like(res, fill_value=-1)
-                    expected[round(u[-1:][0])] = 1
+                    expected = exp(v[-1], expected)
 
+                if self.eta_adapt:
+                    self.eta = self.eta_adapt(
+                        np.average(np.subtract(expected, res)), self.eta
+                    )
                 d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
-                dw[0] += self.eta * (d.T.dot(np.atleast_2d(v[-2])))
+                dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
 
                 j = 0
                 for layer in self.matrix_arr[::-1]:
                     if j != 0:
-                        d = np.atleast_2d(aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T).T
-                        dw[j] += self.eta * d.T.dot((np.atleast_2d(v[-(j + 2)])))
+                        d = np.atleast_2d(
+                            aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
+                        ).T
+                        dw[j] += self.optimizer(
+                            d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j
+                        )
                     aux = layer
                     j += 1
 
                 error += np.average((np.subtract(expected, res) / 2) ** 2)
 
-            j = 0
-            for layer in self.matrix_arr[::-1]:
-                layer += dw[j]
-                j += 1
-
             error = error / len(data)
             errors.append(error)
 
-            if error < min_error:
-                min_error = error
+            if error <= error_max or n >= max_iter:
+                break
 
-        # Scale weights down to account for dropout in training
+            j = 0
+            for layer in self.matrix_arr[::-1]:
+                aux = layer.copy()
+                layer += dw[j]
+                j += 1
+
         for layer_idx in range(len(self.matrix_arr)):
             if layer_idx == 0:
                 prob = self.input_keep_prob
@@ -114,25 +134,28 @@ class Perceptron:
                 prob = self.hidden_keep_prob
             self.matrix_arr[layer_idx] = np.array([prob * i for i in self.matrix_arr[layer_idx]])
 
-        fig = plt.figure(figsize=(14, 9))
-        plt.plot(range(1, n + 1), errors)
-        plt.show()
-        print(n)
-        print(min_error)
-        print(self.matrix_arr)
+        print("Times: ", n)
+        print("Error: ", error)
+        return historic, errors, layer_historic
 
     def online(self, data, error_max, max_iter, exp=None):
-        min_error = math.inf
+        errors, historic, layer_historic = [], [], []
+        error = math.inf
         n = 0
-        data_copy = copy.copy(data)
-        while min_error > error_max and n < max_iter:
-            random.shuffle(data_copy)
+        k = 0
+        while error > error_max and n < max_iter:
+            error = 0
+
             dw = []
             for i in self.matrix_arr[::-1]:
                 dw.append(np.atleast_2d(np.zeros_like(i)))
 
             n += 1
+
+            data_copy = data.copy()
+            random.shuffle(data_copy)
             for u in data_copy:
+                k += 1
                 h, v = [], []
                 v.append(np.array(u[:-1]))
                 for layer in self.matrix_arr:
@@ -142,37 +165,56 @@ class Perceptron:
                 res = v[-1]
                 expected = u[-1]
                 if exp:
-                    res = exp(v[-1])
-                    expected = np.full_like(res, fill_value=-1)
-                    expected[round(u[-1:][0])] = 1
+                    expected = exp(v[-1], expected)
 
+                if self.eta_adapt:
+                    self.eta = self.eta_adapt(
+                        np.average(np.subtract(expected, res)), self.eta
+                    )
                 d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
-                dw[0] = self.eta * (d.T.dot(np.atleast_2d(v[-2])))
+                dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
 
                 j = 0
+                if len(layer_historic) <= k - 1:
+                    layer_historic.append([])
                 for layer in self.matrix_arr[::-1]:
                     if j != 0:
-                        d = np.atleast_2d(aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T).T
-                        dw[j] = self.eta * d.T.dot((np.atleast_2d(v[-(j + 2)])))
-                    aux = layer
+                        d = np.atleast_2d(
+                            aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
+                        ).T
+                        dw[j] = self.optimizer(
+                            d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j
+                        )
                     layer += dw[j]
+                    aux = layer
+                    layer_historic[k - 1].append(layer.copy())
                     j += 1
 
-                error = 0
                 for a in data_copy:
                     he, ve = [], []
                     ve.append(np.array(a[:-1]))
                     for layer in self.matrix_arr:
                         he.append(np.atleast_1d(layer @ ve[-1]))
                         ve.append(np.atleast_1d(np.array(self.g(he[-1]))))
+                    res = ve[-1]
+                    expected = a[-1]
 
-                    error += np.average((1 / 2) * (np.subtract(a[-1:], ve[-1])) ** 2)
+                    if len(historic) <= k - 1:
+                        historic.append([])
+                    aux = a[:-1].copy()
+                    aux.append(ve[-1])
+                    historic[k - 1].append(aux)
 
-                if error < min_error:
-                    min_error = error
+                    if exp:
+                        expected = exp(ve[-1], expected)
+                    error += np.average((np.subtract(expected, res) / 2) ** 2)
 
-                if min_error <= error_max or n >= max_iter:
-                    print(n)
-                    print(min_error)
-                    print(self.matrix_arr)
+                error = error / len(data)
+                errors.append(error)
+
+                if error <= error_max or n >= max_iter:
                     break
+
+        print("Times: ", n)
+        print("Error: ", error)
+        return historic, errors, layer_historic

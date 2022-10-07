@@ -4,7 +4,7 @@
   "g_function": "tanh",
   "beta": 1,
   "eta_adapt": "adaptative_eta",
-  "max_iter": 100000,
-  "error": 3e-4,
+  "max_iter": 200000,
+  "error": 1e-5,
   "eta": 0.1
 }

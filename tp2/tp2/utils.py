@@ -30,14 +30,19 @@ def ident_diff(x):
     return res
 
 
-b = 1
+b = 0.05
+
+
+def set_b(b_val):
+    global b
+    b = b_val
 
 
 def tanh_diff(x):
     res = []
     x = np.atleast_1d(x)
     for i in x:
-        res.append(b * (1 - math.tanh(b * i)))
+        res.append(b * (1 - ((math.tanh(b * i)) ** 2)))
     return res
 
 
