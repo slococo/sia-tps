@@ -6,8 +6,7 @@ import numpy as np
 
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
-
-from tp2 import utils, optimizer
+from tp2 import utils
 from tp2.ej3.c.wrapper import Wrapper
 from tp2.perceptron import Perceptron
 

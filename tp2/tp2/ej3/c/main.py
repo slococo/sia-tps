@@ -8,11 +8,10 @@ import pandas as pd
 matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
-
 from tp2 import utils
 from tp2.ej3.c.wrapper import Wrapper
+from tp2.optimizer import adaptative_eta, momentum
 from tp2.perceptron import Perceptron
-from tp2.optimizer import momentum, adaptative_eta
 
 
 def res_index(x, n):
@@ -86,7 +85,9 @@ def main(config_path=None, data_path=None):
     training_data = data_normalised
 
     start_time = time.time()
-    historic, errors, _ = perceptron.train(training_data, error, max_iter, learning, res_index)
+    historic, errors, _ = perceptron.train(
+        training_data, error, max_iter, learning, res_index
+    )
     print("Zeit: {:.2f}s".format((time.time() - start_time)))
 
     for data in data_normalised:

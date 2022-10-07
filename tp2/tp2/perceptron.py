@@ -84,7 +84,9 @@ class Perceptron:
                     expected = exp(v[-1], expected)
 
                 if self.eta_adapt:
-                    self.eta = self.eta_adapt(np.average(np.subtract(expected, res)), self.eta)
+                    self.eta = self.eta_adapt(
+                        np.average(np.subtract(expected, res)), self.eta
+                    )
                 d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
                 dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
 
@@ -94,7 +96,9 @@ class Perceptron:
                         d = np.atleast_2d(
                             aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
                         ).T
-                        dw[j] += self.optimizer(d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j)
+                        dw[j] += self.optimizer(
+                            d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j
+                        )
                     aux = layer
                     j += 1
 
@@ -146,7 +150,9 @@ class Perceptron:
                     expected = exp(v[-1], expected)
 
                 if self.eta_adapt:
-                    self.eta = self.eta_adapt(np.average(np.subtract(expected, res)), self.eta)
+                    self.eta = self.eta_adapt(
+                        np.average(np.subtract(expected, res)), self.eta
+                    )
                 d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
                 dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
 
@@ -158,7 +164,9 @@ class Perceptron:
                         d = np.atleast_2d(
                             aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
                         ).T
-                        dw[j] = self.optimizer(d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j)
+                        dw[j] = self.optimizer(
+                            d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j
+                        )
                     layer += dw[j]
                     aux = layer
                     layer_historic[k - 1].append(layer.copy())

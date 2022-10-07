@@ -3,17 +3,15 @@ import time
 
 import matplotlib
 import numpy as np
-
 from tp2.ej1.animation import create_animation
 
 matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
-
 from tp2 import utils
 from tp2.ej1.wrapper import Wrapper
+from tp2.optimizer import adaptative_eta, gradient, momentum
 from tp2.perceptron import Perceptron
-from tp2.optimizer import momentum, adaptative_eta, gradient
 
 
 def main(config_path=None, data_path=None):
@@ -73,18 +71,36 @@ def main(config_path=None, data_path=None):
     for i in data:
         print(i[:-1], i[-1], perceptron.predict(i[:-1]))
 
-    wrapper = Wrapper(perceptron, data, historic, layer_historic, errors, learning, g_function)
+    wrapper = Wrapper(
+        perceptron, data, historic, layer_historic, errors, learning, g_function
+    )
     wrapper.save()
 
     if wrapper.errors:
         fig = plt.figure(figsize=(14, 9))
         plt.plot(range(1, len(wrapper.errors) + 1), wrapper.errors)
         plt.ylim(0, 1)
-        fig.savefig("anim-" + g_function + "-" + learning + "-" + perceptron.optimizer.__name__ + "-error.png", dpi=fig.dpi)
+        fig.savefig(
+            "anim-"
+            + g_function
+            + "-"
+            + learning
+            + "-"
+            + perceptron.optimizer.__name__
+            + "-error.png",
+            dpi=fig.dpi,
+        )
         plt.show()
 
     if wrapper.historic:
-        create_animation(wrapper.data, wrapper.historic, wrapper.layer_historic, wrapper.perceptron, wrapper.learning, wrapper.g_function)
+        create_animation(
+            wrapper.data,
+            wrapper.historic,
+            wrapper.layer_historic,
+            wrapper.perceptron,
+            wrapper.learning,
+            wrapper.g_function,
+        )
 
 
 if __name__ == "__main__":

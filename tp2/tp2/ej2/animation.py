@@ -1,6 +1,5 @@
 import matplotlib
 import matplotlib.pyplot as plt
-
 from tp2.ej2.wrapper import Wrapper
 
 matplotlib.use("TkAgg")

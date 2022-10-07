@@ -2,7 +2,9 @@ import pickle
 
 
 class Wrapper:
-    def __init__(self, perceptron, data, historic, layer_historic, errors, learning, g_function):
+    def __init__(
+        self, perceptron, data, historic, layer_historic, errors, learning, g_function
+    ):
         self.perceptron = perceptron
         self.data = data
         self.historic = historic
