@@ -10,7 +10,7 @@ matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 from tp2 import utils
 from tp2.ej1.wrapper import Wrapper
-from tp2.optimizer import adaptative_eta, gradient, momentum, rms_prop
+from tp2.optimizer import *
 from tp2.perceptron import Perceptron
 
 
@@ -32,6 +32,7 @@ def main(config_path=None, data_path=None):
             max_iter = data["max_iter"]
             error = data["error"]
             eta = data["eta"]
+            beta = 1
     except FileNotFoundError:
         raise "Couldn't find config path"
 
@@ -92,15 +93,15 @@ def main(config_path=None, data_path=None):
         )
         plt.show()
 
-    if wrapper.historic:
-        create_animation(
-            wrapper.data,
-            wrapper.historic,
-            wrapper.layer_historic,
-            wrapper.perceptron,
-            wrapper.learning,
-            wrapper.g_function,
-        )
+    # if wrapper.historic:
+    #     create_animation(
+    #         wrapper.data,
+    #         wrapper.historic,
+    #         wrapper.layer_historic,
+    #         wrapper.perceptron,
+    #         wrapper.learning,
+    #         wrapper.g_function,
+    #     )
 
 
 if __name__ == "__main__":

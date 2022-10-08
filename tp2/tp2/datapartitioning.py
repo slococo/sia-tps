@@ -1,5 +1,5 @@
 import numpy as np
-from perceptron import Perceptron
+from tp2.perceptron import Perceptron
 
 
 class TestingResult:
@@ -7,70 +7,113 @@ class TestingResult:
         self.expected = expected
         self.results = results
 
+    def get_expected(self):
+        return self.expected
+
+    def get_results(self):
+        return self.results
+
 
 def holdout(
-    dataset,
-    training_probability,
-    activation_function,
+    data_dim,
+    dims,
+    optimizer,
+    g,
+    g_diff,
     eta,
-    neuron_matrix,
+    eta_adapt,
+    training_probability,
+    dataset,
     error,
     max_iter,
-    learning,
+    learning
 ):
+
+    perceptron = Perceptron(
+        data_dim,
+        dims,
+        optimizer,
+        g,
+        g_diff,
+        eta,
+        eta_adapt
+    )
+
     dataset = np.array(dataset)
     np.random.shuffle(dataset)
 
-    perceptron = Perceptron(
-        neuron_matrix, None, activation_function, activation_function, eta
-    )
+    train_size = int(len(dataset) * training_probability)
 
-    perceptron.train(
-        dataset[: int(len(dataset) * training_probability) + 1],
+    historic, errors, _ = perceptron.train(
+        dataset[: train_size + 1],
         error,
         max_iter,
         learning,
     )
 
-    results = perceptron.predict(
-        dataset[int(len(dataset) * training_probability) + 1 :, :-1]
+    results = np.zeros(shape=(1, len(dataset) - train_size - 1))
+    expected = np.zeros(shape=(1, len(dataset) - train_size - 1))
+
+    # print(dataset)
+    # print(dataset[train_size + 1:, :-1])
+    results[0] = perceptron.predict(
+        dataset[train_size + 1:, :-1]
     )
 
-    expected = np.squeeze(dataset[int(len(dataset) * training_probability) + 1:, -1:])
+    expected[0] = np.squeeze(dataset[train_size + 1:, -1:])
 
-    return TestingResult(expected, results)
+    return historic, errors, TestingResult(expected, results)
 
 
 def k_fold(
-    dataset, k, activation_function, eta, neurone_matrix, error, max_iter, learning
+    data_dim,
+    dims,
+    optimizer,
+    g,
+    g_diff,
+    eta,
+    eta_adapt,
+    k,
+    dataset,
+    error,
+    max_iter,
+    learning
 ):
     dataset = np.array(dataset)
     partition_size = int(len(dataset) / k)
 
     if partition_size * k == len(dataset):
-        partitioned_dataset = dataset.reshape(k, partition_size, 4)
+        partitioned_dataset = dataset.reshape(k, partition_size, 5)
     else:
         partitioned_dataset = dataset[: partition_size * k - len(dataset)].reshape(
-            k, partition_size, 4
+            k, partition_size, 5
         )
 
     results = np.zeros(shape=(k, partition_size))
     expected = np.zeros(shape=(k, partition_size))
 
+    historic, errors = 0, 0
+
     for i in range(k):
         perceptron = Perceptron(
-            neurone_matrix, None, activation_function, activation_function, eta
+            data_dim,
+            dims,
+            optimizer,
+            g,
+            g_diff,
+            eta,
+            eta_adapt
         )
 
-        perceptron.train(
-            np.delete(partitioned_dataset, i, 0).reshape((k - 1) * partition_size, 4),
+        historic, errors, _ = perceptron.train(
+            np.delete(partitioned_dataset, i, 0).reshape((k - 1) * partition_size, 5),
             error,
             max_iter,
             learning,
         )
 
-        results[i] = perceptron.predict(partitioned_dataset[i])
+        results[i] = perceptron.predict(np.delete(partitioned_dataset[i], 0, 2))
 
         expected[i] = np.squeeze(partitioned_dataset[i, :, -1:])
 
-    return TestingResult(expected, results)
+    return historic, errors, TestingResult(expected, results)

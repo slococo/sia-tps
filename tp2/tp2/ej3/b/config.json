@@ -1,7 +1,7 @@
 {
-  "learning": "batch",
-  "optimizer": "momentum",
-  "eta_adapt": "adaptative_eta",
+  "learning": "online",
+  "optimizer": "adam",
+  "eta_adapt": null,
   "g_function": "tanh",
   "beta": 0.05,
   "max_iter": 10000,

@@ -49,7 +49,7 @@ class Perceptron:
     def predict(self, data):
         out = np.array(data)
         for layer in self.matrix_arr:
-            aux = np.atleast_1d(layer @ np.atleast_2d(out).T)
+            aux = np.squeeze(np.atleast_1d(layer @ np.atleast_2d(out).T))
             out = self.g(aux)
         return out
 
@@ -102,7 +102,7 @@ class Perceptron:
                     self.eta = self.eta_adapt(
                         np.average(np.subtract(expected, res)), self.eta
                     )
-                d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
+                d = np.atleast_2d(np.subtract(res, expected) * self.g_diff(h[-1]))
                 dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
 
                 j = 0
@@ -176,7 +176,7 @@ class Perceptron:
                     self.eta = self.eta_adapt(
                         np.average(np.subtract(expected, res)), self.eta
                     )
-                d = np.atleast_2d(np.subtract(expected, res) * self.g_diff(h[-1]))
+                d = np.atleast_2d(np.subtract(res, expected) * self.g_diff(h[-1]))
                 dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
 
                 j = 0
