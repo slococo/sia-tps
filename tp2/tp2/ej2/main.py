@@ -11,8 +11,9 @@ from matplotlib import pyplot as plt
 from tp2 import utils
 from tp2.ej2 import animation, graph
 from tp2.ej2.wrapper import Wrapper
-from tp2.optimizer import adaptative_eta, momentum, rms_prop, adam, adamax
+from tp2.optimizer import *
 from tp2.perceptron import Perceptron
+from tp2.datapartitioning import *
 
 
 def main(config_path=None):
@@ -40,6 +41,8 @@ def main(config_path=None):
             max_iter = data["max_iter"]
             error = data["error"]
             eta = data["eta"]
+            partitioning_method = data["partitioning_method"]
+            partitioning_parameter = data["partitioning_parameter"]
     except FileNotFoundError:
         raise "Couldn't find config path"
 
@@ -62,9 +65,9 @@ def main(config_path=None):
     utils.set_b(beta)
 
     matr_dims = [1]
-    perceptron = Perceptron(
-        len(data_matrix[0]), matr_dims, optimizer, g_function, g_diff, eta, eta_adapt
-    )
+    #perceptron = Perceptron(
+    #    len(data_matrix[0]), matr_dims, optimizer, g_function, g_diff, eta, eta_adapt
+    #)
 
     res_min = np.min(res_matrix)
     res_normalised = np.subtract(
@@ -77,27 +80,77 @@ def main(config_path=None):
 
     data_normalised = np.concatenate((data_normalised, res_normalised), axis=1)
 
-    training_data = data_normalised[: round(len(data_normalised) / 2)]
-    # training_data = data_normalised[: round(len(data_normalised))]
+    #training_data = data_normalised[: round(len(data_normalised) / 2)]
+    #training_data = data_normalised[: round(len(data_normalised))]
 
     start_time = time.time()
-    historic, errors, _ = perceptron.train(training_data, error, max_iter, learning)
-    print("Zeit: {:.2f}s".format((time.time() - start_time)))
+
+    match partitioning_method:
+        case "holdout":
+            f = holdout
+        case "k_fold":
+            f = k_fold
+
+    historic, errors, returned_result = f(
+        len(data_matrix[0]),
+        matr_dims,
+        optimizer,
+        g_function,
+        g_diff,
+        eta,
+        eta_adapt,
+        partitioning_parameter,
+        data_normalised,
+        error,
+        max_iter,
+        learning
+    )
+
+    testing_result : TestingResult = returned_result
+
+    # historic, errors, _ = perceptron.train(training_data, error, max_iter, learning)
+    # print("Zeit: {:.2f}s".format((time.time() - start_time)))
 
     a, b = np.min(res_matrix), np.max(res_matrix)
-    predict_error = 0
-    for data in data_normalised:
-        pred = perceptron.predict(data[:-1])
-        predict_error += np.average((np.subtract(data[-1], pred) / 2) ** 2)
-        print(
-            "expected: ",
-            utils.denormalise(data[-1:], -1, 1, a, b),
-            "\tout: ",
-            utils.denormalise(pred, -1, 1, a, b),
-        )
 
-    predict_error /= len(data_normalised)
-    print("Error with full data: ", predict_error)
+    match partitioning_method:
+        case "holdout":
+            print("Training probability: " + str(partitioning_parameter))
+        case "k-fold":
+            print("Fold number: " + str(partitioning_parameter))
+
+    global_error = 0
+    for i in range(len(testing_result.expected)):
+        local_error = 0
+        print("Perceptron number: " + str(i))
+        for j in range(len(testing_result.expected[i])):
+            print(
+                    "expected: ",
+                    utils.denormalise(testing_result.expected[i][j], -1, 1, a, b),
+                    "\tout: ",
+                    utils.denormalise(testing_result.results[i][j], -1, 1, a, b),
+            )
+            local_error += (np.subtract(testing_result.expected[i][j], testing_result.results[i][j]) / 2) ** 2
+
+        print("Perceptron error: " + str(local_error))
+        global_error += local_error
+
+    global_error /= len(testing_result.expected)
+    print("Algorithm error: " + str(global_error))
+
+    # predict_error = 0
+    # for data in data_normalised:
+    #    pred = perceptron.predict(data[:-1])
+    #    predict_error += np.average((np.subtract(data[-1], pred) / 2) ** 2)
+    #    print(
+    #        "expected: ",
+    #        utils.denormalise(data[-1:], -1, 1, a, b),
+    #        "\tout: ",
+    #        utils.denormalise(pred, -1, 1, a, b),
+    #    )
+
+    # predict_error /= len(data_normalised)
+    # print("Error with full data: ", predict_error)
 
     if historic:
         fig = plt.figure(figsize=(14, 9))

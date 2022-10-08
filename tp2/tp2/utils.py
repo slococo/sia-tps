@@ -57,7 +57,7 @@ def tanh_arr(x):
 def logistic_arr(x):
     res = []
     for i in x:
-        res.append(1 / (1 + math.exp(-2 * b * i)))
+        res.append(2 / (1 + math.exp(-2 * b * i)) - 1)
     return res
 
 
@@ -65,6 +65,6 @@ def logistic_diff(x):
     res = []
     for i in x:
         res.append(
-            2 * b / (1 + math.exp(-2 * b * i)) * (1 - 1 / (1 + math.exp(-2 * b * i)))
+            4 * b * np.exp(-2 * b * i) / np.power((np.exp(-2 * b * i) + 1), 2)
         )
     return res

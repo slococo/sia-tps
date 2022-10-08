@@ -8,6 +8,7 @@ matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 from tp2 import utils
 from tp2.ej3.c.wrapper import Wrapper
+from tp2.optimizer import *
 from tp2.perceptron import Perceptron
 
 

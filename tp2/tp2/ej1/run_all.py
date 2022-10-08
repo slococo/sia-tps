@@ -1,4 +1,8 @@
 import json
+import time
+
+import numpy as np
+
 import tp2.utils as utils
 from tp2.optimizer import *
 from tp2.run_all_generic import run_all_generic
