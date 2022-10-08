@@ -46,7 +46,7 @@ def run_all():
                                 print("Train method: {}".format(method))
                                 print("Keep probs: {}".format(keep_probs))
                                 times = []
-                                errors = []
+                                errors_arr = []
                                 layers = []
                                 for dataset in data:
                                     utils.set_b(tanh_beta)
@@ -69,9 +69,11 @@ def run_all():
                                         method,
                                     )
                                     times.append((time.time() - start_time) / 1000)
-                                avg_time = sum(times) / len(times)
-                                avg_error = sum(errors) / len(errors)
-                                avg_layers = sum(layers) / len(layers)
+                                    errors_arr.append(errors)
+                                    layers.append(layer_historic)
+                                avg_time = np.average(times)
+                                avg_error = np.average(errors_arr)
+                                avg_layers = np.average(layers)
                                 print("End of run")
                                 print("Average time: {:.8f}ms".format(avg_time))
                                 print("Average error: {:.8f}".format(avg_error))
