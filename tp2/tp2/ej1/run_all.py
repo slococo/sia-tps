@@ -1,10 +1,8 @@
 import json
 import time
-
-import numpy as np
+import tp2.utils as utils
 from tp2.optimizer import *
 from tp2.perceptron import Perceptron
-import tp2.utils as utils
 
 
 def run_all():
@@ -39,7 +37,17 @@ def run_all():
                     for tanh_beta in np.linspace(0.01, 2, 4):
                         for method in train_methods:
                             for keep_probs in keep_probs_arr:
+                                print("Starting new run")
+                                print("Optimizer: {}".format(opt.__name__))
+                                print("G function: {}".format(g_func_pair[0].__name__))
+                                print("Eta adapt: " + "True" if eta_ad is not None else "False")
+                                print("Eta init: {}".format(eta_init))
+                                print("Tanh beta: {}".format(tanh_beta))
+                                print("Train method: {}".format(method))
+                                print("Keep probs: {}".format(keep_probs))
                                 times = []
+                                errors = []
+                                layers = []
                                 for dataset in data:
                                     utils.set_b(tanh_beta)
                                     perceptron = Perceptron(
@@ -62,7 +70,13 @@ def run_all():
                                     )
                                     times.append((time.time() - start_time) / 1000)
                                 avg_time = sum(times) / len(times)
+                                avg_error = sum(errors) / len(errors)
+                                avg_layers = sum(layers) / len(layers)
+                                print("End of run")
                                 print("Average time: {:.8f}ms".format(avg_time))
+                                print("Average error: {:.8f}".format(avg_error))
+                                print("Average layers: {:.8f}".format(avg_layers))
+                                print("-----------------------------------------------------------------")
 
 
 if __name__ == "__main__":
