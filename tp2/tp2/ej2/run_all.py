@@ -2,14 +2,16 @@ import json
 import tp2.utils as utils
 from tp2.optimizer import *
 from tp2.run_all_generic import run_all_generic
+import pandas as pd
 
 
 def run_all():
     try:
-        with open("data.json") as f:
-            data = json.load(f)
+        df = pd.read_csv("dataset.csv")
     except FileNotFoundError:
-        raise RuntimeError("Couldn't load data.json")
+        raise RuntimeError("Couldn't read dataset")
+
+    # TODO: Correctly read data and pass to run_all as JSON (or modigy run_all to read CSV)
 
     optimizers = [gradient, momentum]
     g_functions = [
@@ -34,7 +36,7 @@ def run_all():
         neuron_dim=[1],
         data=data,
         max_iter=2000,
-        max_error=0
+        max_error=0.01
     )
 
 

@@ -21,6 +21,8 @@ def run_all_generic(
     data_dim: int,
     neuron_dim: List,
     data: dict,
+    max_error: float = 0.01,
+    max_iter: int = 1000,
 ):
     """Function designed to test all possible combinations of the perceptron,
     including the different optimizers, the different activation functions,
@@ -33,6 +35,9 @@ def run_all_generic(
                     for tanh_beta in tanh_beta_arr:
                         for method in train_methods:
                             for keep_probs in keep_probs_arr:
+                                print(
+                                    "-----------------------------------------------------------------"
+                                )
                                 print("Starting new run")
                                 print("Optimizer: {}".format(opt.__name__))
                                 print("G function: {}".format(g_func_pair[0].__name__))
@@ -46,9 +51,11 @@ def run_all_generic(
                                 print("Train method: {}".format(method))
                                 print("Keep probs: {}".format(keep_probs))
                                 times = []
-                                errors_arr = []
-                                layers = []
+                                train_errors_arr = []
+                                predict_errors_arr = []
                                 for dataset in data:
+                                    print("")
+                                    print("Dataset: {}".format(dataset))
                                     utils.set_b(tanh_beta)
                                     perceptron = Perceptron(
                                         data_dim,
@@ -64,24 +71,30 @@ def run_all_generic(
                                     start_time = time.time()
                                     historic, errors, layer_historic = perceptron.train(
                                         data[dataset],
-                                        1000,
-                                        0.01,
-                                        method,
+                                        error_max=max_error,
+                                        max_iter=max_iter,
+                                        method=method,
                                     )
                                     times.append((time.time() - start_time) / 1000)
-                                    errors_arr.append(errors)
-                                    layers.append(layer_historic)
+                                    train_errors_arr.append(errors[-1])
+
+                                    for u in data[dataset]:
+                                        predict_errors_arr.append(
+                                            np.abs(
+                                                np.subtract(
+                                                    perceptron.predict(u[:-1]), u[-1]
+                                                )
+                                            )
+                                        )
+                                    print("")
                                 avg_time = np.average(times)
-                                avg_error = np.average(errors_arr)
-                                avg_layers = np.average(layers)
+                                avg_error = np.average(train_errors_arr)
+                                avg_predict_error = np.average(predict_errors_arr)
                                 print("End of run")
                                 print("Average time: {:.8f}ms".format(avg_time))
-                                print("Average error: {:.8f}".format(avg_error))
-                                print("Average layers: {:.8f}".format(avg_layers))
+                                print("Average train error: {:.8f}".format(avg_error))
                                 print(
-                                    "-----------------------------------------------------------------"
+                                    "Average predict error: {:.8f}".format(
+                                        avg_predict_error
+                                    )
                                 )
-
-
-if __name__ == "__main__":
-    run_all()
