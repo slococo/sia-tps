@@ -35,6 +35,7 @@ class Grapher:
                 final_aux.append(color * aux_aux)
             final.append(final_aux)
 
-
         plt.imshow(final, interpolation="nearest")
         plt.show()
+
+

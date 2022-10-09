@@ -32,13 +32,15 @@ def main(config_path=None, data_path=None):
 
     data, exp = CSVLoader.load(data_path, False, data_column, expected_column, False)
     errors = []
-    matr_dims = [1]
-    for i in range(0, 5):
+    matr_dims = [5, 1]
+    for i in range(0, 2):
         perceptron, max_iter, error, learning, eta, _ = Initializer.initialize(config_path, matr_dims, 3)
 
         start_time = time.time()
-        historic, aux, layer_historic = perceptron.train(np.concatenate((data, np.atleast_2d(exp)), 1), error, max_iter, learning)
-        print("Zeit: {:.8f}ms".format((time.time() - start_time) / 1000))
+        historic, aux, layer_historic, epoch = perceptron.train(np.concatenate((data, np.atleast_2d(exp)), 1), error, max_iter, learning)
+        print("Epochs: ", epoch)
+        print("Error: ", aux[-1])
+        print("Zeit: {:.8f}s".format((time.time() - start_time)))
         errors.append(aux)
 
         predict_error = Tester.test(perceptron, data, exp, utils.quadratic_error)

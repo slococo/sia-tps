@@ -39,7 +39,7 @@ def main(config_path=None, data_path=None, noisy_data_path=None):
 
         start_time = time.time()
         historic, aux, layer_historic = perceptron.train(np.concatenate((data, np.atleast_2d(exp)), 1), error, max_iter, learning, utils.res_index)
-        print("Zeit: {:.8f}ms".format((time.time() - start_time) / 1000))
+        print("Zeit: {:.8f}s".format((time.time() - start_time)))
         errors.append(aux)
 
         predict_error = Tester.test(perceptron, data, exp, utils.quadratic_error, utils.res_index)

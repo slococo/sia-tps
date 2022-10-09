@@ -13,6 +13,7 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 def create_animation(data, historic, layer_historic, perceptron, learning, g_function):
     fig = plt.figure(figsize=(14, 9))
     ax = plt.axes()
+    print(np.atleast_2d(historic).shape)
 
     def animate_batch(i):
         ax.clear()
@@ -20,7 +21,7 @@ def create_animation(data, historic, layer_historic, perceptron, learning, g_fun
         ax.set_xlim([-1.5, 1.5])
         ax.set_title(
             "ej1 ~ activation: "
-            + g_function
+            + g_function.__name__
             + " ~ "
             + learning
             + "\n"
@@ -61,7 +62,7 @@ def create_animation(data, historic, layer_historic, perceptron, learning, g_fun
         ax.set_xlim([-1.5, 1.5])
         ax.set_title(
             "ej1 ~ activation: "
-            + g_function
+            + g_function.__name__
             + " ~ "
             + learning
             + "\n"
@@ -103,13 +104,13 @@ def create_animation(data, historic, layer_historic, perceptron, learning, g_fun
     else:
         raise "Invalid learning technique"
     ani = FuncAnimation(
-        fig, animate, frames=len(layer_historic), interval=1000, repeat=False
+        fig, animate_batch, frames=len(layer_historic), interval=1000, repeat=False
     )
     plt.close()
     fps = round(len(layer_historic) / 4)
     ani.save(
         "anim-"
-        + g_function
+        + g_function.__name__.__str__()
         + "-"
         + learning
         + "-"

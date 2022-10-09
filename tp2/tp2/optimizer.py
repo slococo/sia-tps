@@ -1,7 +1,7 @@
 import numpy as np
 
 b = 0.1
-a = 0.00001
+a = None
 prev_e = 0
 k0 = 10
 k = k0
@@ -9,7 +9,9 @@ tendency = 0
 
 
 def adaptative_eta(e, eta):
-    global tendency, prev_e, k, k0
+    global tendency, prev_e, k, k0, a
+    if not a:
+        a = eta
     sign = np.sign(e - prev_e)
     if tendency * sign > 0:
         k -= 1
@@ -54,76 +56,75 @@ def rms_prop(diff, eta, j):
 
 
 beta1, beta2, eps, t = 0.9, 0.999, 1e-8, 0
-m, v, theta = [], [], []
+m, v = [], []
 
 
 def adam(diff, eta, j):
-    global m, v, theta, t
+    global m, v, t
     if j == len(m):
         m.append(0)
         v.append(0)
-        theta.append(0)
     elif j > len(m):
         raise "Invalid j"
-    prev_theta = np.inf
-    while not np.allclose(prev_theta, theta[j]):
-        t += 1
-        m[j] = beta1 * m[j] + (1 - beta1) * diff
-        v[j] = beta2 * v[j] + (1 - beta2) * np.power(diff, 2)
-        m_hat = - np.divide(m[j], 1 - np.power(beta1, t))
-        v_hat = np.divide(v[j], 1 - np.power(beta2, t))
-        prev_theta = np.atleast_1d(theta[j]).copy()
-        theta[j] -= eta * m_hat / (np.sqrt(v_hat) + eps)
-    t = 0
-    return theta[j]
+    t += 1
+    m[j] = beta1 * m[j] + (1 - beta1) * diff
+    v[j] = beta2 * v[j] + (1 - beta2) * np.power(diff, 2)
+    m_hat = np.divide(m[j], 1 - np.power(beta1, t))
+    v_hat = np.divide(v[j], 1 - np.power(beta2, t))
+    return - eta * m_hat / (np.sqrt(v_hat) + eps)
 
 
-b1, b2, ta = 0.9, 0.999, 0
-ma, va, w = [], [], []
+ta = 0
+ma, va = [], []
 
 
 def adamax(diff, eta, j):
-    global ma, va, w, ta
+    global ma, va, ta
     if j == len(ma):
         ma.append(0)
         va.append(0)
-        w.append(0)
     elif j > len(ma):
         raise "your hands"
-    prev_w = np.inf
-    while not np.allclose(prev_w, w[j]):
-        ta += 1
-        ma[j] = beta1 * ma[j] + (1 - beta1) * diff
-        ma_hat = np.divide(ma[j], 1 - np.power(b1, ta))
-        va[j] = np.maximum(b2 * va[j], np.abs(diff))
-        prev_w = np.atleast_1d(w[j]).copy()
-        w[j] -= eta * ma_hat / va[j]
-    ta = 0
-    return w[j]
+    ta += 1
+    ma[j] = beta1 * ma[j] + (1 - beta1) * diff
+    ma_hat = np.divide(ma[j], 1 - np.power(beta1, ta))
+    va[j] = np.maximum(beta2 * va[j], np.abs(diff))
+    return - eta * ma_hat / (va[j] + eps)
 
 
-# def nadam(diff, eta, j):
-#     global m, v, theta, t
-#     if j == len(m):
-#         m.append(0)
-#         v.append(0)
-#         theta.append(0)
-#     elif j > len(m):
-#         raise "Invalid j"
-#     # for _ in range(0, 15):
-#     prev_theta = np.inf
-#     while not np.allclose(prev_theta, theta[j]):
-#         t += 1
-#         m[j] = beta1 * m[j] + (1 - beta1) * diff
-#         v[j] = beta2 * v[j] + (1 - beta2) * np.power(diff, 2)
-#         m_hat = - np.divide(m[j], 1 - np.power(beta1, t))
-#         v_hat = np.divide(v[j], 1 - np.power(beta2, t))
-#         prev_theta = theta[j]
-#         theta[j] -= eta * m_hat / (np.sqrt(v_hat) + eps)
-#     # print(prev_theta)
-#     # preveta = eta
-#     t = 0
-#     return theta[j]
+mn, vn, tn = [], [], 0
+
+
+def nadam(diff, eta, j):
+    global mn, vn, tn
+    if j == len(mn):
+        mn.append(0)
+        vn.append(0)
+    elif j > len(mn):
+        raise "Invalid j"
+    tn += 1
+    mn[j] = beta1 * mn[j] + (1 - beta1) * diff
+    vn[j] = beta2 * vn[j] + (1 - beta2) * np.power(diff, 2)
+    m_hat = np.divide(mn[j], (1 - np.power(beta1, tn)) + np.divide((1 - beta1) * diff, (1 - np.power(beta1, tn))))
+    v_hat = np.divide(vn[j], 1 - np.power(beta2, tn))
+    return - eta * m_hat / (np.sqrt(v_hat) + eps)
+
+
+mg, vg, vg_hat = [], [], []
+
+
+def amsgrad(diff, eta, j):
+    global mg, vg, vg_hat
+    if j == len(mg):
+        mg.append(0)
+        vg.append(0)
+    elif j > len(mg):
+        raise "your hands"
+    mg[j] = beta1 * mg[j] + (1 - beta1) * diff
+    vg[j] = beta2 * vg[j] + (1 - beta2) * np.power(diff, 2)
+    vg_hat = np.maximum(vg[j], vg_hat)
+    return - eta * mg[j] / (np.add(np.sqrt(vg_hat), eps))
+
 
 def gradient(diff, eta, _):
     return - eta * diff
