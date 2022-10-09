@@ -5,110 +5,56 @@ import matplotlib
 import numpy as np
 import pandas as pd
 
+from tp2.error_graph import ErrorGraph
+from tp2.grapher import Grapher
+from tp2.initializer import Initializer
+from tp2.loader import CSVLoader
+from tp2.tester import Tester
+
 matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
 from tp2 import utils
 from tp2.ej3.c.wrapper import Wrapper
 from tp2.optimizer import *
-from tp2.perceptron import Perceptron
 
 
-def res_index(x, n):
-    res = np.full_like(x, fill_value=-1)
-    res[round(n)] = 1
-    return res
-
-
-def main(config_path=None, data_path=None):
+def main(config_path=None, data_path=None, noisy_data_path=None):
     if config_path is None:
         config_path = "tp2/ej3/b/config.json"
-
     if data_path is None:
-        path = "tp2/ej3/b/digitsformat.csv"
-    else:
-        path = data_path
+        data_path = "tp2/ej3/b/digitsformat.csv"
+    if noisy_data_path is None:
+        noisy_data_path = "tp2/ej3/c/noisy_digitsformat.csv"
 
-    data_column_names = ["x" + str(i) for i in range(1, 36)]
-    expected_column_names = ["y"]
+    data_column = ["x" + str(i) for i in range(1, 36)]
+    expected_column = ["y"]
 
-    df = pd.read_csv(path)
+    data, exp = CSVLoader.load(data_path, False, data_column, expected_column, True)
+    data = np.subtract(1, data)
+    noisy_data, noisy_exp = CSVLoader.load(noisy_data_path, False, data_column, expected_column, True)
 
-    data_matrix = df[data_column_names].to_numpy()
-    res_matrix = df[expected_column_names].to_numpy()
-    data_matrix = np.insert(data_matrix, 0, 1, axis=1)
+    numbers = np.concatenate((data, noisy_data), axis=0)[:, 1:]
+    Grapher.graph_numbers(numbers)
 
-    try:
-        with open(config_path) as f:
-            data = json.load(f)
-            learning = data["learning"]
-            optimizer = data["optimizer"]
-            g_function = data["g_function"]
-            eta_adapt = data["eta_adapt"]
-            beta = data["beta"]
-            max_iter = data["max_iter"]
-            error = data["error"]
-            eta = data["eta"]
-    except FileNotFoundError:
-        raise "Couldn't find config path"
+    errors = []
+    matr_dims = [20, 10, 2]
+    for i in range(0, 5):
+        perceptron, max_iter, error, learning, eta, _ = Initializer.initialize(config_path, matr_dims, 35)
 
-    optimizer = globals()[optimizer]
-    if eta_adapt is not None:
-        eta_adapt = globals()[eta_adapt]
-    match g_function:
-        case "tanh":
-            g_function = utils.tanh_arr
-            g_diff = utils.tanh_diff
-        case "identity":
-            g_function = utils.identity
-            g_diff = utils.ident_diff
-        case "logistic":
-            g_function = utils.logistic_arr
-            g_diff = utils.logistic_diff
-        case _:
-            g_function = np.sign
-            g_diff = utils.ident_diff
-    utils.set_b(beta)
+        start_time = time.time()
+        historic, aux, layer_historic = perceptron.train(np.concatenate((data, np.atleast_2d(exp)), 1), error, max_iter, learning, utils.res_index)
+        print("Zeit: {:.8f}ms".format((time.time() - start_time) / 1000))
+        errors.append(aux)
 
-    matr_dims = [21, 2]
-    perceptron = Perceptron(
-        len(data_matrix[0]), matr_dims, optimizer, g_function, g_diff, eta, eta_adapt
-    )
+        predict_error = Tester.test(perceptron, data, exp, utils.quadratic_error, utils.res_index)
+        print(f"Predict error: {predict_error}")
 
-    data_min = np.min(data_matrix)
-    data_normalised = np.subtract(
-        2 * (np.subtract(data_matrix, data_min) / (np.max(data_matrix) - data_min)), 1
-    )
+        noisy_error = Tester.test(perceptron, noisy_data, noisy_exp, utils.quadratic_error, utils.res_index)
+        print(f"Noisy error: {noisy_error}")
 
-    data_normalised = np.concatenate((data_normalised, res_matrix), axis=1)
-
-    training_data = data_normalised
-
-    exp = res_index
-    start_time = time.time()
-    historic, errors, _ = perceptron.train(
-        training_data, error, max_iter, learning, exp
-    )
-    print("Zeit: {:.2f}s".format((time.time() - start_time)))
-
-    predict_error = 0
-    for data in data_normalised:
-        pred = perceptron.predict(data[:-1])
-        predict_error += np.average((np.subtract(exp(pred, data[-1]), pred) / 2) ** 2)
-        print("expected: ", round(data[-1]), "\t\tout: ", np.argmax(pred))
-
-    predict_error /= len(data_normalised)
-    print("Error with full data: ", predict_error)
-
-    wrapper = Wrapper(perceptron, data, historic, errors)
-    wrapper.save()
-
-    if wrapper.historic:
-        fig = plt.figure(figsize=(14, 9))
-        plt.plot(range(1, len(wrapper.errors) + 1), wrapper.errors)
-        plt.ylim(0, 1)
-        plt.show()
+    ErrorGraph.plot_error(errors)
 
 
 if __name__ == "__main__":
-    main("config.json", "digitsformat.csv")
+    main("config.json", "digitsformat.csv", "noisy_digitsformat.csv")

@@ -1,11 +1,11 @@
 {
   "dataset": "and",
   "learning": "batch",
-  "optimizer": "adam",
+  "optimizer": "gradient",
   "g_function": "tanh",
   "beta": 1,
   "eta_adapt": null,
   "max_iter": 20000,
-  "error": 1e-5,
+  "error": 0,
   "eta": 0.1
 }

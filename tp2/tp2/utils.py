@@ -13,7 +13,7 @@ def normalise(values, a, b):
     if min == max:
         raise "Values are not normalisable"
     else:
-        return np.add((b - a) * (np.subtract(values, min) / (max - min)), a)
+        return np.add((b - a) * (np.subtract(values, min) / (max - min)), a), min, max
 
 
 def identity(x):
@@ -67,4 +67,18 @@ def logistic_diff(x):
         res.append(
             4 * b * np.exp(-2 * b * i) / np.power((np.exp(-2 * b * i) + 1), 2)
         )
+    return res
+
+
+def step(x):
+    return np.sign(x)
+
+
+def quadratic_error(exp, res):
+    return np.average(np.power((np.subtract(exp, res) / 2), 2))
+
+
+def res_index(x, n):
+    res = np.full_like(x, fill_value=-1)
+    res[round(n)] = 1
     return res

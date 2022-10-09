@@ -2,7 +2,8 @@ import json
 import time
 from typing import List
 
-
+import numpy as np
+from matplotlib import pyplot as plt
 from numpy import ndarray
 
 import tp2.utils as utils
@@ -23,6 +24,7 @@ def run_all_generic(
     data: dict,
     max_error: float = 0.01,
     max_iter: int = 1000,
+    graph=None
 ):
     """Function designed to test all possible combinations of the perceptron,
     including the different optimizers, the different activation functions,
@@ -78,6 +80,11 @@ def run_all_generic(
                                     times.append((time.time() - start_time) / 1000)
                                     train_errors_arr.append(errors[-1])
 
+                                    # graph(errors,
+                                    #       "opt: {}".format(opt.__name__) + " - g_fun: {}".format(g_func_pair[0].__name__) +
+                                    #       " - eta: {}".format(eta_init) + " - beta: {}".format(tanh_beta) + " - method: {}".format(method)
+                                    #       + " - adapt: {}".format("True" if eta_init is not None else "False") + " - layers: {}".format(len(neuron_dim)))
+
                                     for u in data[dataset]:
                                         predict_errors_arr.append(
                                             np.abs(
@@ -98,3 +105,4 @@ def run_all_generic(
                                         avg_predict_error
                                     )
                                 )
+

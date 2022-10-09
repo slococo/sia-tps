@@ -1,6 +1,6 @@
 {
-  "learning": "online",
-  "optimizer": "adam",
+  "learning": "batch",
+  "optimizer": "gradient",
   "eta_adapt": null,
   "g_function": "tanh",
   "beta": 0.05,

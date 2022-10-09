@@ -1,40 +1,51 @@
+import math
 import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import csv
 
 matplotlib.use("TkAgg")
+
+import matplotlib.pyplot as plt
 
 
 def plot(df=None):
     if df is None:
         df = pd.read_csv("digits.csv", sep=" ", header=None)
 
-    color = np.array([255, 255, 255])
+    color = np.array([1, 1, 1])
     df = df.to_numpy()
     dfi = np.subtract(1, df)
 
+    noisy_dataset = []
     data = None
-    for j in range(0, dfi.shape[0]):
+
+    for f in range(0, dfi.shape[0] * 5):
+        j = f % dfi.shape[0]
         if j % 7 == 0:
-            if not data:
-                data = []
+            noisy_dataset.append([])
+            if data is None:
+                data = np.zeros((7, 5, 3))
             else:
-                plt.imshow(
-                    np.array([[255, 255, 255, 255, 255]]), interpolation="nearest"
-                )
                 plt.imshow(data, interpolation="nearest")
-                plt.show()
-                data = []
-
-        aux = []
+                # plt.show()
+                data = np.zeros((7, 5, 3))
+        aux = np.zeros((5, 3))
         for i in range(0, 5):
-            aux.append(color * (dfi[j][i]))
-        data.append(aux)
-
-    plt.imshow(np.array([[255, 255, 255, 255, 255]]), interpolation="nearest")
+            val = min(max(np.random.normal(loc=dfi[j][i], scale=0.05), 0), 1)
+            noisy_dataset[math.trunc(f / 7)].append(val)
+            aux[i] = color * val
+        data[j % 7] = aux
     plt.imshow(data, interpolation="nearest")
-    plt.show()
+    # plt.show()
+
+    q = 0
+    with open('noisy_digitsformat.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',')
+        for row in noisy_dataset:
+            row.append(q % 10)
+            q += 1
+            writer.writerow(row)
 
 
 if __name__ == "__main__":
