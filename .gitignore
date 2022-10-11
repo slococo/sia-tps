@@ -67,3 +67,7 @@ cython_debug/
 .DS_Store
 .python-version
 .vscode/*
+*.obj
+*.gif
+*.png
+*.mp4

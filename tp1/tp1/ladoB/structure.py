@@ -2,7 +2,6 @@ import time
 from math import ceil, floor
 
 import numpy as np
-
 from tp1.ladoB.fitness import euclidean_distance_fitness
 
 

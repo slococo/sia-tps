@@ -1,0 +1,12 @@
+{
+  "learning": "batch",
+  "optimizer": "adam",
+  "g_function": "tanh",
+  "beta": 1,
+  "eta_adapt": null,
+  "max_iter": 2000,
+  "error": 0,
+  "eta": 0.0001,
+  "partitioning_method": "k_fold_training",
+  "partitioning_parameters": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+}

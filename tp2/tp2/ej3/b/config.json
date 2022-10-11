@@ -1,0 +1,10 @@
+{
+  "learning": "batch",
+  "optimizer": "gradient",
+  "eta_adapt": null,
+  "g_function": "tanh",
+  "beta": 0.05,
+  "max_iter": 175,
+  "error": 0,
+  "eta": 0.05
+}
