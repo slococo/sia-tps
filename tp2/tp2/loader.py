@@ -5,8 +5,8 @@ import numpy as np
 
 matplotlib.use("TkAgg")
 
-from tp2 import utils
 import pandas as pd
+from tp2 import utils
 
 
 class Loader:

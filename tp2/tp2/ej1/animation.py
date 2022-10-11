@@ -28,7 +28,8 @@ def create_animation(data, historic, layer_historic, perceptron, learning, g_fun
             + perceptron.eta.__str__()
             + "  optimizer: "
             + perceptron.optimizer.__name__
-            + " ~ iter: " + str(i)
+            + " ~ iter: "
+            + str(i)
         )
         ax.set_xlabel("x")
         ax.set_ylabel("y")

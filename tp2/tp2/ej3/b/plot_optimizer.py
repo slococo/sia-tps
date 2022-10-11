@@ -4,7 +4,6 @@ import time
 import matplotlib
 import numpy as np
 import pandas as pd
-
 from tp2.ej3.c import plot_probability
 from tp2.error_graph import ErrorGraph
 from tp2.grapher import Grapher
@@ -36,7 +35,9 @@ def main(config_path=None, data_path=None, noisy_data_path=None):
     data, exp = CSVLoader.load(data_path, False, data_column, expected_column, True)
     data = np.subtract(1, data)
     noisy_data_path = "noisy_digitsformat.csv"
-    noisy_data, noisy_exp = CSVLoader.load(noisy_data_path, False, data_column, expected_column, True)
+    noisy_data, noisy_exp = CSVLoader.load(
+        noisy_data_path, False, data_column, expected_column, True
+    )
 
     # numbers = np.concatenate((data, noisy_data), axis=0)[:, 1:]
     # Grapher.graph_numbers(numbers)
@@ -45,7 +46,7 @@ def main(config_path=None, data_path=None, noisy_data_path=None):
     # optimizers = [rms_prop, adam, adamax, nadam, adadelta]
     # colors = ['green', 'yellow', 'purple', 'orange', 'brown', 'pink']
     optimizers = [rms_prop, adam, adamax, nadam]
-    colors = ['green', 'yellow', 'purple', 'orange']
+    colors = ["green", "yellow", "purple", "orange"]
     # optimizers = [adadelta]
     # colors = ['brown']
     # optimizers = [gradient, momentum]
@@ -57,17 +58,31 @@ def main(config_path=None, data_path=None, noisy_data_path=None):
         errors = []
         noisy_errors = []
         for i in range(0, 3):
-            perceptron, max_iter, error, learning, eta, _ = Initializer.initialize(config_path, matr_dims, 35)
+            perceptron, max_iter, error, learning, eta, _ = Initializer.initialize(
+                config_path, matr_dims, 35
+            )
             perceptron.optimizer = optimizers[j]
 
             start_time = time.time()
-            historic, aux, layer_historic, epoch = perceptron.train(np.concatenate((data, np.atleast_2d(exp)), 1), error, max_iter, learning, utils.res_index)
+            historic, aux, layer_historic, epoch = perceptron.train(
+                np.concatenate((data, np.atleast_2d(exp)), 1),
+                error,
+                max_iter,
+                learning,
+                utils.res_index,
+            )
             print("Error: ", aux[-1])
             print("Epochs: ", epoch)
             print("Zeit: {:.8f}s".format((time.time() - start_time)))
             errors.append(aux)
 
-            noisy_error = Tester.test(perceptron, noisy_data, noisy_exp, utils.quadratic_error, utils.res_index)
+            noisy_error = Tester.test(
+                perceptron,
+                noisy_data,
+                noisy_exp,
+                utils.quadratic_error,
+                utils.res_index,
+            )
             noisy_errors.append(noisy_error)
             print(f"Noisy error: {noisy_error}")
 
@@ -95,4 +110,3 @@ def main(config_path=None, data_path=None, noisy_data_path=None):
 
 if __name__ == "__main__":
     main("config.json", "digitsformat.csv", "noisy_digitsformat.csv")
-

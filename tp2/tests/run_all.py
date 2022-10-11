@@ -3,10 +3,9 @@ import time
 from typing import List
 
 import numpy as np
+import tp2.utils as utils
 from matplotlib import pyplot as plt
 from numpy import ndarray
-
-import tp2.utils as utils
 from tp2.optimizer import *
 from tp2.perceptron import Perceptron
 
@@ -99,4 +98,3 @@ def run_all_generic(
                                         avg_predict_error
                                     )
                                 )
-

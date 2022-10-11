@@ -1,8 +1,9 @@
 import json
-import tp2.utils as utils
-from tp2.optimizer import *
-from tests.run_all import run_all_generic
+
 import pandas as pd
+import tp2.utils as utils
+from tests.run_all import run_all_generic
+from tp2.optimizer import *
 
 
 def run_all():
@@ -36,7 +37,7 @@ def run_all():
         neuron_dim=[1],
         data=data,
         max_iter=2000,
-        max_error=0.01
+        max_error=0.01,
     )
 
 

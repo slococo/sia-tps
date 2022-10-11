@@ -19,7 +19,7 @@ class ErrorGraph:
         plt.show()
 
     @classmethod
-    def make_plt(cls, errors=None, color='red', means=None, stds=None):
+    def make_plt(cls, errors=None, color="red", means=None, stds=None):
         if errors is not None:
             errors = np.atleast_2d(errors)
             means = np.mean(errors, axis=0)
@@ -39,10 +39,16 @@ class ErrorGraph:
         # x = []
         # for i in range(0, len(means)):
         #     x.append("{:d}".format((i + 2)))
-            # x.append("{:.2f}".format((i + 2) * 0.05))
+        # x.append("{:.2f}".format((i + 2) * 0.05))
         # plt.xticks(range(0, len(means)), x)
-        plt.fill_between(range(0, len(means)), np.subtract(means, stds), np.add(means, stds), alpha=0.1, color=color,
-                         label="_nolegend_")
+        plt.fill_between(
+            range(0, len(means)),
+            np.subtract(means, stds),
+            np.add(means, stds),
+            alpha=0.1,
+            color=color,
+            label="_nolegend_",
+        )
 
     @classmethod
     def bar_predict_graph(cls, errors, colors, legends):
@@ -50,4 +56,6 @@ class ErrorGraph:
             mean = np.mean(errors[i])
             std = np.std(errors[i])
             plt.grid(axis="y", c="lightgray", linewidth=0.5, linestyle="-")
-            plt.bar(legends[i], mean, yerr=std, ecolor='black', capsize=10, color=colors[i])
+            plt.bar(
+                legends[i], mean, yerr=std, ecolor="black", capsize=10, color=colors[i]
+            )

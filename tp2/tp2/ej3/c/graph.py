@@ -1,9 +1,9 @@
+import csv
 import math
+
 import matplotlib
 import numpy as np
 import pandas as pd
-import csv
-
 from tp2.grapher import Grapher
 
 matplotlib.use("TkAgg")
@@ -50,8 +50,8 @@ def plot(df=None):
     # plt.show()
 
     q = 0
-    with open('noisy_digitsformat-normal-masfuerte.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
+    with open("noisy_digitsformat-normal-masfuerte.csv", "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, delimiter=",")
         for row in noisy_dataset:
             row.append(q % 10)
             q += 1

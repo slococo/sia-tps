@@ -4,7 +4,6 @@ import time
 import matplotlib
 import numpy as np
 import pandas as pd
-
 from tp2.error_graph import ErrorGraph
 from tp2.initializer import Initializer
 from tp2.loader import CSVLoader
@@ -14,11 +13,11 @@ matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
 from tp2 import utils
+from tp2.datapartitioning import *
 from tp2.ej2 import animation, graph
 from tp2.ej2.wrapper import Wrapper
 from tp2.optimizer import *
 from tp2.perceptron import Perceptron
-from tp2.datapartitioning import *
 
 
 def main(config_path=None, data_path=None):
@@ -33,17 +32,23 @@ def main(config_path=None, data_path=None):
     data_pathe = "dataset2.csv"
 
     data, exp = CSVLoader.load(data_path, False, data_column, expected_column, False)
-    data_e, exp_e = CSVLoader.load(data_pathe, False, data_column, expected_column, False)
+    data_e, exp_e = CSVLoader.load(
+        data_pathe, False, data_column, expected_column, False
+    )
     # data_nn, exp_nn = CSVLoader.load(data_path, False, data_column, expected_column, True)
 
     matr_dims = [1]
     errors = []
     pred_errors = []
     for i in range(0, 5):
-        perceptron, max_iter, error, learning, eta, _ = Initializer.initialize(config_path, matr_dims, 3)
+        perceptron, max_iter, error, learning, eta, _ = Initializer.initialize(
+            config_path, matr_dims, 3
+        )
 
         start_time = time.time()
-        historic, aux, layer_historic, epoch = perceptron.train(np.concatenate((data_e, np.atleast_2d(exp_e)), 1), error, max_iter, learning)
+        historic, aux, layer_historic, epoch = perceptron.train(
+            np.concatenate((data_e, np.atleast_2d(exp_e)), 1), error, max_iter, learning
+        )
         print("Error: ", aux[-1])
         print("Epochs: ", epoch)
         print("Zeit: {:.8f}s".format((time.time() - start_time)))
@@ -93,7 +98,6 @@ def main(config_path=None, data_path=None):
     #     print("Error: ", errors[-1])
     #
     # ErrorGraph.plot_error(errors)
-
 
     # path = "dataset.csv"
     #

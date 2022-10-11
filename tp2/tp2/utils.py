@@ -64,9 +64,7 @@ def logistic_arr(x):
 def logistic_diff(x):
     res = []
     for i in x:
-        res.append(
-            2 * b * np.exp(-2 * b * i) / np.power((np.exp(-2 * b * i) + 1), 2)
-        )
+        res.append(2 * b * np.exp(-2 * b * i) / np.power((np.exp(-2 * b * i) + 1), 2))
     return res
 
 

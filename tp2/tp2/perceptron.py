@@ -6,7 +6,18 @@ import numpy as np
 
 
 class Perceptron:
-    def __init__(self, data_dim, dims, optimizer, g, g_diff, eta, eta_adapt, input_keep_prob=1, hidden_keep_prob=1):
+    def __init__(
+        self,
+        data_dim,
+        dims,
+        optimizer,
+        g,
+        g_diff,
+        eta,
+        eta_adapt,
+        input_keep_prob=1,
+        hidden_keep_prob=1,
+    ):
         self.matrix_arr = []
         aux = data_dim
         for dim in dims:
@@ -76,7 +87,9 @@ class Perceptron:
                     expected = exp(v[-1], expected)
 
                 if self.eta_adapt:
-                    self.eta = self.eta_adapt(np.average(np.subtract(expected, res)), self.eta)
+                    self.eta = self.eta_adapt(
+                        np.average(np.subtract(expected, res)), self.eta
+                    )
                 d = self.calc_d(res=res, exp=expected, h=h[-1])
                 dw[0] += self.calc_dw(d, v[-2], 0)
 
@@ -123,7 +136,9 @@ class Perceptron:
                     expected = exp(v[-1], expected)
 
                 if self.eta_adapt:
-                    self.eta = self.eta_adapt(np.average(np.subtract(expected, res)), self.eta)
+                    self.eta = self.eta_adapt(
+                        np.average(np.subtract(expected, res)), self.eta
+                    )
                 d = self.calc_d(res=res, exp=expected, h=h[-1])
                 dw[0] = self.calc_dw(d, v[-2], 0)
 
@@ -173,7 +188,9 @@ class Perceptron:
                 prob = self.input_keep_prob
             else:
                 prob = self.hidden_keep_prob
-            self.matrix_arr[layer_idx] = np.array([prob * i for i in self.matrix_arr[layer_idx]])
+            self.matrix_arr[layer_idx] = np.array(
+                [prob * i for i in self.matrix_arr[layer_idx]]
+            )
 
     def initialize_values(self, n, layer_historic=None):
         dw = []

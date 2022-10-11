@@ -1,10 +1,12 @@
 import matplotlib
+
 matplotlib.use("TkAgg")
+import time
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from tp2 import utils
-import time
 
 
 def read_and_plot(df=None):
@@ -18,7 +20,7 @@ def read_and_plot(df=None):
     ax = plt.axes(projection="3d")
     plot(data, res, ax)
     plt.close()
-    fig.savefig('colors-' + round(time.time()).__str__() + '.png', dpi=fig.dpi)
+    fig.savefig("colors-" + round(time.time()).__str__() + ".png", dpi=fig.dpi)
 
 
 def plot(data, res, ax):
@@ -27,18 +29,20 @@ def plot(data, res, ax):
     ax.set_zlim([-2, 8])
     for i in range(0, len(data)):
         color_i = float_rgb(res[i], -1, 1)
-        val = "#{:02x}{:02x}{:02x}".format(round(color_i[0]), round(color_i[1]), round(color_i[2]))
+        val = "#{:02x}{:02x}{:02x}".format(
+            round(color_i[0]), round(color_i[1]), round(color_i[2])
+        )
         ax.scatter(data[i][0], data[i][1], data[i][2], color=val)
 
 
 def float_rgb(mag, cmin, cmax):
     try:
-        x = float(mag-cmin)/(cmax-cmin)
+        x = float(mag - cmin) / (cmax - cmin)
     except ZeroDivisionError:
         x = 0.5
-    blue = min((max((4*(0.75-x), 0.)), 1.))
-    red = min((max((4*(x-0.25), 0.)), 1.))
-    green = min((max((4*np.fabs(x-0.5)-1., 0.)), 1.))
+    blue = min((max((4 * (0.75 - x), 0.0)), 1.0))
+    red = min((max((4 * (x - 0.25), 0.0)), 1.0))
+    green = min((max((4 * np.fabs(x - 0.5) - 1.0, 0.0)), 1.0))
     return np.multiply([red, green, blue], 255)
 
 

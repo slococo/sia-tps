@@ -52,7 +52,7 @@ def rms_prop(diff, eta, j):
     elif j > len(S):
         raise "Invalid j"
     S[j] = S[j] * gamma + (1 - gamma) * np.power(diff, 2)
-    return - eta * np.divide(diff, np.sqrt(S[j] + e))
+    return -eta * np.divide(diff, np.sqrt(S[j] + e))
 
 
 beta1, beta2, eps, t = 0.9, 0.999, 1e-8, 0
@@ -71,7 +71,7 @@ def adam(diff, eta, j):
     v[j] = beta2 * v[j] + (1 - beta2) * np.power(diff, 2)
     m_hat = np.divide(m[j], 1 - np.power(beta1, t))
     v_hat = np.divide(v[j], 1 - np.power(beta2, t))
-    return - eta * m_hat / (np.sqrt(v_hat) + eps)
+    return -eta * m_hat / (np.sqrt(v_hat) + eps)
 
 
 ta = 0
@@ -89,7 +89,7 @@ def adamax(diff, eta, j):
     ma[j] = beta1 * ma[j] + (1 - beta1) * diff
     ma_hat = np.divide(ma[j], 1 - np.power(beta1, ta))
     va[j] = np.maximum(beta2 * va[j], np.abs(diff))
-    return - eta * ma_hat / (va[j] + eps)
+    return -eta * ma_hat / (va[j] + eps)
 
 
 mn, vn, tn = [], [], 0
@@ -105,9 +105,13 @@ def nadam(diff, eta, j):
     tn += 1
     mn[j] = beta1 * mn[j] + (1 - beta1) * diff
     vn[j] = beta2 * vn[j] + (1 - beta2) * np.power(diff, 2)
-    m_hat = np.divide(mn[j], (1 - np.power(beta1, tn)) + np.divide((1 - beta1) * diff, (1 - np.power(beta1, tn))))
+    m_hat = np.divide(
+        mn[j],
+        (1 - np.power(beta1, tn))
+        + np.divide((1 - beta1) * diff, (1 - np.power(beta1, tn))),
+    )
     v_hat = np.divide(vn[j], 1 - np.power(beta2, tn))
-    return - eta * m_hat / (np.sqrt(v_hat) + eps)
+    return -eta * m_hat / (np.sqrt(v_hat) + eps)
 
 
 mg, vg, vg_hat = [], [], []
@@ -123,7 +127,7 @@ def amsgrad(diff, eta, j):
     mg[j] = beta1 * mg[j] + (1 - beta1) * diff
     vg[j] = beta2 * vg[j] + (1 - beta2) * np.power(diff, 2)
     vg_hat = np.maximum(vg[j], vg_hat)
-    return - eta * mg[j] / (np.add(np.sqrt(vg_hat), eps))
+    return -eta * mg[j] / (np.add(np.sqrt(vg_hat), eps))
 
 
 Eg, Ex, rho, dx = [], [], 0.9, []
@@ -141,11 +145,11 @@ def adadelta(diff, eta, j):
     Eg[j] = rho * Eg[j] + (1 - rho) * np.power(diff, 2)
     rmsEg = np.sqrt(Eg[j] + e)
     rmsEx = np.sqrt(Ex[j] + e)
-    dx[j] = - np.divide(rmsEx * diff, rmsEg)
+    dx[j] = -np.divide(rmsEx * diff, rmsEg)
     Ex[j] = rho * Ex[j] + (1 - rho) * np.power(dx[j], 2)
 
     return dx[j]
 
 
 def gradient(diff, eta, _):
-    return - eta * diff
+    return -eta * diff

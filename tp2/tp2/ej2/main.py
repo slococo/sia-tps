@@ -4,7 +4,6 @@ import time
 import matplotlib
 import numpy as np
 import pandas as pd
-
 from tp2.error_graph import ErrorGraph
 from tp2.initializer import Initializer
 from tp2.loader import CSVLoader
@@ -14,11 +13,11 @@ matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
 from tp2 import utils
+from tp2.datapartitioning import *
 from tp2.ej2 import animation, graph
 from tp2.ej2.wrapper import Wrapper
 from tp2.optimizer import *
 from tp2.perceptron import Perceptron
-from tp2.datapartitioning import *
 
 
 def main(config_path=None, data_path=None):
@@ -88,7 +87,6 @@ def main(config_path=None, data_path=None):
         #
         # print(f"Predict error: {predict_error}")
 
-
     # wrapper = Wrapper(perceptron, data_nn, historic, learning)
     # wrapper.save()
 
@@ -109,7 +107,6 @@ def main(config_path=None, data_path=None):
     #     print("Error: ", errors[-1])
     #
     # ErrorGraph.plot_error(errors)
-
 
     # path = "dataset.csv"
     #

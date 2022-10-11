@@ -1,8 +1,8 @@
 import json
 
-from tp2.perceptron import Perceptron
-from tp2.optimizer import *
 from tp2 import utils
+from tp2.optimizer import *
+from tp2.perceptron import Perceptron
 
 
 class Initializer:
@@ -46,4 +46,3 @@ class Initializer:
         )
 
         return perceptron, max_iter, error, learning, eta, dataset
-

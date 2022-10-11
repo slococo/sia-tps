@@ -1,7 +1,7 @@
 import numpy as np
+from tp2 import utils
 from tp2.initializer import Initializer
 from tp2.tester import Tester
-from tp2 import utils
 
 
 def holdout(
@@ -16,7 +16,9 @@ def holdout(
     historic.append([])
     errors.append([])
 
-    perceptron, max_iter, errors[0], learning, eta, _ = Initializer.initialize(config_path, dims, data_dim-1)
+    perceptron, max_iter, errors[0], learning, eta, _ = Initializer.initialize(
+        config_path, dims, data_dim - 1
+    )
 
     dataset = np.array(dataset)
     np.random.shuffle(dataset)
@@ -24,10 +26,7 @@ def holdout(
     train_size = int(len(dataset) * training_probability) + 1
 
     historic[0], aux, layer_historic, epoch = perceptron.train(
-        dataset[:train_size],
-        errors[0],
-        max_iter,
-        learning
+        dataset[:train_size], errors[0], max_iter, learning
     )
 
     if dims[-1] > 1:
@@ -38,10 +37,13 @@ def holdout(
         expected = np.zeros(shape=(1, len(dataset) - train_size))
 
     results[0] = Tester.test(
-        perceptron, dataset[train_size:, :-dims[-1]], dataset[train_size:, -dims[-1]:], utils.quadratic_error
+        perceptron,
+        dataset[train_size:, : -dims[-1]],
+        dataset[train_size:, -dims[-1] :],
+        utils.quadratic_error,
     )
 
-    expected[0] = np.squeeze(dataset[train_size:, -dims[-1]:])
+    expected[0] = np.squeeze(dataset[train_size:, -dims[-1] :])
 
     return historic, errors, expected, results
 
@@ -79,23 +81,27 @@ def k_fold(
         historic.append([])
         errors.append([])
 
-        perceptron, max_iter, errors[i], learning, eta, _ = Initializer.initialize(config_path, dims, data_dim-1)
+        perceptron, max_iter, errors[i], learning, eta, _ = Initializer.initialize(
+            config_path, dims, data_dim - 1
+        )
 
         historic[i], aux, layer_historic, epoch = perceptron.train(
-            np.delete(partitioned_dataset, i, 0).reshape((k - 1) * partition_size, data_dim + dims[-1]),
+            np.delete(partitioned_dataset, i, 0).reshape(
+                (k - 1) * partition_size, data_dim + dims[-1]
+            ),
             errors[i],
             max_iter,
-            learning
+            learning,
         )
 
         results[i] = Tester.test(
             perceptron,
-            partitioned_dataset[i][:, :-dims[-1]],
-            partitioned_dataset[i][:, -dims[-1]:],
-            utils.quadratic_error
+            partitioned_dataset[i][:, : -dims[-1]],
+            partitioned_dataset[i][:, -dims[-1] :],
+            utils.quadratic_error,
         )
 
-        expected[i] = np.squeeze(partitioned_dataset[i, :, -dims[-1]:])
+        expected[i] = np.squeeze(partitioned_dataset[i, :, -dims[-1] :])
 
     return historic, errors, expected, results
 
@@ -133,21 +139,25 @@ def k_fold_training(
         historic.append([])
         errors.append([])
 
-        perceptron, max_iter, errors[i], learning, eta, _ = Initializer.initialize(config_path, dims, data_dim-1)
+        perceptron, max_iter, errors[i], learning, eta, _ = Initializer.initialize(
+            config_path, dims, data_dim - 1
+        )
         perceptrons.append(perceptron)
 
         historic[i], aux, layer_historic, epoch = perceptron.train(
-            np.delete(partitioned_dataset, i, 0).reshape((k - 1) * partition_size, data_dim + dims[-1]),
+            np.delete(partitioned_dataset, i, 0).reshape(
+                (k - 1) * partition_size, data_dim + dims[-1]
+            ),
             errors[i],
             max_iter,
-            learning
+            learning,
         )
 
         results[i] = Tester.test(
             perceptron,
-            partitioned_dataset[i][:, :-dims[-1]],
-            partitioned_dataset[i][:, -dims[-1]:],
-            utils.quadratic_error
+            partitioned_dataset[i][:, : -dims[-1]],
+            partitioned_dataset[i][:, -dims[-1] :],
+            utils.quadratic_error,
         )
 
         # expected[i] = np.squeeze(partitioned_dataset[i, :, -dims[-1]:])
@@ -162,17 +172,19 @@ def k_fold_training(
 
     for i in range(0, len(aux)):
         for j in range(0, len(weights)):
-            # print(aux[i])
-            weights[j] = np.add(weights[j], np.multiply(perceptrons[i].matrix_arr[j], aux[i]))
+            weights[j] = np.add(
+                weights[j], np.multiply(perceptrons[i].matrix_arr[j], aux[i])
+            )
 
-    perceptron, _, errors, _, _, _ = Initializer.initialize(config_path, dims, data_dim-1)
+    perceptron, _, errors, _, _, _ = Initializer.initialize(
+        config_path, dims, data_dim - 1
+    )
     perceptron.matrix_arr = weights
     results = Tester.test(
-            perceptron,
-            partitioned_dataset[k - 1][:, :-1],
-            partitioned_dataset[k - 1][:, -1],
-            utils.quadratic_error
-        )
-    # partitioned_dataset[k-1]
+        perceptron,
+        partitioned_dataset[k - 1][:, :-1],
+        partitioned_dataset[k - 1][:, -1],
+        utils.quadratic_error,
+    )
 
     return None, errors, None, results

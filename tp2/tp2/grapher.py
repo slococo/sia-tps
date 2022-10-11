@@ -19,7 +19,9 @@ class Grapher:
             for i in range(0, 7):
                 aux2 = []
                 for k in range(0, 10):
-                    aux2 = np.concatenate((aux2, numbers[(j * 10) + k][i * 5:(i + 1) * 5]), 0)
+                    aux2 = np.concatenate(
+                        (aux2, numbers[(j * 10) + k][i * 5 : (i + 1) * 5]), 0
+                    )
                 if len(aux) == 0:
                     aux = [aux2]
                 else:

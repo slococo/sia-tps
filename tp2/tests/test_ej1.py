@@ -5,16 +5,15 @@ import matplotlib
 import numpy as np
 
 matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt
-
 import tp2.utils as utils
-from tp2.optimizer import *
+from matplotlib import pyplot as plt
 from tests.run_all import run_all_generic
+from tp2.optimizer import *
 
 
 def create_graph(errors, name):
     fig = plt.figure(figsize=(14, 9))
-    plt.rcParams.update({'font.size': 12})
+    plt.rcParams.update({"font.size": 12})
     plt.title(name)
     plt.plot(range(1, len(errors) + 1), errors)
     plt.xlabel("Epoch")

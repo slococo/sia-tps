@@ -1,13 +1,12 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-
-from tp2.ej2.wrapper import Wrapper
 from graph import plot
+from tp2.ej2.wrapper import Wrapper
 
 matplotlib.use("TkAgg")
 
-from matplotlib.animation import FuncAnimation, PillowWriter, FFMpegWriter
+from matplotlib.animation import FFMpegWriter, FuncAnimation, PillowWriter
 
 
 def create_animation(data, historic):
