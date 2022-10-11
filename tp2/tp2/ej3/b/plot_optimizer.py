@@ -16,17 +16,17 @@ matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
 from tp2 import utils
-from tp2.ej3.c.wrapper import Wrapper
+from tp2.ej3.b.wrapper import Wrapper
 from tp2.optimizer import *
 
 
 def main(config_path=None, data_path=None, noisy_data_path=None):
     if config_path is None:
-        config_path = "tp2/ej3/c/config.json"
+        config_path = "tp2/ej3/b/config.json"
     if data_path is None:
-        data_path = "tp2/ej3/c/digitsformat.csv"
+        data_path = "tp2/ej3/b/digitsformat.csv"
     if noisy_data_path is None:
-        noisy_data_path = "tp2/ej3/c/noisy_digitsformat.csv"
+        noisy_data_path = "tp2/ej3/b/noisy_digitsformat.csv"
 
     data_column = ["x" + str(i) for i in range(1, 36)]
     expected_column = ["y"]
@@ -35,22 +35,22 @@ def main(config_path=None, data_path=None, noisy_data_path=None):
 
     data, exp = CSVLoader.load(data_path, False, data_column, expected_column, True)
     data = np.subtract(1, data)
-    noisy_data_path = "noisy_digitsformat-uniform.csv"
+    noisy_data_path = "noisy_digitsformat.csv"
     noisy_data, noisy_exp = CSVLoader.load(noisy_data_path, False, data_column, expected_column, True)
 
     # numbers = np.concatenate((data, noisy_data), axis=0)[:, 1:]
     # Grapher.graph_numbers(numbers)
     # exit(1)
 
-    # optimizers = [gradient, momentum, rms_prop, adam, adamax, nadam, adadelta]
-    # colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'brown']
-    # optimizers = [rms_prop, adam, adamax, nadam]
-    # colors = ['green', 'yellow', 'purple', 'orange']
-    optimizers = [adam]
-    colors = ['brown']
+    # optimizers = [rms_prop, adam, adamax, nadam, adadelta]
+    # colors = ['green', 'yellow', 'purple', 'orange', 'brown', 'pink']
+    optimizers = [rms_prop, adam, adamax, nadam]
+    colors = ['green', 'yellow', 'purple', 'orange']
+    # optimizers = [adadelta]
+    # colors = ['brown']
     # optimizers = [gradient, momentum]
     # colors = ['red', 'blue']
-    matr_dims = [20, 20, 10]
+    matr_dims = [15, 2]
     noisy_acums = []
     for j in range(0, len(optimizers)):
         print(optimizers[j].__name__)
@@ -71,10 +71,10 @@ def main(config_path=None, data_path=None, noisy_data_path=None):
             noisy_errors.append(noisy_error)
             print(f"Noisy error: {noisy_error}")
 
-            wrapper = Wrapper(perceptron, data, historic, learning)
-            wrapper.save()
-
-            exit(1)
+            # wrapper = Wrapper(perceptron, data, historic, learning)
+            # wrapper.save()
+            #
+            # exit(1)
 
             # plot_probability.plot_probabilities(perceptron, data, exp, "temp.png")
 

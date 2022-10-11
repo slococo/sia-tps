@@ -30,48 +30,29 @@ def main(config_path=None, data_path=None):
     data_column = ["x1", "x2", "x3"]
     expected_column = ["y"]
 
-    try:
-        with open(config_path) as f:
-            data = json.load(f)
-            partitioning_method = data["partitioning_method"]
-            partitioning_parameters = data["partitioning_parameters"]
-    except FileNotFoundError:
-        raise "Couldn't find config path"
-
-    if partitioning_parameters is None or partitioning_method is None:
-        exit(1)
-
-    match partitioning_method:
-        case "holdout":
-            f = holdout
-        case "k_fold":
-            f = k_fold
-        case "k_fold_training":
-            f = k_fold_training
-        case _:
-            exit(1)
+    data_pathe = "dataset2.csv"
 
     data, exp = CSVLoader.load(data_path, False, data_column, expected_column, False)
+    data_e, exp_e = CSVLoader.load(data_pathe, False, data_column, expected_column, False)
     # data_nn, exp_nn = CSVLoader.load(data_path, False, data_column, expected_column, True)
 
-    means = []
-    stds = []
+    matr_dims = [1]
+    errors = []
+    pred_errors = []
+    for i in range(0, 5):
+        perceptron, max_iter, error, learning, eta, _ = Initializer.initialize(config_path, matr_dims, 3)
 
-    for i in range(0, len(partitioning_parameters)):
-        print(i)
-        res_aux = []
-        for _ in range(0, 5):
-            historic, _, expected_values, results = f(
-                config_path,
-                4,
-                [1],
-                partitioning_parameters[i],
-                np.concatenate((data, exp), 1),
-            )
-            res_aux.append(results)
+        start_time = time.time()
+        historic, aux, layer_historic, epoch = perceptron.train(np.concatenate((data_e, np.atleast_2d(exp_e)), 1), error, max_iter, learning)
+        print("Error: ", aux[-1])
+        print("Epochs: ", epoch)
+        print("Zeit: {:.8f}s".format((time.time() - start_time)))
+        errors.append(aux)
 
-        means.append(np.mean(res_aux))
-        stds.append(np.std(res_aux))
+        predict_error = Tester.test(perceptron, data, exp, utils.quadratic_error)
+        pred_errors.append(predict_error)
+        print(f"Predict error: {predict_error}")
+
         # print(means[-1], stds[-1])
         # errors.append(results)
         # prediction_errors.append(prediction_error)
@@ -88,13 +69,16 @@ def main(config_path=None, data_path=None):
         #
         # print(f"Predict error: {predict_error}")
 
+    print()
+    print("mean:", np.mean(pred_errors))
+    print("std:", np.std(pred_errors))
 
     # wrapper = Wrapper(perceptron, data_nn, historic, learning)
     # wrapper.save()
 
     # aux = np.atleast_2d(errors).T
     # for i in range(0, len(aux)):
-    ErrorGraph.plot_error(means=means, stds=stds)
+    # ErrorGraph.plot_error(errors=pred_errors)
 
     # for i in range(0, len(partitioning_parameters)):
     #     historic, _, expected_values, results = holdout(

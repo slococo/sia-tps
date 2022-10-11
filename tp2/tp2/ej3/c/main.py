@@ -34,11 +34,13 @@ def main(config_path=None, data_path=None, noisy_data_path=None):
     noisy_data, noisy_exp = CSVLoader.load(noisy_data_path, False, data_column, expected_column, True)
     errors = []
     matr_dims = [20, 10]
-    for i in range(0, 5):
+    for i in range(0, 2):
         perceptron, max_iter, error, learning, eta, _ = Initializer.initialize(config_path, matr_dims, 35)
 
         start_time = time.time()
-        historic, aux, layer_historic = perceptron.train(np.concatenate((data, np.atleast_2d(exp)), 1), error, max_iter, learning, utils.res_index)
+        historic, aux, layer_historic, epoch = perceptron.train(np.concatenate((data, np.atleast_2d(exp)), 1), error, max_iter, learning, utils.res_index)
+        print("Error: ", aux[-1])
+        print("Epochs: ", epoch)
         print("Zeit: {:.8f}s".format((time.time() - start_time)))
         errors.append(aux)
 

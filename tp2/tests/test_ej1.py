@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 import tp2.utils as utils
 from tp2.optimizer import *
-from tp2.run_all_generic import run_all_generic
+from tests.run_all import run_all_generic
 
 
 def create_graph(errors, name):
@@ -26,7 +26,7 @@ def create_graph(errors, name):
 
 def run_all():
     try:
-        with open("data.json") as f:
+        with open("../tp2/ej1/data.json") as f:
             data = json.load(f)
     except FileNotFoundError:
         raise RuntimeError("Couldn't load data.json")
@@ -55,7 +55,6 @@ def run_all():
         data=data,
         max_iter=2000,
         max_error=0,
-        graph=create_graph,
     )
 
 

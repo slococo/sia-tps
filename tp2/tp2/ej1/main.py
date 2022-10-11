@@ -4,6 +4,7 @@ import time
 import matplotlib
 import numpy as np
 
+from tp2.ej1 import graph
 from tp2.ej1.animation import create_animation
 from tp2.error_graph import ErrorGraph
 from tp2.initializer import Initializer
@@ -36,21 +37,20 @@ def main(config_path=None, data_path=None):
         errors.append(aux)
 
         predict_error = Tester.test(perceptron, data, exp, utils.quadratic_error)
+        # graph.plot(perceptron)
+        # exit(1)
 
         print(f"Predict error: {predict_error}")
-        print()
-        create_animation(
-            data,
-            historic,
-            layer_historic,
-            perceptron,
-            learning,
-            perceptron.g,
-        )
+        # create_animation(
+        #     data,
+        #     historic,
+        #     layer_historic,
+        #     perceptron,
+        #     learning,
+        #     perceptron.g,
+        # )
 
-    ErrorGraph.plot_error(errors)
-
-
+    # ErrorGraph.plot_error(errors)
 
 
 if __name__ == "__main__":

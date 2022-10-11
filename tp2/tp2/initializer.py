@@ -20,8 +20,6 @@ class Initializer:
                 max_iter = data["max_iter"]
                 error = data["error"]
                 eta = data["eta"]
-                # partitioning_method = data.get("part_method", default=None)
-                # partitioning_parameter = data.get("part_parameter", default=None)
         except FileNotFoundError:
             raise "Couldn't find config path"
 

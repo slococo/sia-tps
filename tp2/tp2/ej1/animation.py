@@ -13,9 +13,8 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 def create_animation(data, historic, layer_historic, perceptron, learning, g_function):
     fig = plt.figure(figsize=(14, 9))
     ax = plt.axes()
-    print(np.atleast_2d(historic).shape)
 
-    def animate_batch(i):
+    def animate(i):
         ax.clear()
         ax.set_ylim([-1.5, 1.5])
         ax.set_xlim([-1.5, 1.5])
@@ -29,6 +28,7 @@ def create_animation(data, historic, layer_historic, perceptron, learning, g_fun
             + perceptron.eta.__str__()
             + "  optimizer: "
             + perceptron.optimizer.__name__
+            + " ~ iter: " + str(i)
         )
         ax.set_xlabel("x")
         ax.set_ylabel("y")
@@ -36,7 +36,7 @@ def create_animation(data, historic, layer_historic, perceptron, learning, g_fun
         ax.axhline(linewidth=0.4, color="black")
         ax.axvline(linewidth=0.4, color="black")
 
-        res = historic[i]
+        res = np.squeeze(historic[i])
         for u in range(0, len(data)):
             color = "black"
             if res[u] > 0:
@@ -56,55 +56,8 @@ def create_animation(data, historic, layer_historic, perceptron, learning, g_fun
         y = -(matr[1] * x + matr[0]) / matr[2]
         ax.plot(x, y, "gray")
 
-    def animate_online(i):
-        ax.clear()
-        ax.set_ylim([-1.5, 1.5])
-        ax.set_xlim([-1.5, 1.5])
-        ax.set_title(
-            "ej1 ~ activation: "
-            + g_function.__name__
-            + " ~ "
-            + learning
-            + "\n"
-            + "eta: "
-            + perceptron.eta.__str__()
-            + "  optimizer: "
-            + perceptron.optimizer.__name__
-        )
-        ax.set_xlabel("x")
-        ax.set_ylabel("y")
-
-        ax.axhline(linewidth=0.4, color="black")
-        ax.axvline(linewidth=0.4, color="black")
-
-        for u in range(0, len(historic[i])):
-            res = historic[i][u][-1]
-            color = "black"
-            if res > 0:
-                color = "blue"
-            elif res < 0:
-                color = "red"
-            ax.plot(
-                historic[i][u][1],
-                historic[i][u][2],
-                marker="o",
-                markerfacecolor=color,
-                markeredgecolor=color,
-            )
-
-        matr = layer_historic[i][0][0]
-        x = np.linspace(-2, 2, 50)
-        y = -(matr[1] * x + matr[0]) / matr[2]
-        ax.plot(x, y, "gray")
-
-    if learning == "batch":
-        animate = animate_batch
-    elif learning == "online":
-        animate = animate_online
-    else:
-        raise "Invalid learning technique"
     ani = FuncAnimation(
-        fig, animate_batch, frames=len(layer_historic), interval=1000, repeat=False
+        fig, animate, frames=len(layer_historic), interval=400, repeat=False
     )
     plt.close()
     fps = round(len(layer_historic) / 4)

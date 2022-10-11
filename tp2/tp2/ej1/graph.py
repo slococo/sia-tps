@@ -16,7 +16,7 @@ def plot(perceptron=None):
     y = x.copy().T
     coefs = perceptron.matrix_arr[0][0]
     z = np.tanh(coefs[0] + x * coefs[1] + y * coefs[2])
-    fig = plt.figure(figsize=(14, 9))
+    plt.figure(figsize=(14, 9))
     ax = plt.axes(projection="3d")
     ax.plot_surface(
         x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False, alpha=0.85
@@ -24,7 +24,6 @@ def plot(perceptron=None):
     x = np.array([1, 1, -1, -1])
     y = np.array([1, -1, -1, 1])
     ax.scatter(x, y, color="black", depthshade=False, alpha=1)
-    # fig.savefig('temp.png', dpi=fig.dpi)
     plt.show()
 
 

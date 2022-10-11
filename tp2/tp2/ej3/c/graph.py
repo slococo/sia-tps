@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import csv
 
+from tp2.grapher import Grapher
+
 matplotlib.use("TkAgg")
 
 import matplotlib.pyplot as plt
@@ -12,6 +14,9 @@ import matplotlib.pyplot as plt
 def plot(df=None):
     if df is None:
         df = pd.read_csv("digits.csv", sep=" ", header=None)
+
+    uniform = False
+    normal = True
 
     color = np.array([1, 1, 1])
     df = df.to_numpy()
@@ -32,7 +37,12 @@ def plot(df=None):
                 data = np.zeros((7, 5, 3))
         aux = np.zeros((5, 3))
         for i in range(0, 5):
-            val = min(max(np.random.normal(loc=dfi[j][i], scale=0.05), 0), 1)
+            val = dfi[j][i]
+            if uniform:
+                if np.random.uniform(0, 1) <= 0.05:
+                    val = 1 - dfi[j][i]
+            elif normal:
+                val = min(max(np.random.normal(loc=dfi[j][i], scale=0.5), 0), 1)
             noisy_dataset[math.trunc(f / 7)].append(val)
             aux[i] = color * val
         data[j % 7] = aux
@@ -40,7 +50,7 @@ def plot(df=None):
     # plt.show()
 
     q = 0
-    with open('noisy_digitsformat.csv', 'w', newline='') as csvfile:
+    with open('noisy_digitsformat-normal-masfuerte.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         for row in noisy_dataset:
             row.append(q % 10)

@@ -1,13 +1,13 @@
 import json
 import tp2.utils as utils
 from tp2.optimizer import *
-from tp2.run_all_generic import run_all_generic
+from tests.run_all import run_all_generic
 import pandas as pd
 
 
 def run_all():
     try:
-        df = pd.read_csv("dataset.csv")
+        df = pd.read_csv("../tp2/ej2/dataset.csv")
     except FileNotFoundError:
         raise RuntimeError("Couldn't read dataset")
 

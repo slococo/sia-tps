@@ -1,3 +1,5 @@
+import time
+
 import matplotlib
 import numpy as np
 
@@ -10,6 +12,7 @@ class Grapher:
     def graph_numbers(cls, numbers):
         data = []
         color = np.array([1, 1, 1])
+        fig = plt.figure(figsize=(14, 9))
 
         for j in range(0, 6):
             aux = []
@@ -36,6 +39,5 @@ class Grapher:
             final.append(final_aux)
 
         plt.imshow(final, interpolation="nearest")
-        plt.show()
-
-
+        fig.savefig("noisy-numbers" + round(time.time()).__str__() + ".png")
+        plt.close()

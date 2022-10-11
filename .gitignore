@@ -70,3 +70,4 @@ cython_debug/
 *.obj
 *.gif
 *.png
+*.mp4

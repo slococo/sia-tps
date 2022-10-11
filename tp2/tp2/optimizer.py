@@ -84,7 +84,7 @@ def adamax(diff, eta, j):
         ma.append(0)
         va.append(0)
     elif j > len(ma):
-        raise "your hands"
+        raise "Invalid j"
     ta += 1
     ma[j] = beta1 * ma[j] + (1 - beta1) * diff
     ma_hat = np.divide(ma[j], 1 - np.power(beta1, ta))
@@ -119,11 +119,32 @@ def amsgrad(diff, eta, j):
         mg.append(0)
         vg.append(0)
     elif j > len(mg):
-        raise "your hands"
+        raise "Invalid j"
     mg[j] = beta1 * mg[j] + (1 - beta1) * diff
     vg[j] = beta2 * vg[j] + (1 - beta2) * np.power(diff, 2)
     vg_hat = np.maximum(vg[j], vg_hat)
     return - eta * mg[j] / (np.add(np.sqrt(vg_hat), eps))
+
+
+Eg, Ex, rho, dx = [], [], 0.9, []
+
+
+def adadelta(diff, eta, j):
+    global Eg, Ex, dx
+    if j == len(Eg):
+        Eg.append(0)
+        Ex.append(0)
+        dx.append(0)
+    elif j > len(Eg):
+        raise "Invalid j"
+
+    Eg[j] = rho * Eg[j] + (1 - rho) * np.power(diff, 2)
+    rmsEg = np.sqrt(Eg[j] + e)
+    rmsEx = np.sqrt(Ex[j] + e)
+    dx[j] = - np.divide(rmsEx * diff, rmsEg)
+    Ex[j] = rho * Ex[j] + (1 - rho) * np.power(dx[j], 2)
+
+    return dx[j]
 
 
 def gradient(diff, eta, _):

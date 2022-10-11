@@ -60,8 +60,8 @@ class Perceptron:
         errors, historic, layer_historic = [], [], []
         error, n = math.inf, 0
         while error > error_max and n < max_iter:
-            n += 1
             error, dw = self.initialize_values(n, layer_historic)
+            n += 1
 
             for u in data:
                 h, v = self.calc_out(u[:-1], True)
@@ -112,6 +112,7 @@ class Perceptron:
 
             data_copy = data.copy()
             random.shuffle(data_copy)
+            errors_aux = []
             for u in data_copy:
                 k += 1
                 h, v = self.calc_out(u[:-1], True)
@@ -139,6 +140,7 @@ class Perceptron:
                 layer_historic.append([])
                 for layer in self.matrix_arr:
                     layer_historic[k - 1].append(layer.copy())
+                historic.append([])
 
                 for a in data:
                     he, ve = self.calc_out(a[:-1], True)
@@ -148,193 +150,22 @@ class Perceptron:
                     if exp:
                         expected = exp(ve[-1], expected)
 
-                    if len(historic) <= k - 1:
-                        historic.append([])
                     historic[k - 1].append(ve[-1])
-
                     error += np.average((np.subtract(expected, res) / 2) ** 2)
 
                 error = error / len(data)
-                errors.append(error)
+                errors_aux.append(error)
 
                 if error <= error_max or n >= max_iter:
+                    errors.append(np.average(errors_aux))
                     break
+
+            errors.append(np.average(errors_aux))
 
         if self.dropout:
             self.scale_weights()
 
         return historic, errors, layer_historic, n
-
-    # def batch_old(self, data, error_max, max_iter, exp=None):
-    #     errors, historic, layer_historic = [], [], []
-    #     error = math.inf
-    #     n = 0
-    #     while error > error_max and n < max_iter:
-    #         error = 0
-    #
-    #         dw = []
-    #         for i in self.matrix_arr[::-1]:
-    #             dw.append(np.atleast_2d(np.zeros_like(i)))
-    #
-    #         n += 1
-    #         if len(layer_historic) <= n - 1:
-    #             layer_historic.append([])
-    #
-    #         for layer in self.matrix_arr:
-    #             layer_historic[n - 1].append(layer.copy())
-    #
-    #         for u in data:
-    #             h, v = [], []
-    #             v.append(np.array(u[:-1]))
-    #             for layer in self.matrix_arr:
-    #                 if self.dropout:
-    #                     if layer is self.matrix_arr[0]:
-    #                         prob = self.input_keep_prob
-    #                     else:
-    #                         prob = self.hidden_keep_prob
-    #                     layer_cpy = layer.copy()
-    #                     for i in range(len(layer)):
-    #                         if random.uniform(0, 1) > prob:
-    #                             layer_cpy[i] = np.zeros(len(layer[i]))
-    #                     h.append(np.atleast_1d(layer_cpy @ v[-1]))
-    #                 else:
-    #                     h.append(np.atleast_1d(layer @ v[-1]))
-    #                 v.append(np.atleast_1d(np.array(self.g(h[-1]))))
-    #
-    #             if len(historic) <= n - 1:
-    #                 historic.append([])
-    #             historic[n - 1].append(v[-1])
-    #
-    #             res = v[-1]
-    #             expected = u[-1]
-    #             if exp:
-    #                 expected = exp(v[-1], expected)
-    #
-    #             if self.eta_adapt:
-    #                 self.eta = self.eta_adapt(
-    #                     np.average(np.subtract(expected, res)), self.eta
-    #                 )
-    #             d = np.atleast_2d(np.subtract(res, expected) * self.g_diff(h[-1]))
-    #             dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
-    #
-    #             j = 0
-    #             for layer in self.matrix_arr[::-1]:
-    #                 if j != 0:
-    #                     d = np.atleast_2d(
-    #                         aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
-    #                     ).T
-    #                     dw[j] += self.optimizer(
-    #                         d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j
-    #                     )
-    #                 aux = layer
-    #                 j += 1
-    #
-    #             error += np.average((np.subtract(expected, res) / 2) ** 2)
-    #
-    #         error = error / len(data)
-    #         errors.append(error)
-    #
-    #         if error <= error_max or n >= max_iter:
-    #             break
-    #
-    #         j = 0
-    #         for layer in self.matrix_arr[::-1]:
-    #             aux = layer.copy()
-    #             layer += dw[j]
-    #             j += 1
-    #
-    #     if self.dropout:
-    #         for layer_idx in range(len(self.matrix_arr)):
-    #             if layer_idx == 0:
-    #                 prob = self.input_keep_prob
-    #             else:
-    #                 prob = self.hidden_keep_prob
-    #             self.matrix_arr[layer_idx] = np.array([prob * i for i in self.matrix_arr[layer_idx]])
-    #
-    #     print("Times: ", n)
-    #     print("Error: ", error)
-    #     return historic, errors, layer_historic
-
-    # def online_old(self, data, error_max, max_iter, exp=None):
-    #     errors, historic, layer_historic = [], [], []
-    #     error = math.inf
-    #     n = 0
-    #     k = 0
-    #     while error > error_max and n < max_iter:
-    #         error = 0
-    #
-    #         dw = []
-    #         for i in self.matrix_arr[::-1]:
-    #             dw.append(np.atleast_2d(np.zeros_like(i)))
-    #
-    #         n += 1
-    #
-    #         data_copy = data.copy()
-    #         random.shuffle(data_copy)
-    #         for u in data_copy:
-    #             k += 1
-    #             h, v = [], []
-    #             v.append(np.array(u[:-1]))
-    #             for layer in self.matrix_arr:
-    #                 h.append(np.atleast_1d(layer @ v[-1]))
-    #                 v.append(np.atleast_1d(np.array(self.g(h[-1]))))
-    #
-    #             res = v[-1]
-    #             expected = u[-1]
-    #             if exp:
-    #                 expected = exp(v[-1], expected)
-    #
-    #             if self.eta_adapt:
-    #                 self.eta = self.eta_adapt(
-    #                     np.average(np.subtract(expected, res)), self.eta
-    #                 )
-    #             d = np.atleast_2d(np.subtract(res, expected) * self.g_diff(h[-1]))
-    #             dw[0] += self.optimizer(d.T.dot(np.atleast_2d(v[-2])), self.eta, 0)
-    #
-    #             j = 0
-    #             if len(layer_historic) <= k - 1:
-    #                 layer_historic.append([])
-    #             for layer in self.matrix_arr[::-1]:
-    #                 if j != 0:
-    #                     d = np.atleast_2d(
-    #                         aux.T.dot(d.T) * np.atleast_2d(self.g_diff(h[-(j + 1)])).T
-    #                     ).T
-    #                     dw[j] = self.optimizer(
-    #                         d.T.dot((np.atleast_2d(v[-(j + 2)]))), self.eta, j
-    #                     )
-    #                 layer += dw[j]
-    #                 aux = layer
-    #                 layer_historic[k - 1].append(layer.copy())
-    #                 j += 1
-    #
-    #             for a in data_copy:
-    #                 he, ve = [], []
-    #                 ve.append(np.array(a[:-1]))
-    #                 for layer in self.matrix_arr:
-    #                     he.append(np.atleast_1d(layer @ ve[-1]))
-    #                     ve.append(np.atleast_1d(np.array(self.g(he[-1]))))
-    #                 res = ve[-1]
-    #                 expected = a[-1]
-    #
-    #                 if len(historic) <= k - 1:
-    #                     historic.append([])
-    #                 aux = a[:-1].copy()
-    #                 aux.append(ve[-1])
-    #                 historic[k - 1].append(aux)
-    #
-    #                 if exp:
-    #                     expected = exp(ve[-1], expected)
-    #                 error += np.average((np.subtract(expected, res) / 2) ** 2)
-    #
-    #             error = error / len(data)
-    #             errors.append(error)
-    #
-    #             if error <= error_max or n >= max_iter:
-    #                 break
-    #
-    #     print("Times: ", n)
-    #     print("Error: ", error)
-    #     return historic, errors, layer_historic
 
     def scale_weights(self):
         for layer_idx in range(len(self.matrix_arr)):

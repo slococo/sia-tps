@@ -1,36 +1,30 @@
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
+
 from tp2.ej2.wrapper import Wrapper
+from graph import plot
 
 matplotlib.use("TkAgg")
 
-from matplotlib.animation import FuncAnimation, PillowWriter
+from matplotlib.animation import FuncAnimation, PillowWriter, FFMpegWriter
 
 
 def create_animation(data, historic):
-    fig = plt.figure(figsize=(6, 4))
+    fig = plt.figure(figsize=(14, 9))
     ax = plt.axes(projection="3d")
 
     def animate(i):
         ax.clear()
+        ax.set_title(f"iter: {i}")
+        res = np.squeeze(historic[i])
+        plot(data[:, 1:], res, ax)
 
-        ax.set_ylim([-2, 8])
-        ax.set_xlim([-2, 8])
-        ax.set_zlim([-2, 8])
-
-        res = historic[i]
-        for j in range(0, len(data)):
-            val = 0xCC * ((res[j][0] + 1) / 2)
-            ax.scatter(
-                data[j][0],
-                data[j][1],
-                data[j][2],
-                color="#{:02x}{:02x}{:02x}".format(round(val), 0x00, round(val / 3)),
-            )
-
-    ani = FuncAnimation(fig, animate, frames=len(historic), interval=86, repeat=False)
+    ani = FuncAnimation(fig, animate, frames=len(historic), interval=20, repeat=False)
     plt.close()
-    ani.save("anim.gif", writer="PillowWriter", fps=12)
+    ani.save("anim.gif", fps=200)
+
+    # ani.save("anim.mp4", writer=FFMpegWriter(fps=60))
 
 
 if __name__ == "__main__":

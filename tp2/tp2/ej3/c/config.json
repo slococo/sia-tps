@@ -1,10 +1,10 @@
 {
   "learning": "batch",
-  "optimizer": "adamax",
+  "optimizer": "adam",
   "eta_adapt": null,
   "g_function": "tanh",
   "max_iter": 20000,
   "error": 0,
-  "eta": 0.1,
+  "eta": 0.001,
   "beta": 0.05
 }
