@@ -3,10 +3,11 @@ import json
 import matplotlib
 import numpy as np
 
+from tp3 import utils
+
 matplotlib.use("TkAgg")
 
 import pandas as pd
-from tp2 import utils
 
 
 class Loader:
@@ -45,14 +46,15 @@ class JSONLoader(Loader):
         except FileNotFoundError:
             raise "Data file path is incorrect"
 
-        res = data[:, -exp_size]
-        data = data[:, :-exp_size]
+        # res = data[:, -exp_size]
+        # data = data[:, :-exp_size]
 
-        if not normalised:
-            normalised_data_matrix, _, _ = utils.normalise(data, -1, 1)
-            normalised_res_matrix, _, _ = utils.normalise(res, -1, 1)
+        # if not normalised:
+        #     normalised_data_matrix, _, _ = utils.normalise(data, -1, 1)
+        #     normalised_res_matrix, _, _ = utils.normalise(res, -1, 1)
 
-        if not has_bias:
-            data = np.insert(data, 0, 1, axis=1)
+        # if not has_bias:
+        #     data = np.insert(data, 0, 1, axis=1)
 
-        return data, res
+        # return data, res
+        return data

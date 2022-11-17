@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class Grapher:
     @classmethod
-    def graph_numbers(cls, numbers):
+    def graph_data(cls, numbers):
         data = []
         color = np.array([1, 1, 1])
         fig = plt.figure(figsize=(14, 9))

@@ -1,8 +1,8 @@
 import json
 
-from tp2 import utils
-from tp2.optimizer import *
-from tp2.perceptron import Perceptron
+from tp3 import utils
+from tp3.optimizer import *
+from tp3.perceptron import Perceptron
 
 
 class Initializer:
