@@ -1,7 +1,7 @@
 import numpy as np
-from tp2 import utils
-from tp2.initializer import Initializer
-from tp2.tester import Tester
+from tp3 import utils
+from tp3.initializer import Initializer
+from tp3.tester import Tester
 
 
 def holdout(

@@ -1,11 +1,11 @@
 {
   "dataset": "fonts",
-  "learning": "online",
-  "optimizer": "gradient",
-  "g_function": "step",
+  "learning": "batch",
+  "optimizer": "adam",
+  "g_function": "tanh",
   "beta": 1,
   "eta_adapt": null,
-  "max_iter": 10000,
+  "max_iter": 20000,
   "error": 0,
   "eta": 0.01
 }

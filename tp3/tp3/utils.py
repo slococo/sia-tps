@@ -38,6 +38,10 @@ def set_b(b_val):
     b = b_val
 
 
+def get_b():
+    return b
+
+
 def tanh_diff(x):
     res = []
     x = np.atleast_1d(x)
@@ -74,6 +78,16 @@ def step(x):
 
 def quadratic_error(exp, res):
     return np.average(np.power((np.subtract(exp, res) / 2), 2))
+
+
+delta = 1e-6
+
+
+def log_error(exp, res):
+    return np.add(
+        np.multiply(np.multiply(0.5, (1 + exp)), np.log((1 + exp + delta) / (1 + res + delta))),
+        np.multiply(np.multiply(0.5, (1 - exp)), np.log((1 - exp + delta) / (1 - res + delta)))
+    )
 
 
 def res_index(x, n):

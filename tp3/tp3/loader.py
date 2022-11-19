@@ -22,18 +22,18 @@ class CSVLoader(Loader):
             with open(path) as f:
                 df = pd.read_csv(f)
                 data = df[data_columns].to_numpy()
-                res = df[exp_columns].to_numpy()
+                # res = df[exp_columns].to_numpy()
         except FileNotFoundError:
             raise "Data file path is incorrect"
 
         if not normalised:
             data, _, _ = utils.normalise(data, -1, 1)
-            res, _, _ = utils.normalise(res, -1, 1)
 
+        data_b = data
         if not has_bias:
-            data = np.insert(data, 0, 1, axis=1)
+            data_b = np.insert(data, 0, 1, axis=1)
 
-        return data, res
+        return data_b, data
 
 
 class JSONLoader(Loader):
@@ -57,4 +57,4 @@ class JSONLoader(Loader):
         #     data = np.insert(data, 0, 1, axis=1)
 
         # return data, res
-        return data
+        return data, data

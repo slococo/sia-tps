@@ -1,6 +1,7 @@
 import json
 
 from tp3 import utils
+from tp3.autoencoder import Autoencoder
 from tp3.optimizer import *
 from tp3.perceptron import Perceptron
 
@@ -41,7 +42,7 @@ class Initializer:
                 g_diff = utils.ident_diff
         utils.set_b(beta)
 
-        perceptron = Perceptron(
+        perceptron = Autoencoder(
             data_size + 1, matr_dims, optimizer, g_function, g_diff, eta, eta_adapt
         )
 

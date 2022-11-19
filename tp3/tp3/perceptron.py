@@ -4,6 +4,8 @@ import random
 
 import numpy as np
 
+from tp3 import utils
+
 
 class Perceptron:
     def __init__(
@@ -47,12 +49,12 @@ class Perceptron:
         with open(file_name, "rb") as f:
             return pickle.load(f)
 
-    def train(self, data, error_max, max_iter, method, exp=None):
+    def train(self, data, expected, error_max, max_iter, method, exp=None):
         match method:
             case "online":
-                return self.online(data, error_max, max_iter, exp)
+                return self.online(data, expected, error_max, max_iter, exp)
             case "batch":
-                return self.batch(data, error_max, max_iter, exp)
+                return self.batch(data, expected, error_max, max_iter, exp)
             case _:
                 raise RuntimeError("Unknown method " + method)
 
@@ -67,30 +69,31 @@ class Perceptron:
             out = self.g(aux)
         return out
 
-    def batch(self, data, error_max, max_iter, exp=None):
+    def batch(self, data, expected, error_max, max_iter, exp=None):
         errors, historic, layer_historic = [], [], []
         error, n = math.inf, 0
         while error > error_max and n < max_iter:
             error, dw = self.initialize_values(n, layer_historic)
             n += 1
 
-            for u in data:
-                h, v = self.calc_out(u[:-1], True)
+            for i in range(0, len(data)):
+                u = data[i]
+                h, v = self.calc_out(u, True)
 
                 if len(historic) <= n - 1:
                     historic.append([])
                 historic[n - 1].append(v[-1])
 
                 res = v[-1]
-                expected = u[-1]
+                expec = expected[i]
                 if exp:
-                    expected = exp(v[-1], expected)
+                    expec = exp(v[-1], expected[i])
 
                 if self.eta_adapt:
                     self.eta = self.eta_adapt(
-                        np.average(np.subtract(expected, res)), self.eta
+                        np.average(np.subtract(expec, res)), self.eta
                     )
-                d = self.calc_d(res=res, exp=expected, h=h[-1])
+                d = self.calc_d(res=res, exp=expec, h=h[-1])
                 dw[0] += self.calc_dw(d, v[-2], 0)
 
                 j = 0
@@ -101,7 +104,7 @@ class Perceptron:
                     aux = layer
                     j += 1
 
-                error += np.average((np.subtract(expected, res) / 2) ** 2)
+                error += np.average((np.subtract(expec, res) / 2) ** 2)
 
             error = error / len(data)
             errors.append(error)
@@ -116,36 +119,39 @@ class Perceptron:
 
         return historic, errors, layer_historic, n
 
-    def online(self, data, error_max, max_iter, exp=None):
+    def online(self, data, expected, error_max, max_iter, exp=None):
         errors, historic, layer_historic = [], [], []
         error, n, k = math.inf, 0, 0
         while error > error_max and n < max_iter:
             error, dw = self.initialize_values(n)
             n += 1
 
-            data_copy = data.copy()
-            random.shuffle(data_copy)
+            temp = list(zip(data, expected))
+            random.shuffle(temp)
+            data_copy, expected_copy = zip(*temp)
+
             errors_aux = []
-            for u in data_copy:
+            for i in range(0, len(data_copy)):
                 k += 1
-                h, v = self.calc_out(u[:-1], True)
+                u = data_copy[i]
+                h, v = self.calc_out(u, True)
 
                 res = v[-1]
-                expected = u[-1]
+                expec = expected_copy[i]
                 if exp:
-                    expected = exp(v[-1], expected)
+                    expec = exp(v[-1], expected_copy[i])
 
                 if self.eta_adapt:
                     self.eta = self.eta_adapt(
-                        np.average(np.subtract(expected, res)), self.eta
+                        np.average(np.subtract(expec, res)), self.eta
                     )
-                d = self.calc_d(res=res, exp=expected, h=h[-1])
+                d = self.calc_d_log(res=res, exp=expec, h=h[-1])
                 dw[0] = self.calc_dw(d, v[-2], 0)
 
                 j = 0
                 for layer in self.matrix_arr[::-1]:
                     if j != 0:
-                        d = self.calc_d(d=d, w=aux, h=h[-(j + 1)])
+                        d = self.calc_d_log(d=d, w=aux, h=h[-(j + 1)])
                         dw[j] = self.calc_dw(d, v[-(j + 2)], j)
                     aux = layer
                     j += 1
@@ -157,16 +163,17 @@ class Perceptron:
                     layer_historic[k - 1].append(layer.copy())
                 historic.append([])
 
-                for a in data:
-                    he, ve = self.calc_out(a[:-1], True)
+                for j in range(0, len(data)):
+                    a = data[j]
+                    he, ve = self.calc_out(a, True)
 
                     res = ve[-1]
-                    expected = a[-1]
+                    expec = expected[j]
                     if exp:
-                        expected = exp(ve[-1], expected)
+                        expec = exp(ve[-1], expected[j])
 
                     historic[k - 1].append(ve[-1])
-                    error += np.average((np.subtract(expected, res) / 2) ** 2)
+                    error += np.average((np.subtract(expec, res) / 2) ** 2)
 
                 error = error / len(data)
                 errors_aux.append(error)
@@ -208,6 +215,14 @@ class Perceptron:
             return np.atleast_2d(d.dot(w) * np.atleast_2d(self.g_diff(h)))
         elif res is not None and exp is not None:
             return np.atleast_2d(np.subtract(res, exp) * self.g_diff(h))
+        else:
+            raise "your hands"
+
+    def calc_d_log(self, h, d=None, w=None, res=None, exp=None):
+        if w is not None and d is not None:
+            return np.atleast_2d(d.dot(w) * np.atleast_2d(self.g_diff(h)))
+        elif res is not None and exp is not None:
+            return utils.get_b() * np.subtract(res, exp)
         else:
             raise "your hands"
 

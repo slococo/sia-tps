@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class Grapher:
     @classmethod
-    def graph_data(cls, numbers):
+    def graph_data(cls, data):
         data = []
         color = np.array([1, 1, 1])
         fig = plt.figure(figsize=(14, 9))
@@ -20,7 +20,7 @@ class Grapher:
                 aux2 = []
                 for k in range(0, 10):
                     aux2 = np.concatenate(
-                        (aux2, numbers[(j * 10) + k][i * 5 : (i + 1) * 5]), 0
+                        (aux2, data[(j * 10) + k][i * 5 : (i + 1) * 5]), 0
                     )
                 if len(aux) == 0:
                     aux = [aux2]
@@ -41,5 +41,5 @@ class Grapher:
             final.append(final_aux)
 
         plt.imshow(final, interpolation="nearest")
-        fig.savefig("noisy-numbers" + round(time.time()).__str__() + ".png")
+        fig.savefig("noisy-data" + round(time.time()).__str__() + ".png")
         plt.close()
