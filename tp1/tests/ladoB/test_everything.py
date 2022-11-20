@@ -2,7 +2,6 @@ import time
 
 import matplotlib.pyplot as plt
 import numpy as np
-from tp1.ladoB.structure import GeneticExecutor
 
 from tests.ladoB import (
     all_crossovers,
@@ -11,6 +10,7 @@ from tests.ladoB import (
     params,
     tries_per_run,
 )
+from tp1.ladoB.structure import GeneticExecutor
 
 """Test each combination of crossover, selection and mutation methods,
  each 10 times, for each input-output pair in config.json"""

@@ -1,4 +1,5 @@
 import numpy as np
+
 from tp2 import utils
 from tp2.initializer import Initializer
 from tp2.tester import Tester

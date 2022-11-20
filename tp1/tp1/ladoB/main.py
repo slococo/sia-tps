@@ -2,6 +2,7 @@ import json
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from tp1.ladoB.crossover import avg_cross, two_point_cross, uniform_cross
 from tp1.ladoB.mutation import (
     complete_mutate,

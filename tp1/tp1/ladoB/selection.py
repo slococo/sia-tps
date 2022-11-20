@@ -3,6 +3,7 @@ import random
 from typing import List
 
 import numpy as np
+
 from tp1.ladoB.structure import Color
 
 

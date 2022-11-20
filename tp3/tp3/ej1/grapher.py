@@ -20,7 +20,9 @@ class Grapher:
                 if np.atleast_2d(aux).shape[1] == 0:
                     aux = aux2
                 else:
-                    aux = np.concatenate((np.atleast_2d(aux), np.atleast_2d(aux2)), axis=0)
+                    aux = np.concatenate(
+                        (np.atleast_2d(aux), np.atleast_2d(aux2)), axis=0
+                    )
 
             aux = np.subtract(1, aux)
             plt.imshow(aux, interpolation="nearest", cmap="gray")

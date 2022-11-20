@@ -3,6 +3,7 @@ import time
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+
 from tp2.ej3.c.wrapper import Wrapper
 from tp2.loader import CSVLoader
 
