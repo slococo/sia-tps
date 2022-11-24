@@ -11,13 +11,10 @@ import matplotlib.pyplot as plt
 class ErrorGraph:
     @classmethod
     def plot_error(cls, errors=None, means=None, stds=None):
-        # fig = plt.figure(figsize=(14, 9))
         if errors is not None:
             cls.make_plt(errors=errors)
         else:
             cls.make_plt(means=means, stds=stds)
-        # plt.close()
-        # fig.savefig("error" + round(time.time()).__str__() + ".png")
         plt.show()
 
     @classmethod

@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 delta_y = 0.01
 delta_x = 0.005
 
+
 class Grapher:
     @classmethod
     def graph_data(cls, data):
@@ -102,16 +103,26 @@ class Grapher:
             aux2 = []
             for j in np.arange(-1, 1, 0.1):
                 if j == -1:
-                    aux2 = np.array(perceptron.create_from_latent([-i, j])).reshape(7, 5)
+                    aux2 = np.array(perceptron.create_from_latent([-i, j])).reshape(
+                        7, 5
+                    )
                 else:
-                    aux2 = np.concatenate((aux2, np.array(perceptron.create_from_latent([-i, j])).reshape(7, 5)), axis=0)
+                    aux2 = np.concatenate(
+                        (
+                            aux2,
+                            np.array(perceptron.create_from_latent([-i, j])).reshape(
+                                7, 5
+                            ),
+                        ),
+                        axis=0,
+                    )
 
             if i == -1:
                 aux = aux2
             else:
                 aux = np.concatenate((np.atleast_2d(aux), aux2), axis=1)
 
-        plt.imshow(aux, cmap='gray')
+        plt.imshow(aux, cmap="gray")
         plt.show()
 
     @classmethod
@@ -131,7 +142,7 @@ class Grapher:
             else:
                 test = np.insert(test, test.shape[1], -1, axis=1)
                 test = np.concatenate((test, np.array(data[k]).reshape(y, x)), axis=1)
-                
+
         aux = np.insert(aux, aux.shape[0], -1, axis=0)
         aux = np.concatenate((aux, test), axis=0)
         aux = np.subtract(1, aux)

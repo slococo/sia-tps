@@ -107,14 +107,18 @@ delta = 1e-6
 
 
 def log_error(exp, res):
-    return np.average(np.add(
-        np.multiply(
-            np.multiply(0.5, (1 + exp)), np.log((1 + exp + delta) / (1 + res + delta))
-        ),
-        np.multiply(
-            np.multiply(0.5, (1 - exp)), np.log((1 - exp + delta) / (1 - res + delta))
-        ),
-    ))
+    return np.average(
+        np.add(
+            np.multiply(
+                np.multiply(0.5, (1 + exp)),
+                np.log((1 + exp + delta) / (1 + res + delta)),
+            ),
+            np.multiply(
+                np.multiply(0.5, (1 - exp)),
+                np.log((1 - exp + delta) / (1 - res + delta)),
+            ),
+        )
+    )
 
 
 def res_sign(res, _):

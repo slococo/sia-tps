@@ -3,8 +3,8 @@ import json
 from tp3 import utils
 from tp3.autoencoder import Autoencoder
 from tp3.den_autoencoder import DenoisingAutoencoder
-from tp3.optimizer import *
 from tp3.noise import *
+from tp3.optimizer import *
 from tp3.perceptron import Perceptron
 
 
@@ -55,11 +55,24 @@ class Initializer:
         match type:
             case "ae":
                 perceptron = Autoencoder(
-                    data_size + 1, matr_dims, optimizer, g_function, g_diff, eta, eta_adapt
+                    data_size + 1,
+                    matr_dims,
+                    optimizer,
+                    g_function,
+                    g_diff,
+                    eta,
+                    eta_adapt,
                 )
             case "dae":
                 perceptron = DenoisingAutoencoder(
-                    data_size + 1, matr_dims, optimizer, g_function, g_diff, eta, eta_adapt, noise_dist
+                    data_size + 1,
+                    matr_dims,
+                    optimizer,
+                    g_function,
+                    g_diff,
+                    eta,
+                    eta_adapt,
+                    noise_dist,
                 )
             case _:
                 raise "your hands"

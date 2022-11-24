@@ -12,8 +12,40 @@ def main(data_path=None):
     data_column = ["x" + str(i) for i in range(1, 36)]
     data, exp = CSVLoader.load(data_path, False, data_column, None, False)
 
-    chars = ["`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-             "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", "DEL"]
+    chars = [
+        "`",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z",
+        "{",
+        "|",
+        "}",
+        "~",
+        "DEL",
+    ]
     Grapher.graph_latent(perceptron, data, chars)
 
 

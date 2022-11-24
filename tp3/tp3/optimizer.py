@@ -60,8 +60,24 @@ m, v = [], []
 
 
 def reset_state():
-    global m, v, ma, va,  mn, vn, tn, mg, vg, vg_hat, Eg, Ex, dx, dw, S, t, prev_e, tendency, ta, tn, k0, k, a
-    m, v, ma, va,  mn, vn, tn, mg, vg, vg_hat, Eg, Ex, dx, dw, S = [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+    global m, v, ma, va, mn, vn, tn, mg, vg, vg_hat, Eg, Ex, dx, dw, S, t, prev_e, tendency, ta, tn, k0, k, a
+    m, v, ma, va, mn, vn, tn, mg, vg, vg_hat, Eg, Ex, dx, dw, S = (
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+    )
     t, prev_e, tendency, ta, tn = 0, 0, 0, 0, 0
     k0, k, a = 10, 10, None
 

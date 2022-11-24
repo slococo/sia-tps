@@ -39,7 +39,9 @@ def main(config_path=None, data_path=None):
     print("Zeit: {:.8f}ms".format((time.time() - start_time) * 1000))
     errors.append(aux)
 
-    predict_error = Tester.test(perceptron, data, exp, utils.quadratic_error, res_fun=None)
+    predict_error = Tester.test(
+        perceptron, data, exp, utils.quadratic_error, res_fun=None
+    )
 
     print(f"Predict error: {predict_error}")
 

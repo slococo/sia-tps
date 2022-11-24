@@ -18,9 +18,8 @@ class Autoencoder(Perceptron):
     ):
         aux_dims = dims[:-1]
         n = len(aux_dims) // 2
-        # if not np.all(aux_dims[:n] == aux_dims[-1: -n - 1: -1]):
-        #     raise "your hands"
-            # raise "Dims array does not correspond to symmetrical Autoencoder architecture"
+        if not np.all(aux_dims[:n] == aux_dims[-1: -n - 1: -1]):
+            raise "your hands"
         Perceptron.__init__(
             self,
             data_dim,
@@ -37,14 +36,14 @@ class Autoencoder(Perceptron):
 
     def get_latent_layer(self, data):
         out = np.array(data)
-        for layer in self.matrix_arr[:self.z]:
+        for layer in self.matrix_arr[: self.z]:
             aux = np.squeeze(np.atleast_1d(layer @ np.atleast_2d(out).T))
             out = self.g(aux)
         return out
 
     def create_from_latent(self, data):
         out = np.array(data)
-        for layer in self.matrix_arr[self.z:]:
+        for layer in self.matrix_arr[self.z :]:
             aux = np.squeeze(np.atleast_1d(layer @ np.atleast_2d(out).T))
             out = self.g(aux)
         return out

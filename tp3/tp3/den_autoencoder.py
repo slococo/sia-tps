@@ -33,5 +33,11 @@ class DenoisingAutoencoder(Autoencoder):
 
     def train(self, data, expected, error_max, max_iter, method, exp=None):
         return Autoencoder.train(
-            self, self.noise_distribution(0, 0.1, data), data[:, 1:], error_max, max_iter, method, exp
+            self,
+            self.noise_distribution(0, 0.1, data),
+            data[:, 1:],
+            error_max,
+            max_iter,
+            method,
+            exp,
         )

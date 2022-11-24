@@ -9,14 +9,10 @@ def main():
     perceptron = Perceptron.load("perceptron_200_35-25-17-2.obj")
 
     data_column = ["x" + str(i) for i in range(1, 36)]
-    # data_column = ["x" + str(i) for i in range(1, 65)]
     data, exp = CSVLoader.load("../fonts.csv", False, data_column, None, False)
-    # data, exp = CSVLoader.load("../other.csv", False, data_column, None, False)
-    # Grapher.graph_chars(data[:, 1:], 8, 8, 16)
-    # exit(1)
 
     # Grapher.graph_char(perceptron.create_from_latent([.04, .05]))
-    ### Grapher.generate_and_graph(perceptron)
+    # Grapher.generate_and_graph(perceptron)
 
     Grapher.graph_chars(data[:, 1:], 5, 7, 8)
 
@@ -24,7 +20,9 @@ def main():
     for i in range(0, len(data)):
         predicts.append(perceptron.predict(data[i]))
 
-    predict_error = Tester.test(perceptron, data, exp, utils.quadratic_error, res_fun=None)
+    predict_error = Tester.test(
+        perceptron, data, exp, utils.quadratic_error, res_fun=None
+    )
     print(predict_error)
 
     Grapher.graph_chars(predicts, 5, 7, 8)

@@ -2,14 +2,15 @@ import math
 import pickle
 import random
 
-import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 
 matplotlib.use("TkAgg")
 
-from tp3 import utils
 from matplotlib.animation import FuncAnimation, PillowWriter
+
+from tp3 import utils
 
 
 class Perceptron:
@@ -54,12 +55,18 @@ class Perceptron:
         with open(file_name, "rb") as f:
             return pickle.load(f)
 
-    def train(self, data, expected, error_max, max_iter, method, exp=None, res_fun=None):
+    def train(
+        self, data, expected, error_max, max_iter, method, exp=None, res_fun=None
+    ):
         match method:
             case "online":
-                return self.online(data, expected, error_max, max_iter, exp=exp, res_fun=res_fun)
+                return self.online(
+                    data, expected, error_max, max_iter, exp=exp, res_fun=res_fun
+                )
             case "batch":
-                return self.batch(data, expected, error_max, max_iter, exp=exp, res_fun=res_fun)
+                return self.batch(
+                    data, expected, error_max, max_iter, exp=exp, res_fun=res_fun
+                )
             case _:
                 raise RuntimeError("Unknown method " + method)
 
@@ -75,20 +82,11 @@ class Perceptron:
         return out
 
     def batch(self, data, expected, error_max, max_iter, exp=None, res_fun=None):
-        # tags = ["`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
-        #          "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", "DEL"]
-
         errors, historic, layer_historic = [], [], []
         error, n = math.inf, 0
-        latents = [[]]
         while error > error_max and n < max_iter:
             error, dw = self.initialize_values(n, layer_historic)
             n += 1
-            
-            # if not n % 500:
-            #     for i in range(0, len(data)):
-            #         latents[-1].append((tags[i], self.get_latent_layer(data[i])))
-            #     latents.append([])
 
             for i in range(0, len(data)):
                 u = data[i]
@@ -133,26 +131,6 @@ class Perceptron:
 
         if self.dropout:
             self.scale_weights()
-
-        # fig = plt.figure(figsize=(14, 9))
-        # ax = plt.axes()
-
-        # def animate(k):
-        #     ax.clear()
-        #     ax.set_ylim([-1.2, 1.2])
-        #     ax.set_xlim([-1.2, 1.2])
-        #     ax.set_title(str(k))
-        #
-        #     for point in latents[k]:
-        #         ax.annotate(point[0], (point[1][0], point[1][1]))
-        #
-        #
-        # ani = FuncAnimation(
-        #     fig, animate, frames=int(n/500), interval=400, repeat=False
-        # )
-        # plt.close()
-        # fps = int(n/500)
-        # ani.save("anim.gif", fps=fps)
 
         return historic, errors, layer_historic, n
 

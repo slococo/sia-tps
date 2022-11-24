@@ -3,12 +3,12 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 
+from tp3 import optimizer, perceptron
 from tp3.ej1.grapher import Grapher
 from tp3.error_graph import ErrorGraph
 from tp3.initializer import Initializer
 from tp3.loader import CSVLoader
 from tp3.perceptron import Perceptron
-from tp3 import optimizer, perceptron
 
 
 def main(config_path=None, data_path=None):
@@ -20,28 +20,26 @@ def main(config_path=None, data_path=None):
     data_column = ["x" + str(i) for i in range(1, 36)]
     data, exp = CSVLoader.load(data_path, False, data_column, None, False)
 
-    bs = [
-        0.25,
-        0.15,
-        0.05
-    ]
+    bs = [0.25, 0.15, 0.05]
 
-    etas = [
-        0.001,
-        0.005
-    ]
+    etas = [0.001, 0.005]
 
     fig = plt.figure(figsize=(14, 9))
 
     colors = ["yellow", "green", "red", "brown", "indigo", "blue"]
-    # colors = ["brown", "indigo", "blue"]
-    # colors = ["indigo", "blue"]
     for i in range(0, len(etas)):
         for j in range(0, len(bs)):
             errors = []
             for _ in range(0, 2):
                 optimizer.reset_state()
-                perceptron, max_iter, error, learning, eta, dataset = Initializer.initialize(
+                (
+                    perceptron,
+                    max_iter,
+                    error,
+                    learning,
+                    eta,
+                    dataset,
+                ) = Initializer.initialize(
                     config_path, [25, 17, 2, 17, 25, 35], 35, "ae"
                 )
                 start_time = time.time()
@@ -72,4 +70,4 @@ def main(config_path=None, data_path=None):
 
 
 if __name__ == "__main__":
-    main("config.json", "../fonts.csv")
+    main("../tp3/ej1/a/config.json", "../fonts.csv")

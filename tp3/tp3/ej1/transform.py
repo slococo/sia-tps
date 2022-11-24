@@ -16,7 +16,9 @@ class Transformer:
         for c in data:
             aux = []
             for j in c:
-                aux2 = np.unpackbits(np.array(int(j, 16), dtype=np.uint8))[8-byte_size:]
+                aux2 = np.unpackbits(np.array(int(j, 16), dtype=np.uint8))[
+                    8 - byte_size :
+                ]
                 aux2 = aux2
                 if np.atleast_2d(aux).shape[1] == 0:
                     aux = aux2
