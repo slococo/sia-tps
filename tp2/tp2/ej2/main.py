@@ -4,6 +4,7 @@ import time
 import matplotlib
 import numpy as np
 import pandas as pd
+
 from tp2.error_graph import ErrorGraph
 from tp2.initializer import Initializer
 from tp2.loader import CSVLoader
@@ -12,6 +13,7 @@ from tp2.tester import Tester
 matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
+
 from tp2 import utils
 from tp2.datapartitioning import *
 from tp2.ej2 import animation, graph

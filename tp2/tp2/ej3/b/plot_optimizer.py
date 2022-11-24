@@ -4,6 +4,7 @@ import time
 import matplotlib
 import numpy as np
 import pandas as pd
+
 from tp2.ej3.c import plot_probability
 from tp2.error_graph import ErrorGraph
 from tp2.grapher import Grapher
@@ -14,6 +15,7 @@ from tp2.tester import Tester
 matplotlib.use("TkAgg")
 
 from matplotlib import pyplot as plt
+
 from tp2 import utils
 from tp2.ej3.b.wrapper import Wrapper
 from tp2.optimizer import *

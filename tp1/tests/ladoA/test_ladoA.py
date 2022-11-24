@@ -4,6 +4,7 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
+
 from tp1.ladoA.algorithms import a_star, a_star_t, bfs, dfs, greedy, greedy_t, iddfs
 from tp1.ladoA.game import Game
 from tp1.ladoA.heuristics import (

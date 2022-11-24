@@ -4,6 +4,7 @@ import math
 import matplotlib
 import numpy as np
 import pandas as pd
+
 from tp2.grapher import Grapher
 
 matplotlib.use("TkAgg")

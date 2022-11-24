@@ -3,6 +3,7 @@ import time
 
 import matplotlib
 import numpy as np
+
 from tp2.ej1 import graph
 from tp2.ej1.animation import create_animation
 from tp2.error_graph import ErrorGraph

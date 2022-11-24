@@ -6,6 +6,7 @@ import numpy as np
 matplotlib.use("TkAgg")
 
 import pandas as pd
+
 from tp2 import utils
 
 

@@ -1,6 +1,7 @@
 import json
 
 import pandas as pd
+
 import tp2.utils as utils
 from tests.run_all import run_all_generic
 from tp2.optimizer import *
