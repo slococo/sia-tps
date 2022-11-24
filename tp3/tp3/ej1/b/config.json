@@ -3,9 +3,10 @@
   "learning": "batch",
   "optimizer": "adam",
   "g_function": "tanh",
-  "beta": 1,
+  "beta": 0.05,
   "eta_adapt": null,
-  "max_iter": 20000,
+  "max_iter": 30000,
   "error": 0,
-  "eta": 0.01
+  "eta": 0.001,
+  "noise_dist": "gaussian_noise"
 }

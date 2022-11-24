@@ -1,3 +1,5 @@
+import time
+
 import matplotlib
 import numpy as np
 
@@ -15,7 +17,7 @@ class ErrorGraph:
         else:
             cls.make_plt(means=means, stds=stds)
         # plt.close()
-        # fig.savefig("k-fold.png")
+        # fig.savefig("error" + round(time.time()).__str__() + ".png")
         plt.show()
 
     @classmethod
@@ -31,16 +33,7 @@ class ErrorGraph:
         plt.title("Error vs epoch")
         plt.xlabel("epoch")
         plt.ylabel("error")
-        # plt.ylim([-0.1, 0.35])
-        # plt.title("K fold training")
-        # plt.xlabel("prediction error")
-        # plt.ylabel("error")
         plt.plot(means, color=color)
-        # x = []
-        # for i in range(0, len(means)):
-        #     x.append("{:d}".format((i + 2)))
-        # x.append("{:.2f}".format((i + 2) * 0.05))
-        # plt.xticks(range(0, len(means)), x)
         plt.fill_between(
             range(0, len(means)),
             np.subtract(means, stds),

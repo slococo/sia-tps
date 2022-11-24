@@ -9,5 +9,5 @@ def gaussian_noise(mu, sigma, data):
 
 def uniform_noise(a, b, data):
     ret_data = np.array(data)
-    noise = np.random.normal(a, b, np.shape(ret_data))
+    noise = np.random.uniform(a, b, np.shape(ret_data))
     return ret_data + noise

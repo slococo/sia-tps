@@ -2,13 +2,15 @@ import json
 
 from tp3 import utils
 from tp3.autoencoder import Autoencoder
+from tp3.den_autoencoder import DenoisingAutoencoder
 from tp3.optimizer import *
+from tp3.noise import *
 from tp3.perceptron import Perceptron
 
 
 class Initializer:
     @classmethod
-    def initialize(cls, path, matr_dims, data_size):
+    def initialize(cls, path, matr_dims, data_size, type):
         try:
             with open(path) as f:
                 data = json.load(f)
@@ -21,6 +23,8 @@ class Initializer:
                 max_iter = data["max_iter"]
                 error = data["error"]
                 eta = data["eta"]
+                if type == "dae":
+                    noise_dist = data["noise_dist"]
         except FileNotFoundError:
             raise "Couldn't find config path"
 
@@ -37,13 +41,27 @@ class Initializer:
             case "logistic":
                 g_function = utils.logistic_arr
                 g_diff = utils.logistic_diff
+            case "relu":
+                g_function = utils.relu
+                g_diff = utils.relu_diff
             case _:
                 g_function = utils.step
                 g_diff = utils.ident_diff
         utils.set_b(beta)
 
-        perceptron = Autoencoder(
-            data_size + 1, matr_dims, optimizer, g_function, g_diff, eta, eta_adapt
-        )
+        if type == "dae":
+            noise_dist = globals()[noise_dist]
+
+        match type:
+            case "ae":
+                perceptron = Autoencoder(
+                    data_size + 1, matr_dims, optimizer, g_function, g_diff, eta, eta_adapt
+                )
+            case "dae":
+                perceptron = DenoisingAutoencoder(
+                    data_size + 1, matr_dims, optimizer, g_function, g_diff, eta, eta_adapt, noise_dist
+                )
+            case _:
+                raise "your hands"
 
         return perceptron, max_iter, error, learning, eta, dataset

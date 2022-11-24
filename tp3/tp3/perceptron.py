@@ -3,8 +3,13 @@ import pickle
 import random
 
 import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+
+matplotlib.use("TkAgg")
 
 from tp3 import utils
+from matplotlib.animation import FuncAnimation, PillowWriter
 
 
 class Perceptron:
@@ -49,12 +54,12 @@ class Perceptron:
         with open(file_name, "rb") as f:
             return pickle.load(f)
 
-    def train(self, data, expected, error_max, max_iter, method, exp=None):
+    def train(self, data, expected, error_max, max_iter, method, exp=None, res_fun=None):
         match method:
             case "online":
-                return self.online(data, expected, error_max, max_iter, exp)
+                return self.online(data, expected, error_max, max_iter, exp=exp, res_fun=res_fun)
             case "batch":
-                return self.batch(data, expected, error_max, max_iter, exp)
+                return self.batch(data, expected, error_max, max_iter, exp=exp, res_fun=res_fun)
             case _:
                 raise RuntimeError("Unknown method " + method)
 
@@ -69,12 +74,21 @@ class Perceptron:
             out = self.g(aux)
         return out
 
-    def batch(self, data, expected, error_max, max_iter, exp=None):
+    def batch(self, data, expected, error_max, max_iter, exp=None, res_fun=None):
+        # tags = ["`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
+        #          "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", "DEL"]
+
         errors, historic, layer_historic = [], [], []
         error, n = math.inf, 0
+        latents = [[]]
         while error > error_max and n < max_iter:
             error, dw = self.initialize_values(n, layer_historic)
             n += 1
+            
+            # if not n % 500:
+            #     for i in range(0, len(data)):
+            #         latents[-1].append((tags[i], self.get_latent_layer(data[i])))
+            #     latents.append([])
 
             for i in range(0, len(data)):
                 u = data[i]
@@ -88,6 +102,9 @@ class Perceptron:
                 expec = expected[i]
                 if exp:
                     expec = exp(v[-1], expected[i])
+
+                if res_fun:
+                    res = res_fun(v[-1], None)
 
                 if self.eta_adapt:
                     self.eta = self.eta_adapt(
@@ -117,9 +134,29 @@ class Perceptron:
         if self.dropout:
             self.scale_weights()
 
+        # fig = plt.figure(figsize=(14, 9))
+        # ax = plt.axes()
+
+        # def animate(k):
+        #     ax.clear()
+        #     ax.set_ylim([-1.2, 1.2])
+        #     ax.set_xlim([-1.2, 1.2])
+        #     ax.set_title(str(k))
+        #
+        #     for point in latents[k]:
+        #         ax.annotate(point[0], (point[1][0], point[1][1]))
+        #
+        #
+        # ani = FuncAnimation(
+        #     fig, animate, frames=int(n/500), interval=400, repeat=False
+        # )
+        # plt.close()
+        # fps = int(n/500)
+        # ani.save("anim.gif", fps=fps)
+
         return historic, errors, layer_historic, n
 
-    def online(self, data, expected, error_max, max_iter, exp=None):
+    def online(self, data, expected, error_max, max_iter, exp=None, res_fun=None):
         errors, historic, layer_historic = [], [], []
         error, n, k = math.inf, 0, 0
         while error > error_max and n < max_iter:
@@ -141,17 +178,20 @@ class Perceptron:
                 if exp:
                     expec = exp(v[-1], expected_copy[i])
 
+                if res_fun:
+                    res = res_fun(v[-1], None)
+
                 if self.eta_adapt:
                     self.eta = self.eta_adapt(
                         np.average(np.subtract(expec, res)), self.eta
                     )
-                d = self.calc_d_log(res=res, exp=expec, h=h[-1])
+                d = self.calc_d(res=res, exp=expec, h=h[-1])
                 dw[0] = self.calc_dw(d, v[-2], 0)
 
                 j = 0
                 for layer in self.matrix_arr[::-1]:
                     if j != 0:
-                        d = self.calc_d_log(d=d, w=aux, h=h[-(j + 1)])
+                        d = self.calc_d(d=d, w=aux, h=h[-(j + 1)])
                         dw[j] = self.calc_dw(d, v[-(j + 2)], j)
                     aux = layer
                     j += 1
@@ -222,14 +262,14 @@ class Perceptron:
         if w is not None and d is not None:
             return np.atleast_2d(d.dot(w) * np.atleast_2d(self.g_diff(h)))
         elif res is not None and exp is not None:
-            return utils.get_b() * np.subtract(res, exp)
+            return np.atleast_2d(utils.get_b() * np.subtract(res, exp))
         else:
             raise "your hands"
 
     def calc_dw(self, d, v, j):
         return self.optimizer(d.T.dot(np.atleast_2d(v)), self.eta, j)
 
-    def calc_out(self, data, training):
+    def calc_out(self, data, _):
         h, v = [], []
         v.append(data)
         for layer in self.matrix_arr:

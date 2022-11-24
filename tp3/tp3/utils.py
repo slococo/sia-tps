@@ -30,6 +30,29 @@ def ident_diff(x):
     return res
 
 
+relu_alfa = 0.25
+
+
+def relu(x):
+    res = []
+    for i in x:
+        if i >= 0:
+            res.append(i)
+        else:
+            res.append(relu_alfa * i)
+    return res
+
+
+def relu_diff(x):
+    res = []
+    for i in x:
+        if i >= 0:
+            res.append(1)
+        else:
+            res.append(relu_alfa)
+    return res
+
+
 b = 0.05
 
 
@@ -84,17 +107,15 @@ delta = 1e-6
 
 
 def log_error(exp, res):
-    return np.add(
+    return np.average(np.add(
         np.multiply(
             np.multiply(0.5, (1 + exp)), np.log((1 + exp + delta) / (1 + res + delta))
         ),
         np.multiply(
             np.multiply(0.5, (1 - exp)), np.log((1 - exp + delta) / (1 - res + delta))
         ),
-    )
+    ))
 
 
-def res_index(x, n):
-    res = np.full_like(x, fill_value=-1)
-    res[round(n)] = 1
-    return res
+def res_sign(res, _):
+    return np.sign(res)

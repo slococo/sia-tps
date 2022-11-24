@@ -59,6 +59,13 @@ beta1, beta2, eps, t = 0.9, 0.999, 1e-8, 0
 m, v = [], []
 
 
+def reset_state():
+    global m, v, ma, va,  mn, vn, tn, mg, vg, vg_hat, Eg, Ex, dx, dw, S, t, prev_e, tendency, ta, tn, k0, k, a
+    m, v, ma, va,  mn, vn, tn, mg, vg, vg_hat, Eg, Ex, dx, dw, S = [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+    t, prev_e, tendency, ta, tn = 0, 0, 0, 0, 0
+    k0, k, a = 10, 10, None
+
+
 def adam(diff, eta, j):
     global m, v, t
     if j == len(m):
@@ -133,7 +140,7 @@ def amsgrad(diff, eta, j):
 Eg, Ex, rho, dx = [], [], 0.9, []
 
 
-def adadelta(diff, eta, j):
+def adadelta(diff, _, j):
     global Eg, Ex, dx
     if j == len(Eg):
         Eg.append(0)
