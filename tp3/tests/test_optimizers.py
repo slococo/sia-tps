@@ -3,13 +3,13 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 
+from tp3 import optimizer, perceptron
 from tp3.ej1.grapher import Grapher
 from tp3.error_graph import ErrorGraph
 from tp3.initializer import Initializer
 from tp3.loader import CSVLoader
-from tp3.perceptron import Perceptron
-from tp3 import optimizer, perceptron
 from tp3.optimizer import *
+from tp3.perceptron import Perceptron
 
 
 def main(config_path=None, data_path=None):
@@ -30,9 +30,14 @@ def main(config_path=None, data_path=None):
         errors = []
         for _ in range(0, 2):
             optimizer.reset_state()
-            perceptron, max_iter, error, learning, eta, dataset = Initializer.initialize(
-                config_path, [25, 17, 2, 17, 25, 35], 35, "ae"
-            )
+            (
+                perceptron,
+                max_iter,
+                error,
+                learning,
+                eta,
+                dataset,
+            ) = Initializer.initialize(config_path, [25, 17, 2, 17, 25, 35], 35, "ae")
             perceptron.optimizer = globals()[optimizers[i]]
             start_time = time.time()
             historic, aux, layer_historic, epoch = perceptron.train(

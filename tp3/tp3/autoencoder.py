@@ -18,7 +18,7 @@ class Autoencoder(Perceptron):
     ):
         aux_dims = dims[:-1]
         n = len(aux_dims) // 2
-        if not np.all(aux_dims[:n] == aux_dims[-1: -n - 1: -1]):
+        if not np.all(aux_dims[:n] == aux_dims[-1 : -n - 1 : -1]):
             raise "your hands"
         Perceptron.__init__(
             self,
