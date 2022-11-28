@@ -1,11 +1,8 @@
 import json
 
-import matplotlib
 import numpy as np
 
 from tp3 import utils
-
-matplotlib.use("TkAgg")
 
 import pandas as pd
 

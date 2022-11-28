@@ -5,7 +5,6 @@ from tp3.autoencoder import Autoencoder
 from tp3.den_autoencoder import DenoisingAutoencoder
 from tp3.noise import *
 from tp3.optimizer import *
-from tp3.perceptron import Perceptron
 
 
 class Initializer:

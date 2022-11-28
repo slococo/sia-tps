@@ -1,9 +1,8 @@
-import time
-
-import matplotlib
 import numpy as np
+import matplotlib
 
 matplotlib.use("TkAgg")
+
 import matplotlib.pyplot as plt
 
 delta_y = 0.01
@@ -53,7 +52,6 @@ class Grapher:
                 else:
                     a = 1
                 aux3 = np.concatenate((aux3, [a]), axis=0)
-                # aux3 = np.concatenate((aux3, [out[j * 5 + i]]), axis=0)
 
             aux4 = np.concatenate((aux2, [-1], aux3))
             if not j:

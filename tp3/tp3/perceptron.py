@@ -2,13 +2,7 @@ import math
 import pickle
 import random
 
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
-
-matplotlib.use("TkAgg")
-
-from matplotlib.animation import FuncAnimation, PillowWriter
 
 from tp3 import utils
 

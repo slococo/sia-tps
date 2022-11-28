@@ -1,12 +1,7 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 import tensorflow as tf
-from keras import Input, layers, losses
-from keras.datasets import fashion_mnist
+from keras import layers, losses
 from keras.models import Model
-from sklearn.metrics import accuracy_score, precision_score, recall_score
-from sklearn.model_selection import train_test_split
 
 from tp3.loader import CSVLoader
 

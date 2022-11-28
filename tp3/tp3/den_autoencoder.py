@@ -1,5 +1,3 @@
-import numpy as np
-
 from tp3.autoencoder import Autoencoder
 
 
